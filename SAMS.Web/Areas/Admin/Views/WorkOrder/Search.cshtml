@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "工单搜索结果";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "WorkOrder";
+}
+ <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption title">
+                    工单搜索结果
+                </div>
+                <div class="input-group pull-right">
+                </div>
+            </div>
+
+            <div class="portlet-body">
+                <div id="dataTable" class="dataTables_wrapper no-footer">
+                   @Html.Action("GetList", "WorkOrder", new { PageIndex = 1, PageSize = 1, Sort = "CreationTime", Direction = "desc" 
+                    ,Where="{searchkey:'" +ViewData["Number"] +"'}"})
+                </div>
+            </div>
+
+            <form action="/admin/workorder/getlist" data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" data-ajax-failure="showException" data-ajax-mode="replace" data-ajax-success="initTable" data-ajax-update="#dataTable" id="searchByRequest" method="post"><input id="PageIndex" name="PageIndex" type="hidden" value="1" /><input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10" /><input id="Sort" name="Sort" type="hidden" value="" /><input id="Direction" name="Direction" type="hidden" value="" /><input id="Where" name="Where" type="hidden" value="{&#39;organizationId&#39;:&#39;acf44b69-7a2f-47b3-8d7b-1395d1b3885c&#39;,&#39;searchkey&#39;:&#39;W201703070001&#39;}" /></form>
+        </div>
+    </div>
+
+
+</div>
+<!-- END PAGE CONTEN -->
+         
+<div class="modal fade bs-example-modal-lg" id="callDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-modal-lg" id="createworkDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createcustomerDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+     
+<!-- END CONTENT -->
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            initTable();//初始化列表
+        });
+
+        ///初始化列表
+        function initTable() {
+            OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+            //单击行跳转到明细页
+            $('td:not(:lt(2),:last)', $('#tableList tr')).click(function () {
+                var id = $(this).parent().find("input[type=checkbox]").val();//id值
+                window.location = "/admin/workorder/details/"+id;
+            });
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            $("#searchByRequest").submit();
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, direction) {
+            $("#Sort").val(sort);
+            $("#Direction").val(direction);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+</script>
+    }

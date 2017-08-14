@@ -1,0 +1,140 @@
+﻿
+<link href="~/libs/album/css/pure-min.css" rel="stylesheet" type="text/css" media="all">
+<link href="~/libs/album/css/blue.css" rel="stylesheet" type="text/css" media="all">
+<link href="~/libs/album/css/grids.css" rel="stylesheet" type="text/css" media="all">
+<link href="/libs/album/css/album.css" rel="stylesheet" type="text/css" media="all">
+<link href="~/libs/album/css/base.css" rel="stylesheet" type="text/css" media="all">
+<link href="~/Content/mui.min.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="~/Scripts/jquery-2.2.0.js"></script>
+@*<script type="text/javascript" src="~/libs/album/js/jquery.js"></script>*@
+
+@*todo:将附件相册抽离出来*@
+@*附件图片*@
+@using SAMS.WorkOrders
+@using Abp.Web.Mvc.Extensions
+@model SAMS.Web.Areas.Admin.Models.WorkOrder.PictureViewModel
+<!DOCTYPE html>
+<html>
+<head>
+        
+        <style>
+            .pic-cut {
+
+               max-height:768px;
+               max-width:1024px;
+               width:inherit 100%;
+               height:inherit 100%;
+            
+            }
+
+        </style>
+
+</head>
+<body>
+    <div id="content4" class="panel">
+        <div class="content">
+                 
+                @if (!(Model == null || Model.WorkOrder == null || Model.WorkOrder.Photos == null))
+                {
+                    if (Model.WorkOrder.Photos.Count > 0)
+                            {
+                                    <div class="album" id="album">
+                                        <div class="album-image-md" id="album-image-md">
+                                            <p class="album-image-bd">
+
+                                                @*<img src="/upload/90d4de7b-d1ed-495a-8f7b-5bb3d6fffbda_yzj_webview_upload_58dcbebae7bce71366a9b64c.jpg" class="album-image pic-cut" id="album-image" alt="" />*@
+                                                <img src="/upload/@Model.WorkOrder.Photos.ElementAt(0).FilePath" class="album-image" id="album-image" alt="" />
+                                            </p>
+
+
+                                            <p class="album-image-ft" id="album-image-ft"></p>
+                                            <a class="album-download" id="album-download" href="/upload/@Model.WorkOrder.Photos.ElementAt(0).FilePath" target="_blank"><span>下载图片</span></a>
+
+                                            <ul class="album-image-nav hide" id="album-image-nav">
+                                                <li class="album-image-nav-left-block" id="album-image-nav-left-block"><a href="#prev-image" class="album-image-btn-prev" id="album-image-btn-prev">‹</a></li>
+                                                <li class="album-image-nav-right-block" id="album-image-nav-right-block"><a href="#next-image" class="album-image-btn-next" id="album-image-btn-next">›</a></li>
+                                            </ul>
+
+                                            <p class="album-image-loading-overlay hide" id="album-image-loading-overlay"><img src="~/libs/album/img/loading.gif" alt="loading..." width="100" height="100" /></p>
+                                        </div>
+                                        <div class="album-carousel" id="album-carousel">
+                                            <a href="#prev-group" class="album-carousel-btn-prev" id="album-carousel-btn-prev">‹</a>
+                                            <div class="album-carousel-zone" id="album-carousel-zone">
+                                                <ul class="album-carousel-list" id="album-carousel-list">
+                                                    @{var imgIndex = 0; }
+
+                                                    @foreach (var item in Model.WorkOrder.Photos)
+                                                    {
+                                                        <li class="album-carousel-thumb @(imgIndex == 0 ? "album-carousel-thumb-selected" : "")">
+                                                            <a href="/upload/@item.FilePath">
+                                                                <img src="/upload/@item.FilePath" alt="" width="230" height="144" />
+                                                            </a>
+                                                        </li>
+                                                        imgIndex++;
+
+                                                    }
+                                                    @*<li class="album-carousel-thumb album-carousel-thumb-selected">
+                                                            <a href="/upload/90d4de7b-d1ed-495a-8f7b-5bb3d6fffbda_yzj_webview_upload_58dcbebae7bce71366a9b64c.jpg">
+                                                                <img src="/upload/90d4de7b-d1ed-495a-8f7b-5bb3d6fffbda_yzj_webview_upload_58dcbebae7bce71366a9b64c.jpg"  alt="" width="230" height="144" />
+                                                            </a>
+
+                                                        </li>
+                                                        <li class="album-carousel-thumb">
+                                                            <a href="/upload/dc7163a3-036f-450e-ba1c-eea8c668e841_yzj_webview_upload_58db92229a1aa30beaebfa04.jpg">
+                                                                <img src="/upload/dc7163a3-036f-450e-ba1c-eea8c668e841_yzj_webview_upload_58db92229a1aa30beaebfa04.jpg"  alt="" width="230" height="144" />
+                                                            </a>
+
+                                                        </li>
+                                                        <li class="album-carousel-thumb">
+                                                            <a href="/upload/d1155787-8282-4c03-a050-464e9665e458_yzj_webview_upload_58ff0e2be7bce713a62b6f6d.jpg">
+                                                                <img src="/upload/d1155787-8282-4c03-a050-464e9665e458_yzj_webview_upload_58ff0e2be7bce713a62b6f6d.jpg"  alt="" width="230" height="144" />
+                                                            </a>
+
+                                                        </li>*@
+
+
+                                                </ul>
+                                            </div>
+                                            <a href="#next-group" class="album-carousel-btn-next" id="album-carousel-btn-next">›</a>
+                                        </div>
+
+                                    </div>
+                                                        }
+                                    else if (Model.WorkOrder.Photos.Count == 1)
+                                    {
+                                        <p class="album-image-bd"><img src="/upload/@Model.WorkOrder.Photos.ElementAt(0).FilePath" class="album-image" id="album-image" alt="" width="400" height="750" /></p>
+                                    }
+
+
+
+
+                                    }
+
+
+
+                        else
+                        {
+                                                <div class="esh-nodataNote" style="height:240px">
+                                                    <div class="esh-nodata-tip">
+
+                                                        <i class="fa fa-file-text-o"></i>
+                                                        <div class="con">暂无附件</div>
+                                                    </div>
+                                                </div>
+                          }
+        </div>
+    </div>
+    <script type="text/javascript" src="~/Areas/StaffMobile/Scripts/mui.min.js"></script>
+    <script type="text/javascript" src="~/libs/album/js/carousel.js"></script>
+    <script type="text/javascript" src="~/libs/album/js/album.js"></script>
+    <script type="text/javascript">
+
+            (function($){
+	            var Album = new jQuery.Album();
+            })(jQuery);
+           
+
+
+    </script>
+</body>
+</html>

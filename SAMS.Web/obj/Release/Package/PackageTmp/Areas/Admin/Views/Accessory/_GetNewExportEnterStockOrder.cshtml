@@ -1,0 +1,140 @@
+﻿@model SAMS.Web.Areas.Admin.Models.Accessory.GetNewExportEnterStockOrderViewModel
+<div class="table-scrollable">
+    <table class="table table-striped dataTable table-bordered table-hover table-pointer" id="tableList">
+        <thead>
+            <tr>
+                <th class="table-checkbox" style="width:20px;">
+                    <input class="magic-checkbox group-checkable" type="checkbox" name="layout" id="c0" data-set="#tableList .checkboxes">
+                    <label for="c0"></label>
+                </th>
+                <th>
+                    单据编号
+                </th>
+                <th>
+                    单据类型
+                </th>
+                <th>
+                    出入库类别
+                </th>
+                <th>
+                    出入库人员
+                </th>
+                <th width="190px">
+                    操作时间
+                </th>
+                <th>
+                    操作人员
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+@foreach (var item in Model.Orders.Items)
+{
+            <tr class="odd gradeX">
+                <td>
+                    <input class="magic-checkbox checkboxes" type="checkbox" name="ids"  value='@item.Id' id="@item.Id" />
+                    <label for="@item.Id"></label>
+                </td>
+                <td>
+                   No.@item.Id
+                </td>
+                <td>
+                    <span name="type">@item.StockTypeName </span>
+                </td>
+                <td>
+                  @item.CategoryName
+                </td>
+                <td>
+                    @item.StraffName
+                </td>
+                <td>
+                    @item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss")
+                </td>
+                <td>
+                    @item.CreatorName
+                </td>
+            </tr>
+}
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <div class="col-md-5 col-sm-5">
+        <div class="dataTables_info" id="tableListInfo" role="status" aria-live="polite">
+            @if (Model.Orders.TotalCount > 0)
+            {
+                <lable>@Model.Start - @Model.End 条记录&nbsp;&nbsp;&nbsp;&nbsp;共 @Model.Orders.TotalCount 条</lable>
+            }
+            else
+            {
+                <label>没有查询到所需数据</label>
+            }
+        </div>
+    </div>
+    <div class="col-md-7 col-sm-7">
+        <div class="dataTables_paginate paging_bootstrap_full_number">
+            @if (Model.Orders.TotalCount > 0)
+            {
+                <ul class="pagination">
+                    @if (Model.PageIndex == 1)
+                {
+                        <li class='disabled prev'>
+                            <a href='javascript:void(0)'>
+                                <i class='fa fa-angle-double-left'></i>
+                            </a>
+                        </li>
+                        <li class="disabled prev"><a href="javascript:void(0);"><i class='fa fa-angle-left'></i></a></li>
+                    }
+                    else
+                    {
+                        <li class="prev"><a href="#" title="首页" onclick="changePageIndex(1)"><i class='fa fa-angle-double-left'></i></a></li>
+                        <li class="prev"><a href="#" title="上一页" onclick="changePageIndex(@Model.PageIndex -1)"><i class='fa fa-angle-left'></i></a></li>
+                    }
+
+                    @foreach (var i in Model.PageNumbers)
+                {
+                    if (Model.PageIndex.Equals(i))
+                    {
+                            <li class="active"><a href="#" onclick="changePageIndex(@i)">@(i.ToString())</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="#" onclick="changePageIndex(@(i.ToString()))">@(i.ToString())</a></li>
+                        }
+
+
+                    }
+
+                    @if (Model.PageIndex == Model.PageCount)
+                {
+                        <li class="disabled next">
+                            <a href="#" title="下一页" onclick="changePageIndex(@(Model.PageIndex + 1 ))">
+                                <i class='fa fa-angle-right'></i>
+                            </a>
+                        </li>
+                        <li class="disabled next">
+                            <a href="#" title="末页" onclick="changePageIndex(@Model.PageCount )">
+                                <i class='fa fa-angle-double-right'></i>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="next">
+                            <a href="#" title="下一页" onclick="changePageIndex(@(Model.PageIndex + 1 ))">
+                                <i class='fa fa-angle-right'></i>
+                            </a>
+                        </li>
+                        <li class="next">
+                            <a href="#" title="末页" onclick="changePageIndex(@Model.PageCount )">
+                                <i class='fa fa-angle-double-right'></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+
+</div>
+

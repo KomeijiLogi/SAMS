@@ -1,0 +1,218 @@
+﻿@using System.Threading
+@using System.Web.Optimization
+@using Abp.Extensions
+@using Abp.Timing
+@using Abp.Web.Mvc.Extensions
+@using SAMS.Web.Bundling
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js" data-ng-app="app"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js" data-ng-app="app"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="zh-cn">
+<!--<![endif]-->
+<head>
+    <title>售后管理系统</title>
+    <meta charset="utf-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+
+    <link rel="shortcut icon" href="~/favicon.ico" />
+
+    @*<link href="~/Content/fonts-open-sans.css" rel="stylesheet" type="text/css" />*@
+
+    @Styles.Render("~/Bundles/Admin/libs/css" )
+    @Styles.Render("~/Bundles/Admin/metronic/css" )
+    @*@Styles.Render("~/Bundles/Common/css")*@
+    <link href="~/Content/admin/css/plugins.css" rel="stylesheet" type="text/css" />
+    @*@Html.IncludeStyle("~/Areas/Admin/Views/Layout/_Layout.min.css")*@
+
+    @RenderSection("Styles", false)
+
+    <script type="text/javascript">
+        @* This is used to get the application's root path from javascript.
+        It's useful if you're running application in a virtual directory under IIS. *@
+        var abp = abp || {}; abp.appPath = '@ApplicationPath';
+    </script>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<!-- DOC: Apply "page-header-fixed-mobile" and "page-footer-fixed-mobile" class to body element to force fixed header or footer in mobile devices -->
+<!-- DOC: Apply "page-sidebar-closed" class to the body and "page-sidebar-menu-closed" class to the sidebar menu element to hide the sidebar by default -->
+<!-- DOC: Apply "page-sidebar-hide" class to the body to make the sidebar completely hidden on toggle -->
+<!-- DOC: Apply "page-sidebar-closed-hide-logo" class to the body element to make the logo hidden on sidebar toggle -->
+<!-- DOC: Apply "page-sidebar-hide" class to body element to completely hide the sidebar on sidebar toggle -->
+<!-- DOC: Apply "page-sidebar-fixed" class to have fixed sidebar -->
+<!-- DOC: Apply "page-footer-fixed" class to the body element to have fixed footer -->
+<!-- DOC: Apply "page-sidebar-reversed" class to put the sidebar on the right side -->
+<!-- DOC: Apply "page-full-width" class to the body element to have full width page without the sidebar menu -->
+<body class="page-md page-header-fixed page-sidebar-closed-hide-logo">
+
+    <div class="page-header navbar navbar-fixed-top ">
+        @Html.Action("Header", "Layout")
+    </div>
+
+    <div class="clearfix">
+    </div>
+
+    <div class="page-container">
+        <div class="page-sidebar-wrapper">
+            @Html.Action("Sidebar", "Layout", new { currentPageName = ViewBag.CurrentPageName })
+        </div>
+        <div class="page-content-wrapper">
+            <div class="page-content">
+                @RenderBody()
+            </div>
+            <div class="modal fade bs-modal-lg" id="createworkDailog" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="createcustomerDailog" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        @Html.Action("Footer", "Layout")
+    </div>
+
+    <!--[if lt IE 9]>
+        <script src="~/libs/respond/respond.min.js"></script>
+        <script src="~/libs/html5shiv/html5shiv.js"></script>
+        <script src="~/libs/excanvas/excanvas.min.js"></script>
+    <![endif]-->
+    
+    @Scripts.Render("~/Bundles/Admin/libs/js")
+    @Html.IncludeScript(ScriptPaths.JQuery_Validation_Localization)
+    @Html.IncludeScript(ScriptPaths.JQuery_JTable_Localization)
+    @Html.IncludeScript(ScriptPaths.Bootstrap_Select_Localization)
+    @*<script src="~/libs/jquery-validation/js/localization/_messages_empty.js"></script>
+    <script src="~/libs/jquery-jtable/localization/_jquery.jtable.empty.js"></script>
+    <script src="~/libs/bootstrap-select/i18n/defaults-en_US.js"></script>*@
+    
+    <script>
+        abp.localization.defaultSourceName = '@LocalizationSourceName';
+        moment.locale('@Thread.CurrentThread.CurrentUICulture.Name.Left(2)'); //Localizing moment.js
+    </script>
+
+    <!-- Dynamic scripts of ABP system (They are created on runtime and can not be bundled) -->
+    <script src="~/api/AbpServiceProxies/GetAll"></script>
+    <script src="~/AbpScripts/GetScripts?v=@(Clock.Now.Ticks)" type="text/javascript"></script>
+
+    <!-- SignalR scripts -->
+    @*<script src="~/signalr/hubs"></script>
+    @Html.IncludeScript("~/Abp/Framework/scripts/libs/abp.signalr.js")*@
+
+    @Scripts.Render("~/Bundles/Admin/metronic/js")
+    @*<script type="text/javascript">
+        App.setAssetsPath(abp.appPath + 'metronic/assets/');
+    </script>*@
+
+    @Scripts.Render("~/Bundles/Common/js")
+    @Scripts.Render("~/Bundles/Admin/Common/js")
+
+    @Html.IncludeScript("~/Areas/Admin/Views/Layout/_Header.js")
+    @Html.IncludeScript("~/Content/Admin/scripts/custom.js")
+    @Html.IncludeScript("~/Content/Admin/scripts/location.js")
+    @Html.IncludeScript("~/Content/Admin/scripts/editcustomer.js")
+    @Html.IncludeScript("~/Content/Admin/scripts/editworkorder.js")
+    
+    <script>
+        jQuery(document).ready(function () {
+            $.ajaxSetup({ cache: false });
+            Metronic.init(); // init metronic core componets
+            Layout.init(); // init layout
+            if ($(".side-menu-sidebar")) { initSideMenu(); }
+        });
+            //弹出对话框
+            function showDialog(data) {
+                $(".modal-content").html(data);//填充对话框
+                initDialog();//初始化对话框
+                $("#editDailog").modal();//弹出对话框{ backdrop: 'static', keyboard: false }
+            }
+
+            //初始化弹出的对话框
+            function initDialog() {
+                initArea("#sel_pro", "#sel_city", "#sel_distr", $("#Area").val());//初始化省市区域
+                initSelect();//初始化select2控件
+                Metronic.initSlimScroll('.scroller');//滚动条
+                $("#editForm").removeData("validator");//删除验证器
+                $.validator.unobtrusive.parse("#editForm");//添加验证器
+                $("#s2id_sel_distr input").blur(function () { getAreaVal(); });
+                initDataPicker();//设置时间控件
+                initUniform();
+            }
+
+            function createWorkOrder() {
+                startworkorderDialog("新建工单");
+                $.ajax({
+                    url: "/admin/workorder/popcreateworkordercustomer",
+                    type: "Get",
+                    success: function (data) {
+                        showworkorderDialog(data);
+                    },
+                    error: function (data) { showException(data); }
+                });
+            }
+
+            function createCustomer() {
+                startcustomerDialog("新建客户");
+                $.ajax({
+                    url: "/admin/customer/create",
+                    type: "Get",
+                    success: function (data) {
+                        showcustomerDialog(data);
+                    },
+                    error: function (data) { showException(data); }
+                });
+            }
+
+            //启动新建工单对话框
+            function startworkorderDialog(title) {
+                modalLoadding("#createworkDailog", title, 460)
+                $("#createworkDailog").modal();
+            }
+
+            //弹出新建工单对话框
+            function showworkorderDialog(data) {
+                $("#createworkDailog .modal-content").html(data);//填充对话框
+                $("#createworkDailog form").attr("data-ajax-success", "createWorkOrderSucess");//改变表单提交成功回调函数
+                WorkOrder.init("/admin/customer/getcustomersbyname");//初始化对话框
+            }
+
+            //启动新建客户对话框
+            function startcustomerDialog(title) {
+                modalLoadding("#createcustomerDailog", title, 460)
+                $("#createcustomerDailog").modal();
+            }
+
+            //弹出新建客户对话框
+            function showcustomerDialog(data) {
+                $("#createcustomerDailog .modal-content").html(data);//填充对话框
+                $("#createcustomerDailog form").attr("data-ajax-success", "createCustomerSucess");//改变表单提交成功回调函数
+                Customer.init();//初始化对话框
+            }
+
+            //创建工单成功
+            function createWorkOrderSucess(data) { if (data == "ok") { $("#createworkDailog").modal("hide"); growlAlert.success("新建工单成功!"); setTimeout("location='/admin/workorder'", 1000); } else { growlAlert.danger("新建工单失败。"); } }
+
+            //创建客户成功
+            function createCustomerSucess(data) { if (data != null && data.ID != "") { $("#createcustomerDailog").modal("hide"); growlAlert.success("操作成功!"); setTimeout("location='/admin/customer'", 1000); } else { growlAlert.danger("操作失败！"); } }
+
+
+      
+    </script>
+
+    @RenderSection("Scripts", false)
+</body>
+</html>

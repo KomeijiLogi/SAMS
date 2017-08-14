@@ -1,0 +1,188 @@
+﻿
+@{
+    ViewBag.Title = "配件管理";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "AccessoryStock";
+}
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">备件管理</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-angle-down"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/accessorysetting">
+                                        备件设置
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="active">
+                                    <a href=/admin/accessory/neworgstock>备件库存</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newexportenterstockorder>备件出入库单</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newstaffpicking>员工领用备件情况</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newaccessoryuse>备件使用明细</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        备件库存
+                    </div>
+                    <div class="input-group pull-right">
+                        <div class="input-group input-medium ">
+                            <input class="form-control" id="accessoryCode" maxlength="50" name="accessoryCode" placeholder="输入备件编码/备件名..." type="text" value="">
+                            <span class="input-group-btn">
+                                <button class="btn green" id="btnSearch" type="button"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="col-md-8 col-xs-8 clear-padding-left">
+                            <a class="btn green" href="/admin/accessory/createnewenterstockorder?type=EnterStockNew">备件入库</a>
+                            <a class="btn green" href="/admin/accessory/createnewexportstockorder?type=ExportStockNew">备件出库</a>
+                            <a class="btn green" href="/admin/accessory/createnewexportstockorder?type=StaffPickingNew">员工领料</a>
+                            <a class="btn green" href="/admin/accessory/createnewenterstockorder?type=StaffRefundNew">员工退料</a>
+                          
+                        </div>
+                        <div class="col-md-4 col-xs-4 clear-padding-right">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        更多操作&nbsp;<i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        @*<li>
+                                            <a data-toggle="modal" href="javascript:void(0)" onclick="setLowerLimitget()">设置安全库存 </a>
+                                        </li>*@
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:void(0)" onclick="exportExcel()">Excel导出 </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <div id="dataTable" class="dataTables_wrapper no-footer">
+
+                        @Html.Action("GetNewOrgStock", "Accessory", new { PageIndex = 1, PageSize = 10 })
+                    </div>
+                </div>
+
+                <form action="/admin/accessory/getneworgstock" data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" data-ajax-failure="showException" data-ajax-mode="replace" data-ajax-success="initTable" data-ajax-update="#dataTable" id="searchByRequest" method="post" novalidate="novalidate"><input id="PageIndex" name="PageIndex" type="hidden" value="1"><input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10"><input id="Sort" name="Sort" type="hidden" value=""><input id="Direction" name="Direction" type="hidden" value=""><input id="Where" name="Where" type="hidden" value=""></form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editDailog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-2.2.0.js"></script>
+<script>
+    var index = '1';
+    $(document).ready(function () {
+        initEvent();//事件绑定
+        $("#Url").val("/admin/accessory/getnewstaffpicking");
+        $("#dataTable").html($("#table-no-data1").html());
+    });
+
+    //事件绑定
+    function initEvent() {
+        $("#select-staff").change(function () {
+            changeQueryCondition();
+        });
+    }
+    //改变索引页
+    function changePageIndex(index) {
+        $("#PageIndex").val(index);
+        $("#searchByRequest").submit();
+    }
+    ///初始化列表
+    function initTable() {
+        OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+    }
+    //改变排序条件
+    function changeSortCondition(sort, mode) {
+        $("#Sort").val(sort);
+        $("#Direction").val(mode);
+        $("#PageIndex").val(1);//页索引置为1
+        getData();
+    }
+
+    //改变查询条件
+    function changeQueryCondition() {
+        var whereData = "{'stocktype':'new'}";//库存类别备件;
+        $("#Where").val(whereData);
+        $("#PageIndex").val(1);//页索引置为1
+        getData();
+    }
+
+    //改变url
+    function changeUrl(url, tabindex) {
+        index = tabindex;
+        $("#Url").val(url);
+        $("#PageIndex").val(1);//页索引置为1
+        getData();
+    }
+
+
+    //获取列表数据
+    function getData() {
+        if ($("#select-staff").val() && $("#Url").val()) {
+            showLoading();
+            $.ajax({
+                url: $("#Url").val() + "?staffID=" + $("#select-staff").val(),
+                type: "Post",
+                data: { "Where": $("#Where").val(), "Sort": $("#Sort").val(), "Direction": $("#Direction").val(), "PageIndex": $("#PageIndex").val(), "PageSize": $("#PageSize").val() },
+                success: function (data) {
+                    hideLoading();
+                    $("#dataTable").html(data);
+                    initTable();
+                },
+                error: function (data) { hideLoading(); showException(data); }
+            });
+        }
+        else {
+            $("#dataTable").html($("#table-no-data" + index).html());
+        }
+    }
+</script>
+

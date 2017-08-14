@@ -1,0 +1,121 @@
+﻿@model SAMS.Web.Areas.Admin.Models.Staff.EditViewModel
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "SystemSetting";
+}
+ <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+
+
+            <div class="portlet portlet-nav">
+                <div class="portlet-title">
+                    <div class="caption" data-toggle="collapse" data-target="#lst2">
+                        <span class="uppercase">人员管理</span>
+                        <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                    </div>
+                    <div class="btn-group pull-right esh-set-btn-group">
+                        <a href="javascript:;" class="esh-set-group" data-hover="dropdown" data-toggle="dropdown" aria-expanded="false">
+                            <i class="fa  fa-reply  back"></i>
+                        </a>
+                        <ul class="esh-pub-menu dropdown-menu pull-right">
+                            <li>
+
+                                <a href="/admin/systemsetting">
+                                    返回设置主页
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+              
+                <div class="portlet-body side-menu-project-list-content" id="lst2">
+                    <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li class="active">
+                                <a href="/admin/staff">员工管理</a>
+                            </li>
+
+                            @*<li class="">
+                                    <a href="/admin/role">角色管理</a>
+                                </li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="page-title">
+                        编辑员工
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="tip-info margin-bottom-20">
+                        <p>您可以在这为员工创建账户，员工凭账号登录平台。</p>
+                    </div>
+
+                    <form action="/admin/staff/edit/@Model.User.Id" class="form-horizontal" data-ajax="true" data-ajax-begin="showLoading"
+                          data-ajax-complete="hideLoading" data-ajax-failure="showException" data-ajax-success="editSucess"
+                          id="editForm" method="post">
+                        <input id="ID" name="ID" type="hidden" value="@Model.User.Id" />
+
+                        <div class="form-group">
+                            <div class="col-sm-5 col-md-5 col-lg-4">
+                                <label class="control-label margin-bottom-5">姓名<span class="required">*</span></label>
+                                <input class="form-control" data-val="true" data-val-length="姓名长度不能超过50个字符" data-val-length-max="50"
+                                       data-val-required="姓名不能为空" id="Name" name="Name" placeholder="请输入姓名" type="text" value="@Model.User.Name" />
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-lg-offset-1 col-sm-offset-1 col-sm-5 col-md-5 col-lg-4">
+                                <label class="control-label margin-bottom-5">工号<span class="required">*</span></label>
+                                <input class="form-control" data-val="true" data-val-length="工号长度不能超过8个字符" data-val-length-max="8"
+                                       data-val-required="工号不能为空" id="UserName" name="UserName" placeholder="请输入工号" type="text" value="@Model.User.UserName" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-5 col-md-5 col-lg-4">
+                                <label class="control-label margin-bottom-5">手机</label>
+                                <input class="form-control" data-val="true" data-val-regex="电话格式不正确"
+                                       data-val-regex-pattern="^[1][3-8]\d{9}$"
+                                       id="Mobile"
+                                       name="Mobile"
+                                       placeholder="请输入员工手机号" type="text" value="@Model.User.Mobile" />
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Mobile"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-lg-offset-1 col-sm-offset-1 col-sm-5 col-md-5 col-lg-4">
+                                <label class="control-label margin-bottom-5">角色<span class="required">*</span></label>
+                                @Html.DropDownList("RoleName", Model.RoleSelectList, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <div class="col-md-4 margin-top-20">
+                                <a class="btn btn-default" href="/admin/staff">取消</a>
+                                <button type="submit" class="btn green">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+<!-- BEGIN PAGE SELF SCRIPTS -->
+@section Scripts{
+    <script type="text/javascript">
+        //编辑记录成功后的处理
+        function editSucess(data) { if (data == "ok") { growlAlert.success("操作成功"); setTimeout('window.location = "/admin/staff"', 1000); } else { growlAlert.danger("操作失败"); } }
+    </script>
+
+    <!-- END PAGE SELF SCRIPTS -->
+}
+

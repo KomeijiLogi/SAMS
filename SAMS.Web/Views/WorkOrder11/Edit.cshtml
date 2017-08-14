@@ -1,0 +1,359 @@
+﻿@using SAMS.WorkOrders
+@{
+    ViewBag.Title = "回单";
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+@model SAMS.Web.Models.WorkOrder.WorkOrderEditModel
+<script src="~/Scripts/weui/select.js" type="text/javascript"></script>
+<script src="~/Scripts/weui/picker.js" type="text/javascript"></script>
+<script src="~/Scripts/utils.js" type="text/javascript"></script>
+<script>
+    var billID=@Model.bill.Id;
+    var faults = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.faults.Items));
+    var materials=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.boms.Items));
+    var matItems=utils.filterProperties(materials,['ChildMaterialId as value','ChildMaterialFullName as title']);
+    var items=utils.filterProperties(faults,['Id as value','Name as title']);
+    var delFault=function(obj){
+        $(obj).parent().parent().next().remove();
+        $(obj).parent().parent().remove();
+    };
+    var delMat=function(obj){
+        $(obj).parent().parent().next().remove();
+        $(obj).parent().parent().next().remove();
+        $(obj).parent().parent().remove();
+    }
+    var addFault=function(){
+        var e='<div class="weui_cell">'
+             +'<div class="weui_cell_hd"><label for="" class="weui_label">故障:</label></div>'
+             +'<div class="weui_cell_bd weui_cell_primary">'
+             +'    <input class="weui_input fault"  type="text" value="" readonly="" data-values="">'
+             +'    <input type="hidden" class="fid" value=""/>'
+             +'</div>'
+             +'<div class="weui_cell_ft">'
+             +'    <a href="javascript:;" onclick="delFault(this)"><span class="icon icon-122"></span></a>'
+             +'</div>'
+         +'</div>'
+        +'<div class="weui_cell">'
+        +'        <div class="weui_cell_hd"><label for="" class="weui_label">原因:</label></div>'
+        +'        <div class="weui_cell_bd weui_cell_primary">'
+        +'            <input class="weui_input reason" type="text" value="" readonly="" data-values="">'
+       +'         </div>'
+       +' </div>';
+        var el=$(e);
+        $('#af').before(el);
+        el.find('.fault').select({
+            title: "选择故障",
+            autoClose: true,
+            items:items,
+            onChange:function(d){
+                var f=faults.find(function(obj){
+                    return obj.Id==d.values;
+                });
+                var reasons=utils.filterProperties(f.FaultReasonRels,['FaultReasonId as value','FaultReasonName as title']);
+                this.$input.val();
+                this.$input.parent().parent().next().find(".reason").val('')
+                .select({
+                    title: "选择原因",
+                    autoClose: true,
+                    items:reasons
+                });
+            }
+        });
+    };
+    var addMat=function(){
+        var e='<div class="weui_cell">'
+            +'<div class="weui_cell_hd"><label for="" class="weui_label">配件:</label></div>'
+            +'<div class="weui_cell_bd weui_cell_primary">'
+            +'    <input class="weui_input material"  type="text" value="" readonly="" >'
+            +'    <input type="hidden" class="mid" value=""/>'
+            +'</div>'
+            +'<div class="weui_cell_ft">'
+            +'    <a href="javascript:;" onclick="delMat(this)"><span class="icon icon-122"></span></a>'
+            +'</div>'
+        +'</div>'
+
+          +'  <div class="weui_cell">'
+           +'     <div class="weui_cell_hd"><label for="" class="weui_label">新件编号:</label></div>'
+           +'     <div class="weui_cell_bd weui_cell_primary">'
+           +'         <input class="weui_input newSerial" type="text" placeholder="请输入新配件编号" value="" />'
+           +'     </div>'
+           +' </div>'
+
+          +'  <div class="weui_cell">'
+            +'    <div class="weui_cell_hd"><label for="" class="weui_label">旧件编号:</label></div>'
+             +'   <div class="weui_cell_bd weui_cell_primary">'
+             +'       <input class="weui_input newSerial" type="text" placeholder="请输入旧配件编号" value="" />'
+             +'   </div>'
+            +'</div>';
+        var el=$(e);
+        $('#mf').before(el);
+        el.find('.material').select({
+            title: "选择配件",
+            autoClose: true,
+            items:matItems
+        });
+    }
+
+    $(function () {
+        $(".fault").select({
+            title: "选择故障",
+            autoClose: true,
+            items:items,
+            onChange:function(d){
+                var f=faults.find(function(obj){
+                    return obj.Id==d.values;
+                });
+                var reasons=utils.filterProperties(f.FaultReasonRels,['FaultReasonId as value','FaultReasonName as title']);
+                this.$input.val();
+                this.$input.parent().parent().next().find(".reason").val('')
+                .select({
+                    title: "选择原因",
+                    autoClose: true,
+                    items:reasons
+                });
+            }
+
+        });
+        $(".fault").each(function(index,element){
+           // var d=this.parent().parent().next().find(".reason");
+            var f=faults.find(function(obj){
+                return obj.Id==$(element).data('values');
+            });
+            var reasons=utils.filterProperties(f.FaultReasonRels,['FaultReasonId as value','FaultReasonName as title']);
+            $(element).parent().parent().next().find(".reason")
+            .select({
+                title: "选择原因",
+                autoClose: true,
+                items:reasons
+            });
+        });
+
+        $(".material").select({
+            title: "选择配件",
+            autoClose: true,
+            items:matItems
+        });
+        var $form=$("#form");
+        $form.form();
+        $(".completeBtn").on("click",function(){
+
+            $form.validate(function(error){
+                if(error){
+                }else{
+                    var serialNo= $("#serialNo").val();
+                    var faultEntry=[];
+                    $(".fault").each(function(index,item){
+
+                        var faultId=$(item).data('values');
+                        var reasonId=$($(".reason")[index]).data('values');
+                        var FaultEntryId=$($(".fid")[index]).val();
+                        faultEntry.push({FaultEntryId:FaultEntryId,faultId:faultId,faultReasonId:reasonId});
+
+                    });
+                    var materialEntry=[];
+                    $(".material").each(function(index,item){
+
+                        var materialId=$(item).data('values');
+                        var newSerialNo=$($(".newSerial")[index]).val();
+                        var oldSerialNo=$($(".oldSerial")[index]).val();
+                        var MaterialEntryId=$($(".mid")[index]).val();
+                        materialEntry.push({MaterialEntryId:MaterialEntryId,materialId:materialId,newSerialNo:newSerialNo,oldSerialNo:oldSerialNo,qty:1});
+
+                    });
+                    var data = {
+                        "billId": billID,
+                        "serialNo":serialNo,
+                        "faultEntry": faultEntry,
+                        //[
+                        //  {
+                        //      "faultId": 0,
+                        //      "faultReasonId": 0,
+                        //      "faultMeasureId": 0
+                        //  }
+                        //],
+                        "materialEntry":materialEntry,
+                        // [
+                        //  {
+                        //      "materialId": 0,
+                        //      "qty": 0,
+                        //      "newSerialNo": "string",
+                        //      "oldSerialNo": "string"
+                        //  }
+                        //],
+                        //"customerPhone": "string",
+                        //"customerLinkMan": "string",
+                        //"equLocation": "string",
+                        "startTime": "2017-02-09 15:06",
+                        "endTime": "2017-02-08T07:46:20.483Z"
+                    };
+                    $.ajax({
+                        type:'POST',
+                        url:'/api/services/app/workOrder/complete',
+                        data:data,
+                        dataType: 'json',
+                        beforeSend: function (xhr) {
+                            var token = utils.getCookie('XSRF-TOKEN');
+                            xhr.setRequestHeader("X-XSRF-TOKEN", token);
+
+                        },
+                        success: function (data) {
+                            var result = '';
+                            if (data.success == true) {
+                                location.href="/WorkOrder/Detail/"+billID;
+                                //$.toast("操作成功")
+                            }else {
+                                $.toptips("操作失败");
+                            }
+                        },
+                        error: function (xhr, type) {
+                            $.toptips("操作失败");
+                        }
+                    })
+                }
+
+
+            })
+        });
+    });
+</script>
+<div class="weui-header bg-blue">
+    <div class="weui-header-left"> <a class="icon icon-109 f-white" href="javascript :;" onClick="javascript :history.back(-1);">返回</a>  </div>
+    <h1 class="weui-header-title">回单信息</h1>
+    <div class="weui-header-right"><a class="f-white completeBtn" href="javascript:;"  >完成</a> </div>
+</div>
+<form id="form">
+    <div class="weui-cells weui_cells_form">
+
+        <div class="weui_cells_title">设备编号</div>
+        <div class="weui_cells">
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input" id="serialNo" required type="text" placeholder="请输入设备编号"
+                           emptytips="请输入设备编号" value="@Model.bill.SerialNo" />
+                </div>
+                <div class="weui_cell_ft">
+                    <i class="weui_icon_warn"></i>
+                </div>
+            </div>
+        </div>
+        <div class="weui_cells_title">故障信息</div>
+        <div class="weui_cells weui_cells_form" id="f">
+
+            @foreach (var fault in Model.bill.FaultEntry)
+{
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">故障:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input fault"  type="text" value="@fault.Fault.Name" readonly="" data-values="@fault.Fault.Id">
+                        <input type="hidden" class="fid" value="@fault.Id" />
+                    </div>
+                    <div class="weui_cell_ft">
+
+                        <a href="javascript:;" onclick="delFault(this)"><span class="icon icon-122"></span></a>
+                    </div>
+
+                </div>
+
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">原因:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input reason" type="text" value="@fault.FaultReasonName" readonly="" data-values="@fault.FaultReasonId">
+
+                    </div>
+                </div>
+
+}
+            @if (Model.bill.FaultEntry.Count == 0)
+{
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">故障:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input type="hidden" class="fid" value="" />
+                        <input class="weui_input fault" required type="text" value="" readonly="" data-values="">
+                    </div>
+                    <div class="weui_cell_ft">
+                        <a href="javascript:;" onclick="delFault(this)"><span class="icon icon-122"></span></a>
+                    </div>
+                </div>
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">原因:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input reason" type="text" value="" readonly="" data-values="">
+                    </div>
+                </div>
+
+}
+            <a href="javascript:;" onclick="addFault()" class="weui_cell" id="af">
+                <div class="weui_cell_bd weui_cell_primary f14">添加故障</div>
+            </a>
+        </div>
+
+        <div class="weui_cells_title">配件信息</div>
+        <div id="m" class="weui_cells weui_cells_form">
+            @foreach (var material in Model.bill.MaterialEntry)
+        {
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">配件:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input type="hidden" class="mid" value="@material.Id"/>
+                        <input class="weui_input material"  type="text"
+                               value="@material.MaterialName @material.MaterialModel" readonly="" data-values="@material.MaterialId">
+                    </div>
+                    <div class="weui_cell_ft">
+                        <a href="javascript:;" onclick="delMat(this)"><span class="icon icon-122"></span></a>
+                    </div>
+                </div>
+
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">新件编号:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input newSerial" type="text" placeholder="请输入新配件编号" value="@material.NewSerialNo" />
+                    </div>
+                </div>
+
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">旧件编号:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input oldSerial" type="text" placeholder="请输入旧配件编号" value="@material.OldSerialNo" />
+                    </div>
+                </div>
+
+        }
+            @if (Model.bill.MaterialEntry.Count == 0)
+{
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">配件:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input material"  type="text" value="" readonly="">
+                        <input type="hidden" class="mid" value="" />
+                    </div>
+                    <div class="weui_cell_ft">
+                        <a href="javascript:;" onclick="delMat(this)"><span class="icon icon-122"></span></a>
+                    </div>
+                </div>
+
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">新件编号:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input newSerial" type="text" placeholder="请输入新配件编号" value="" />
+                    </div>
+                </div>
+
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label for="" class="weui_label">旧件编号:</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input newSerial" type="text" placeholder="请输入旧配件编号" value="" />
+                    </div>
+                </div>
+}
+            <a href="javascript:void(0);" onclick="addMat()" class="weui_cell" id="mf">
+                <div class="weui_cell_bd weui_cell_primary f14">添加配件</div>
+            </a>
+        </div>
+    </div>
+</form>
+<div class="weui_btn_area">
+    <a href="javascript:;" class="weui_btn weui_btn_primary completeBtn" >完成</a>
+</div>
+
+

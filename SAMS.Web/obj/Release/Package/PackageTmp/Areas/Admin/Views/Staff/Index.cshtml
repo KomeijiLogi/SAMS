@@ -1,0 +1,271 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "SystemSetting";
+}
+
+  <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+          
+
+            <div class="portlet portlet-nav">
+                <div class="portlet-title">
+                    <div class="btn-group pull-right esh-set-btn-group">
+                        <a href="javascript:;" class="esh-set-group" data-hover="dropdown" data-toggle="dropdown" aria-expanded="false">
+                            <i class="fa  fa-reply  back"></i>
+                        </a>
+                        <ul class="esh-pub-menu dropdown-menu pull-right">
+                            <li>
+
+                                <a href="/admin/systemsetting">
+                                    返回设置主页
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="caption" data-toggle="collapse" data-target="#lst2">
+                        <span class="uppercase">人员管理</span>
+                        <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                    </div>
+                </div>
+                <div class="portlet-body side-menu-project-list-content" id="lst2">
+                    <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li class="active">
+                                <a href="/admin/staff">员工管理</a>
+                            </li>
+                           
+                          
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+          
+        </div>
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        员工列表
+                    </div>
+                    <div class="input-group pull-right">
+                        <div class="input-group input-medium ">
+                            <input class="form-control" id="userName" maxlength="20" name="userName" placeholder="输入员工姓名..." type="text" value="" />
+                            <span class="input-group-btn">
+                                <button class="btn green" id="btnSearch" type="button"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="col-md-6  col-xs-6 clear-padding-left">
+                            <a class="btn green" href="/admin/staff/create">新建</a>
+
+                        </div>
+                        <div class="col-md-6  col-xs-6  clear-padding-right">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        更多操作&nbsp;<i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:void(0)" onclick="exportExcel()">Excel导出 </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                              
+                            </div>
+                        </div>
+                    </div>
+                 
+                    <div id="dataTable" class="dataTables_wrapper no-footer">
+                        @Html.Action("Get", "staff", new { PageIndex = 1, PageSize = 10, where = "{}" })
+                    </div>
+                </div>
+                <form action="/admin/staff/get" data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" data-ajax-failure="showException" data-ajax-mode="replace" data-ajax-success="initTable" data-ajax-update="#dataTable" id="searchByRequest" method="post"><input id="PageIndex" name="PageIndex" type="hidden" value="1" /><input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10" /><input id="Sort" name="Sort" type="hidden" value="" /><input id="Direction" name="Direction" type="hidden" value="" /><input id="Where" name="Where" type="hidden" value="" /></form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editDailog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+<!-- BEGIN PAGE SELF SCRIPTS -->
+@section Scripts{
+<script type="text/javascript">
+        $(document).ready(function () {
+            initDataPicker();//设置时间控件
+            initEvent();//事件绑定
+            initTable();//初始化列表
+        });
+
+        //事件绑定
+        function initEvent() {
+            //显示或隐藏筛选功能
+            $('body').on('click', '#btnFilter.collapse, #btnFilter.expand', function (e) {
+                if ($(this).hasClass("collapse")) {
+                    $(this).removeClass("collapse").addClass("expand").text('取消筛选');
+                    $('#filterContent').slideDown(300);
+                } else {
+                    $(this).removeClass("expand").addClass("collapse").text('筛选');
+                    $('#filterContent').slideUp(300);
+                }
+            });
+
+            //取消筛选功能
+            $("#btnFilter").click(function () {
+                if ($(this).hasClass("expand")) {
+                    $("#select-group,#startDate,#endDate").val("");
+                    $("ul.filter-option input[type=radio]").attr("checked", false);
+                    changeQueryCondition();
+                }
+            });
+
+            //开始日期改变触发表单提交
+            $('.input-daterange input[name=startDate]').on("changeDate", function () {
+                blnfirst = false; changeQueryCondition();
+            });
+
+            //结束日期改变触发表单提交
+            $('.input-daterange input[name=endDate]').on("changeDate", function () {
+                var date1 = $('.input-daterange input[name=startDate]').val();
+                var date2 = $(this).val();
+                if (date2 >= date1) {
+                    changeQueryCondition();
+                }
+            });
+
+     
+
+            //输入名称回车查询
+            $("#userName").keypress(function (e) {
+                if (e.which == 13) {
+                    changeQueryCondition();
+                }
+            });
+
+            //搜索按钮按下
+            $("#btnSearch").click(function () { changeQueryCondition(); })
+            $("#btnDelete").click(function () { deleteRecords(); });
+        }
+
+        ///初始化列表
+        function initTable() { OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);  }
+
+        //清空日期
+        var blnfirst = true;//首次执行标识
+        function clearDate(input) {
+            if (blnfirst) {
+                //为避免与onchangeDate事件的冲突
+                 return;
+            }
+
+            if (!$(input).val()) {
+                //日期清空时，重新查询
+                changeQueryCondition();
+            }
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            $("#searchByRequest").submit();
+        }
+
+        //改变查询条件
+        function changeQueryCondition() {
+            var userName = $("#userName").val();
+            if (userName.indexOf("输入") >= 0) {
+                userName = "";
+            }
+            var groupId = $("#select-group").val();
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            var whereData = "{'name':'" + userName + "','startdate':'" + startDate + "','enddate':'" + endDate + "'}";
+            if ($("#Where").val() == whereData) {
+                return;
+            }
+            $("#Where").val(whereData);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, direction) {
+            $("#Sort").val(sort);
+            $("#Direction").val(direction);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //批量删除
+        function deleteRecords() {
+            //获取选择的id
+            var ids = new Array();
+            $("#tableList tbody input[type='checkbox']").each(function () {
+                if ($(this).attr("checked")) ids.push($(this).val());
+            });
+            if (ids.length == 0) { botbox.alert("提示", "您还没有选择要删除的记录!"); return; }//判断选中的记录数
+            deleteRecord(ids);
+        }
+
+        //删除指定记录
+        function deleteRecord(id) {
+            botbox.confirm("提示", "您确认删除吗?", function (result) {
+                if (result) {
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/staff/delete",
+                        type: "POST",
+                        data: { "ids": id },
+                        success: function (data) {
+                            hideLoading();
+                            if (data == "ok") {
+                                $("#searchByRequest").submit();
+                                growlAlert.success("删除成功")
+                            }
+                            else { growlAlert.danger("删除失败"); }
+
+                        },
+                        error: function (data) { hideLoading(); showException(data); }
+                    });
+                }
+            });
+        }
+
+
+        //启动对话框
+        function startDialog(title) {
+            modalLoadding("#editDailog", title, 400)
+            $("#editDailog").modal();
+        }
+
+        //编辑单条记录
+        function editRecord(id) {window.location = "/admin/staff/edit/" + id; }
+
+        //导出excel
+        function exportExcel() { window.location = "/admin/staff/exportexcel?Where=" + $("#Where").val(); }
+
+        
+</script>
+
+<!-- END PAGE SELF SCRIPTS -->
+    }
+
+
+

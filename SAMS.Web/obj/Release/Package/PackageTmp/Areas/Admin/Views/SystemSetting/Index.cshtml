@@ -1,0 +1,240 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "SystemSetting";
+}
+
+<!-- BEGIN PAGE CONTENT-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption title">
+                    系统设置
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="esh-setting-wrapper">
+                    <div class="wrap-item">
+                        <h4>个人设置</h4>
+                        <ul class="esh-setting-list">
+                            <li>
+                                <a href="/admin/personal" class="sysm">
+                                    <i class="setting-ico person"></i>
+                                    <p>个人资料</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/personal/editpassword" class="sysm">
+                                    <i class="setting-ico pwd"></i>
+                                    <p>修改密码</p>
+                                </a>
+                            </li>
+                            @*<li data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="/admin/personal/edittheme" class="sysm">
+                                    <i class="setting-ico theme"></i>
+                                    <p>主题设置</p>
+                                </a>
+                            </li>*@
+                        </ul>
+                    </div>
+
+                    @*<div class="wrap-item">
+                        <h4>服务通道</h4>
+                        <ul class="esh-setting-list">
+                            <li>
+                                <a href="/admin/customersetting/setdomain" class="sysm">
+                                    <i class="setting-ico domain"></i>
+                                    <p>Web网站</p>
+                                </a>
+                            </li>
+
+                            <li data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="/admin/customersetting/setwechat" class="sysm">
+                                    <i class="setting-ico wechat"></i>
+                                    <p>微信</p>
+                                </a>
+                            </li>
+                            <li class="hidden" data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="" class="sysm">
+                                    <i class="setting-ico wechat"></i>
+                                    <p>手机APP</p>
+                                </a>
+                            </li>
+                            <li class="hidden" data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="" class="sysm">
+                                    <i class="setting-ico wechat"></i>
+                                    <p>短信</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="/admin/customersetting/setpushmail" class="sysm">
+                                    <i class="setting-ico email"></i>
+                                    <p>邮件</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>*@
+
+                    <div class="wrap-item">
+                        <h4>工单设置</h4>
+                        <ul class="esh-setting-list">
+                            @*<li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/workorderfilter" class="sysm">
+                                    <i class="setting-ico self-workorder-view"></i>
+                                    <p>自定义工单视图</p>
+                                </a>
+                            </li>*@
+                            <li data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="/admin/product" class="sysm">
+                                    <i class="setting-ico product"></i>
+                                    <p>产品目录</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="3">
+                                <a href="/admin/fault" class="sysm">
+                                    <i class="setting-ico service-item"></i>
+                                    <p>故障目录</p>
+                                </a>
+                            </li>
+                            @*<li>
+                                <a href="/admin/servicemode" class="sysm">
+                                    <i class="setting-ico service-mode"></i>
+                                    <p>服务方式</p>
+                                </a>
+                            </li>*@
+                            @*<li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/customfield" class="sysm">
+                                    <i class="setting-ico self-def"></i>
+                                    <p>自定义工单字段</p>
+                                </a>
+                            </li>*@
+                            @*<li data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="/admin/workorderflowrule" class="sysm">
+                                    <i class="setting-ico process"></i>
+                                    <p>工单处理流程</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="3">
+                                <a href="/admin/autosetting/acceptrule" class="sysm">
+                                    <i class="setting-ico automation"></i>
+                                    <p>工单自动处理</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="3">
+                                <a href="/admin/timelinessrule" class="sysm">
+                                    <i class="setting-ico timeliness"></i>
+                                    <p>工单处理时限</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="3">
+                                <a href="/admin/officehours" class="sysm">
+                                    <i class="setting-ico work-hours"></i>
+                                    <p>工作时间</p>
+                                </a>
+                            </li>*@
+                        </ul>
+                    </div>
+
+                    <div class="wrap-item">
+                        <h4>备件设置</h4>
+                        <ul class="esh-setting-list">
+                            <li>
+                                <a href="/admin/accessorysetting" class="sysm">
+                                    <i class="setting-ico parts-catalog"></i>
+                                    <p>备件目录</p>
+                                </a>
+                            </li>
+                            @*<li data-log="ad-sr-qy1" data-log-label="2">
+                                <a href="/admin/accessorysetting/enterstocktypelist" class="sysm">
+                                    <i class="setting-ico enterStock"></i>
+                                    <p>入库类别</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/accessorysetting/exportstocktypelist" class="sysm">
+                                    <i class="setting-ico exportStock"></i>
+                                    <p>出库类别</p>
+                                </a>
+                            </li>*@
+
+                        </ul>
+                    </div>
+                    @*<div class="wrap-item">
+                        <h4>结算设置</h4>
+                        <ul class="esh-setting-list">
+                            <li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/statementsetting/feeitemcategorylist" class="sysm">
+                                    <i class="setting-ico charge-type"></i>
+                                    <p>服务分类</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/statementsetting/feeitemlist" class="sysm">
+                                    <i class="setting-ico charge-item"></i>
+                                    <p>服务项目</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/statementsetting/otherfeeitemlist" class="sysm">
+                                    <i class="setting-ico charge-other"></i>
+                                    <p>其他收费项目</p>
+                                </a>
+                            </li>
+                            <li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/statementsetting/statementrulelist" class="sysm">
+                                    <i class="setting-ico charge-statement"></i>
+                                    <p>服务商结算规则</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>*@
+
+                    <div class="wrap-item">
+                        <h4>组织人员</h4>
+                        <ul class="esh-setting-list">
+                            @*<li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/admin" class="sysm">
+                                    <i class="setting-ico company"></i>
+                                    <p>公司信息</p>
+                                </a>
+                            </li>*@
+                            <li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/staff" class="sysm">
+                                    <i class="setting-ico admin"></i>
+                                    <p>员工管理</p>
+                                </a>
+                            </li>
+                            @*<li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/staffgroup" class="sysm">
+                                    <i class="setting-ico staff-group"></i>
+                                    <p>员工分组</p>
+                                </a>
+                            </li>*@
+                            @*<li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/role" class="sysm">
+                                    <i class="setting-ico role"></i>
+                                    <p>角色管理</p>
+                                </a>
+                            </li>*@
+
+                            @*<li data-log="ad-sr-qy1" data-log-label="1">
+                                <a href="/admin/facilitator" class="sysm">
+                                    <i class="setting-ico facilitator"></i>
+                                    <p>服务商管理</p>
+                                </a>
+                            </li>*@
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- END SIDE MENU CONTENT -->
+    </div>
+</div>
+
+
+
+

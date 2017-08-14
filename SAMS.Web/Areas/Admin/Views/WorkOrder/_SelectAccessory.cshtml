@@ -1,0 +1,45 @@
+﻿@using Abp.Web.Mvc.Extensions
+@section Scripts
+{
+    @Html.IncludeScript("~/Areas/Admin/Views/WorkOrder/SelectAccessory.js")
+}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">选择备件</h4>
+</div>
+
+<div class="modal-body padding-bottom-10">
+    <div class="scroller clear-padding-right" style="height: 370px" data-always-visible="1" data-rail-visible1="1">
+        <div class="esh-modal-body-title clearfix">
+            <span class="pull-left">请点击“选择”按钮添加备件</span>
+            <div class="input-group pull-right">
+                <div class="input-group input-medium ">
+                    <input class="form-control" id="accessoryCode" maxlength="50" name="accessoryCode" placeholder="输入备件编码/备件名" type="text" value="" />
+                    <span class="input-group-btn">
+                        <button class="btn green" onclick="changeQueryCondition()" type="button"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="esh-stock-order-modal" id="dataTable">
+            @Html.Action("GetAccessory", "WorkOrder", new { PageIndex = 1, PageSize = 8, Sort = "", Direction = "", Where = "{'UserId':" + ViewBag.WorkOrder.AssignedPersonId + "}" })
+
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" id="cancelbtn" data-dismiss="modal" class="btn btn-default">关闭</button>
+</div>
+<form action="/admin/workorder/getaccessory" 
+      data-ajax="true" data-ajax-begin="showPopLoading" 
+      data-ajax-complete="hidePopLoading" data-ajax-failure="showException" 
+      data-ajax-mode="replace" data-ajax-success="initTable" data-ajax-update="#dataTable" 
+      id="searchByRequest" method="post"><input id="stocktype" name="stocktype" type="hidden" value="new" />
+    <input id="PageIndex" name="PageIndex" type="hidden" value="1" />
+    <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" 
+           data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="8" />
+    <input id="Sort" name="Sort" type="hidden" value="" /><input id="Direction" name="Direction" type="hidden" value="" />
+    <input id="Where" name="Where" type="hidden" value="" />
+   
+    </form>

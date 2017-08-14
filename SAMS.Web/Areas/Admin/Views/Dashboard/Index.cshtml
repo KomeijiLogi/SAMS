@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName ="Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="esh-bg-wrap gray">
+            <div class="esh-page-title ehs-page-title-light" >首页</div>
+            <div class="esh-index-body">
+                <div class="esh-chart-info clearfix">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="dashboard-stat esh-dashboard-block">
+                                <div class="dashboard-icon green">
+                                    <i class="icon-docs"></i>
+                                </div>
+                                <div class="dashboard-label pull-left">
+                                    <p class="title">工单</p>
+                                    <a href="@Url.Action("Index", "WorkOrder", new {area = "Admin"})">今日新增工单：<span class="esh-orange">0</span>条</a>
+                                    <a href="/manufacturer/workorder">今日已解决工单：<span class="esh-orange">0</span>条</a>
+                                    <a href="/manufacturer/workorder">所有未解决工单：<span class="esh-orange">3</span>条</a>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+

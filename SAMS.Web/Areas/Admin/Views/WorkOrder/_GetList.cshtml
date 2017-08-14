@@ -1,0 +1,209 @@
+﻿@model SAMS.Web.Areas.Admin.Models.WorkOrder.GetListViewModel
+@using SAMS.WorkOrders
+        <div class="table-scrollable">
+    <table class="table table-striped dataTable table-bordered table-hover esh-table-priority table-pointer" id="tableList">
+        <thead>
+            <tr>
+                <th class="table-checkbox">
+                    <input class="magic-checkbox group-checkable" type="checkbox" name="layout" id="c0" data-set="#tableList .checkboxes">
+                    <label for="c0"></label>
+                </th>
+                <th style="min-width:60px;" class="sorting" aria-data  aria-label="Id">
+                    工单编号
+                </th>
+                <th style="min-width:100px;" class="sorting" aria-data  aria-label="Customer.Name" >
+                    客户
+                </th>
+                <th style="min-width:70px;" class="sorting" aria-data  aria-label="Product.Name" >
+                    产品名称
+                </th>
+                <th style="min-width:70px;" >
+                    产品型号
+                </th>
+                <th style="width:70px;" class="sorting" aria-data  aria-label="ServiceType" >
+                    工单类型
+                </th>
+                
+                <th style="width:70px"  class="sorting" aria-data  aria-label="AssignedPerson.Name" >
+                    服务人员
+                </th>
+                <th style="width:70px;" class="sorting" aria-data  aria-label="Priority"  >
+                    优先级
+                </th>
+                <th style="width:70px;" class="sorting" aria-data  aria-label="BillStatus"  >
+                    状态
+                </th>
+                <th class="sorting" style="width:130px;" aria-data aria-label="CreationTime" >
+                    创建时间
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.WorkOrders.Items)
+            {
+                <tr class="odd gradeX">
+                    <td>
+
+                        <input class="magic-checkbox checkboxes" type="checkbox" name="id" id="@item.Id" value='@item.Id' />
+                        <label for="@item.Id"></label>
+                    </td>
+                    <td>
+                        @item.Id
+                    </td>
+                    <td>
+                        @item.CustomerName
+                    </td>
+                    <td>
+                        @item.ProductName
+                    </td>
+                    <td>
+                        @item.ProductModel
+                    </td>
+                    <td>
+                        
+                        @if (item.ServiceType.Equals(ServiceType.Install))
+                        {
+                            @:安装
+
+                        }
+                        else if (item.ServiceType.Equals(ServiceType.Repair))
+                        {
+                            @:维修
+                            
+                        }
+                    </td>
+                    <td>
+                        @item.AssignedPersonName
+                    </td>
+
+                    <td>
+
+                        @if (item.Priority.Equals(PriorityEnum.General))
+                        {
+                            @:一般
+                        }
+                        else if (item.Priority.Equals(PriorityEnum.Emergency))
+                        {
+                            @:紧急
+                        }
+                        else if (item.Priority.Equals(PriorityEnum.VeryUrgent))
+                        {
+                            @:非常紧急
+                        }
+                    </td>
+                    <td>
+                        @if (item.BillStatus.Equals(BillStatus.Save))
+                            {
+                            <span class="label label-newly">新建</span>
+                            }
+                            else if (item.BillStatus.Equals(BillStatus.Accept))
+                            {
+                            <span class="label label-warning">已受理</span>
+                            }
+                            else if (item.BillStatus.Equals(BillStatus.Dispatch))
+                            {
+                            <span class="label label-primary">已派工</span>
+                            }
+                            else if (item.BillStatus.Equals(BillStatus.Complete))
+                            {
+                            <span class="label label-dark">已完工</span>
+                            }
+                            else if (item.BillStatus.Equals(BillStatus.Statment))
+                            {
+                            <span class="label label-info">已结算</span>
+                            }
+                            else if (item.BillStatus.Equals(BillStatus.ReturnVisit))
+                            {
+                            <span class="label label-success">已回访</span>
+                            }
+                            else if (item.BillStatus.Equals(BillStatus.Close))
+                            {
+                            <span class="label label-success">已关闭</span>
+                            }
+                            else if (item.BillStatus.Equals(BillStatus.Cancel))
+                            {
+                            <span class="label label-default">已取消</span>
+                            }
+
+                    </td>
+                    <td>
+                        @item.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    <div class="row">
+        <div class="col-md-5 col-sm-5">
+            <div class="dataTables_info" id="tableListInfo" role="status" aria-live="polite">
+                @if (Model.WorkOrders.TotalCount > 0)
+                {
+                <lable>@Model.Start - @Model.End 条记录&nbsp;&nbsp;&nbsp;&nbsp;共 @Model.WorkOrders.TotalCount 条</lable>
+                }
+                else
+                {
+                    <label>没有查询到所需数据</label>
+                }
+            </div>
+        </div>
+        <div class="col-md-7 col-sm-7">
+            <div class="dataTables_paginate paging_bootstrap_full_number">
+@if (Model.WorkOrders.TotalCount > 0)
+{
+                <ul class="pagination">
+                    @if (Model.PageIndex == 1)
+                    {
+                        <li class='disabled prev'>
+                            <a href='javascript:void(0)' >
+                                <i class='fa fa-angle-double-left'></i>
+                            </a>
+                        </li>
+                        <li class="disabled prev"><a href="javascript:void(0);"><i class='fa fa-angle-left'></i></a></li>
+                    }
+                    else
+                    {
+                        <li class="prev"><a href="#" title="首页" onclick="changePageIndex(1)"><i class='fa fa-angle-double-left'></i></a></li>
+                        <li class="prev"><a href="#" title="上一页" onclick="changePageIndex(@Model.PageIndex -1)"><i class='fa fa-angle-left'></i></a></li>
+                    }
+                 
+                    @foreach (var i in Model.PageNumbers)
+                    {
+                        if (Model.PageIndex.Equals(i))
+                        {
+                            <li class="active"><a href="#" onclick="changePageIndex(@i)">@(i.ToString())</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="#" onclick="changePageIndex(@(i.ToString()))">@(i.ToString())</a></li>
+                        }
+
+
+                    }
+                   
+                    @if (Model.PageIndex == Model.PageCount)
+                    {
+                    <li class="disabled next"><a href="#" title="下一页" onclick="changePageIndex(@(Model.PageIndex + 1 ))">
+                        <i class='fa fa-angle-right'></i></a></li>
+                    <li class="disabled next"><a href="#" title="末页" onclick="changePageIndex(@Model.PageCount )">
+                        <i class='fa fa-angle-double-right'></i></a></li>
+                    }
+                    else
+                    {
+                        <li class="next">
+                            <a href="#" title="下一页" onclick="changePageIndex(@(Model.PageIndex + 1 ))">
+                                <i class='fa fa-angle-right'></i>
+                            </a>
+                        </li>
+                        <li class="next">
+                            <a href="#" title="末页" onclick="changePageIndex(@Model.PageCount )">
+                                <i class='fa fa-angle-double-right'></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+}
+            </div>
+        </div>
+        
+    </div>

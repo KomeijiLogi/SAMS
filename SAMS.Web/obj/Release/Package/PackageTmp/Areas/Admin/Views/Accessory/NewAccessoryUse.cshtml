@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewBag.Title = "NewAccessoryUse";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+}
+
+               <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">备件管理</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-angle-down"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/accessorysetting">
+                                        备件设置
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="">
+                                    <a href=/admin/accessory/neworgstock>备件库存</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newexportenterstockorder>备件出入库单</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newstaffpicking>员工领用备件情况</a>
+                                </li>
+                                <li class="active">
+                                    <a href=/admin/accessory/newaccessoryuse>备件使用明细</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        备件使用明细
+                    </div>
+                    <div class="input-group pull-right">
+                        <div class="input-group input-medium ">
+                            <input class="form-control" id="workOrderNumber" maxlength="50" name="workOrderNumber" placeholder="输入工单编号..." type="text" value="" />
+                            <span class="input-group-btn">
+                                <button class="btn green" id="btnSearch" type="button"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="col-md-6 col-xs-6 clear-padding-left">
+                            <button class="btn green collapse" id="btnFilter">筛选</button>
+                        </div>
+                        <div class="col-md-6 col-xs-6 clear-padding-right">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        更多操作&nbsp;<i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:void(0)" onclick="exportExcel()">Excel导出 </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="esh-table-filter" id="filterContent">
+                        <ul class="esh-region-color">
+                            <li class="esh-filter-item clearfix">
+                                <span>服务人员：</span>
+                                <ul class="filter-option">
+                                    <li class="wipper select">
+                                        <select class="form-control" id="select-staffId">
+                                            <option value="">请选择服务人员</option>
+                                            <option value="000c872e-c238-4bf4-986f-2e9d5fc2e079">张工</option>
+                                            <option value="55d87af7-e020-485a-ac6a-f9e1e8a712ee">李工</option>
+                                            <option value="953dc607-d48e-4d9f-9d83-53139fb17ea5">13561899216</option>
+                                        </select>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="esh-filter-item clearfix">
+                                <span>使用日期：</span>
+                                <ul class="filter-option input-daterange date-picker">
+                                    <li class="wipper">
+                                        <input class="form-control" id="startDate" name="startDate" onblur="clearDate(this)" placeholder="开始日期" type="text" value="" />
+                                    </li>
+                                    <li>至</li>
+                                    <li class="wipper">
+                                        <input class="form-control" id="endDate" name="endDate" onblur="clearDate(this)" placeholder="结束日期" type="text" value="" />
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="dataTable" class="dataTables_wrapper no-footer">
+                        @Html.Action("GetNewAccessoryUse", "Accessory", new { PageIndex = 1, PageSize = 10 ,Where="{}"})
+                    </div>
+                </div>
+
+                <form action="/admin/accessory/getnewaccessoryuse" data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" data-ajax-failure="showException" data-ajax-mode="replace" data-ajax-success="initTable" data-ajax-update="#dataTable" id="searchByRequest" method="post"><input id="PageIndex" name="PageIndex" type="hidden" value="1" /><input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10" /><input id="Sort" name="Sort" type="hidden" value="" /><input id="Direction" name="Direction" type="hidden" value="" /><input id="Where" name="Where" type="hidden" value="" /></form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+          
+
+

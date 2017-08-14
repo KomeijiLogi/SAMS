@@ -1,0 +1,947 @@
+﻿@using SAMS.WorkOrders
+@using Abp.Web.Mvc.Extensions
+@{
+    ViewBag.Title = "工单详情";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "WorkOrder";
+}
+@section Scripts
+{
+
+  
+ @* @Html.IncludeScript("~/Areas/Admin/Views/WorkOrder/Details.js")*@
+
+        <!-- BEGIN PAGE SELF SCRIPTS -->
+
+@*<script type="text/javascript" src="/Content/global/plugins/fancybox/source/jquery.fancybox.pack.js"></script>*@
+
+<script type="text/javascript" src="~/Content/admin/scripts/selectAccessory.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+     
+            //var Album = new jQuery.Album();
+    
+            $("#desDown,#desUp").click(function () {
+                $(this).parent().addClass("hidden").siblings().removeClass("hidden");
+            });//工单描述展开收起
+            initEditSide();//初始化工单侧栏
+            $('[data-toggle="popover"]').popover({ html: true });//回单信息鼠标弹出
+
+            if ($(".btn-group ul li").length == 0)//更多操作
+            {
+                $(".btn-group").addClass("hidden");
+            }
+        });
+
+        //启动分配派工对话框
+        function startDialog(title,height) {
+            modalLoadding("#editDailog", title, height)
+            $("#editDailog").modal();
+
+        }
+
+        //显示分配派工对话框
+        function showDialog(data) {
+
+            $("#editDailog .modal-content").html(data);//填充对话框
+            initUniform();
+            Metronic.initSlimScroll('.scroller');//滚动条
+            $("#editForm").removeData("validator");//删除验证器
+            $.validator.unobtrusive.parse("#editForm");//添加验证器
+
+            //派工弹出层
+            if ($("#select-staff")) {
+                $("#select-staff").change(function () {
+                    $("#nextHandlerID").val($(this).val());
+                    $("#nextHandlerName").val($("#select-staff option:selected").text());
+
+                });
+            }
+            //分配弹出层
+            if ($("#serviceOrg")) {
+                $("#serviceOrg").change(function () {
+                    $("#nextHandlerID").val($(this).val());
+                    $("#nextHandlerName").val($("#serviceOrg option:selected").text());
+                });
+            }
+        }
+
+        //编辑记录成功后的处理
+        function editSucess(data) { if (data == "ok") { $("#editDailog").modal("hide"); growlAlert.success("操作成功"); window.location.reload(); } else if (data == "error") { growlAlert.danger("操作失败"); } else { growlAlert.info(data); } }
+
+        //改变tab内容
+        function changetab(id) {
+            $("#content" + id).siblings().addClass("hidden");
+            $("#content" + id).removeClass("hidden");
+        }
+
+        //初始化编辑区侧栏
+        function initEditSide() {
+            EditSideView();
+            Metronic.addResizeHandler(function () {
+                EditSideView();
+            });
+
+            function EditSideView() {
+                if (Metronic.getViewPort().width <= 992) {
+                    $(".esh-side-edit-wrap").css("height", "auto");
+                } else {
+                    var contentH = $(window).height() - $(".esh-detail-content").offset().top - parseInt($(".portlet.light .portlet-body").css("padding-bottom"));
+                    if ($(".esh-detail-content").height() < contentH) {
+                        $(".esh-side-edit-wrap").css("height", ($(window).height() - parseInt($(".esh-side-edit-wrap").offset().top)) + "px");
+                    } else {
+                        $(".esh-side-edit-wrap").css("height", ($(document).height() - parseInt($(".esh-side-edit-wrap").offset().top)) + "px");
+                    }
+                }
+
+            }
+        }
+
+        //关闭
+        function close(id) {
+            botbox.confirm("提示", "您确认关闭工单吗?", function (result) {
+                if (result) {
+                    //调用action
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/workorder/close",
+                        type: "POST",
+                        data: { "id": id },
+                        success: function (data) {
+                            hideLoading();
+                            editSucess(data);
+                        },
+                        error: function (data) { hideLoading(); showException(data); }
+                    });
+                }
+            });
+        }
+
+        //取消
+        function cancel(id) {
+            botbox.confirm("提示", "您确认取消工单吗?", function (result) {
+                if (result) {
+                    //调用action
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/workorder/cancel",
+                        type: "POST",
+                        data: { "id": id },
+                        success: function (data) {
+                            hideLoading();
+                            editSucess(data);
+                        },
+                        error: function (data) { hideLoading(); showException(data); }
+                    });
+                }
+            });
+        }
+
+        //启动结算单窗体
+        function startReportDialog(title) {
+            modalLoadding("#reportDailog", title, 500)
+            $("#reportDailog").modal();
+        }
+
+        //显示结算单对话框
+        function showReportDialog(data) {
+            $("#reportDailog .modal-content").html(data);//填充对话框
+            initUniform();
+            Metronic.initSlimScroll('.scroller');//滚动条
+            if ($("#filePortrait"))
+            {
+                initFileInput("filePortrait", "/admin/workorder/uploadimg?workOrderId=" + $("#workOrderId").val(), $("#current_urlImg").val());
+            }
+
+            calAmount();
+        }
+
+        //启动选择对话框
+        function startBigDailog(title) {
+            modalLoadding("#editBigDailog", title, 450)
+            $("#editBigDailog").modal();
+        }
+
+        //显示选择备件对话框
+        function showAccessoryDialog(data) {
+            $("#editBigDailog .modal-content").html(data);//填充对话框
+            SelectAccessory.init();
+        }
+
+        ////显示选择服务项目对话框
+        //function showFeeItemDialog(data) {
+        //    $("#editBigDailog .modal-content").html(data);//填充对话框
+        //    initUniform();
+        //    Metronic.initSlimScroll('.scroller');
+        //}
+
+        ////弹出选择其他收费项目对话框
+        //function showOtherFeeItemDialog(data) {
+        //    $("#editBigDailog .modal-content").html(data);//填充对话框
+        //    initUniform();
+        //    Metronic.initSlimScroll('.scroller');
+        //}
+
+        //添加备件
+        function add_statmentorder_accessory(isReported) {
+            startBigDailog('选择备件');
+            $.ajax({
+                url: "/admin/workorder/selectaccessory",
+                type: "Get",
+                data: { 'isReported': isReported },
+                success: function (data) {
+                    showAccessoryDialog(data);
+                },
+                error: function (data) { showException(data); }
+
+            });
+        }
+
+        //结算单选择备件
+        function select_statmentorder_accessory(val) {
+            var isGuaranteed = $("#guaranteedstate").val() == "In";//在保状态
+            var accessory = eval("(" + val + ")");
+            var hasExist = false;//是否存在
+            $("#div-statementOrder table[name=tb_accessory] tbody tr:not(:first)").each(function () {
+                if ($(this).find("span[name=accessoryID]").html() == accessory.ID) {
+                    hasExist = true;
+                    $(this).find("input[name=count]").val(Number($(this).find("input[name=count]").val()) + 1);
+                    $(this).find("span[name=accessoryCount]").html($(this).find("input[name=count]").val());
+                    return;
+                }
+            });
+            if (!hasExist) {
+                var no = $("#div-statementOrder table[name=tb_accessory] tbody tr").length;
+                var tr_accessory = $("#div-statementOrder table[name=tb_accessory] tbody tr:first");
+                tr_accessory.find("span[name=accessoryNo]").html(no);
+                tr_accessory.find("span[name=accessoryID]").html(accessory.ID);
+                tr_accessory.find("span[name=accessoryName]").html(accessory.Name);
+                tr_accessory.find("span[name=accessoryCode]").html(accessory.Coding);
+                tr_accessory.find("span[name=accessoryType]").html(accessory.Type);
+                tr_accessory.find("span[name=accessoryPrice]").html(accessory.Price);
+                if (!accessory.IsCharged && isGuaranteed) {
+                    tr_accessory.find("span[name=accessoryAmount]").html("0.00");
+                } else {
+                    tr_accessory.find("span[name=accessoryAmount]").html(accessory.Price);
+                }
+
+                tr_accessory.find("span[name=IsCharged]").html(String(accessory.IsCharged));
+                $("#div-statementOrder table[name=tb_accessory] tbody").append("<tr>" + tr_accessory.html() + "</tr>");
+
+            }
+
+            calAmount();//计算总金额
+        }
+
+        //改变备件数量
+        function change_accessory_count(input) {
+            $(input).parent().find("span[name=accessoryCount]").html($(input).val());
+            calAmount();
+        }
+
+        //编辑结算单备件
+        function edit_statement_accessory(btn) {
+            $(btn).parent().find("button[name=edit]").addClass("hidden");
+            $(btn).parent().find("button[name=deleted]").addClass("hidden");
+            $(btn).parent().find("button[name=save]").removeClass("hidden");
+            $(btn).parent().find("button[name=cancel]").removeClass("hidden");
+            $(btn).parent().parent().find("span[name=accessoryCount]").addClass("hidden");
+            $(btn).parent().parent().find("input[name=count]").removeClass("hidden");
+        }
+
+        //删除结算单备件
+        function delete_statement_accessory(btn) {
+            $(btn).parent().parent().remove();
+            calAmount();
+        }
+
+        //查询服务项目
+        function queryFeeItems() {
+            showPopLoading();
+            $.ajax({
+                url: "/admin/workorder/getfeeitem",
+                type: "Get",
+                data: { "type": $("#select-type").val() },
+                success: function (data) {
+                    hidePopLoading();
+                    $("#dataTable").html(data);
+                },
+                error: function (data) { hidePopLoading(); showException(data); }
+            });
+        }
+
+        //结算单添加服务项目
+        function add_statmentorder_service() {
+            startBigDailog('选择服务项目');
+            $.ajax({
+                url: "/admin/workorder/selectfeeitem",
+                type: "Get",
+                success: function (data) {
+                    showFeeItemDialog(data);
+                },
+                error: function (data) { showException(data); }
+            });
+        }
+
+        //结算单选择服务项目
+        function select_statmentorder_feeItem(val) {
+            var isGuaranteed = $("#guaranteedstate").val() == "In";//在保状态
+            var feeItem = eval("(" + val + ")");
+            var hasExist = false;//是否存在
+
+            $("#div-statementOrder table[name=tb_service] tbody tr:not(:first)").each(function () {
+                if ($(this).find("span[name=serviceID]").html() == feeItem.ID) {
+                    hasExist = true;
+                    return;
+                }
+            });
+            if (!hasExist) {
+                var no = $("#div-statementOrder table[name=tb_service] tbody tr").length;
+                var tr_service = $("#div-statementOrder table[name=tb_service] tbody tr:first");
+                tr_service.find("span[name=serviceNo]").html(no);
+                tr_service.find("span[name=serviceID]").html(feeItem.ID);
+                tr_service.find("span[name=serviceName]").html(feeItem.Name);
+                tr_service.find("span[name=servicePrice]").html(feeItem.CustomerPrice);
+
+                if (!feeItem.IsCharged && isGuaranteed) {
+                    tr_service.find("span[name=serviceAmount]").html("0.00");
+                }
+                else {
+                    tr_service.find("span[name=serviceAmount]").html(feeItem.CustomerPrice);
+                }
+
+                tr_service.find("span[name=IsCharged]").html(String(feeItem.IsCharged));
+                $("#div-statementOrder table[name=tb_service] tbody").append("<tr>" + tr_service.html() + "</tr>");
+
+            }
+
+            calAmount();//计算总金额
+        }
+
+        //结算单删除服务项目
+        function delete_statmentorder_service(btn) {
+            $(btn).parent().parent().remove();
+            calAmount();
+        }
+
+       
+
+
+        //结算单删除服务项目
+        function delete_statmentorder_other(btn) {
+            $(btn).parent().parent().remove();
+            calAmount();
+        }
+
+       
+
+        //保存回单
+        function report_save() {
+            if ($("#hasStatement").val() == "true") {
+                //验证员工备件库存
+                var isvalid = true;//是有效
+                var errormsg = "";
+                var staffstocks = eval($("#staffStocks").val());
+                $("#div-statementOrder table[name=tb_accessory] tbody tr:not(:first)").each(function () {
+                    var accessoryID = $(this).find("span[name=accessoryID]").html();
+                    var count = $(this).find("span[name=accessoryCount]").html();
+                    var name = $(this).find("span[name=accessoryName]").html();
+                    isvalid = false;
+                    if (staffstocks)
+                    {
+                        $.each(staffstocks, function (i, o) {
+                            if (o.Accessory.ID == accessoryID && o.NewCount >= count) {
+                                isvalid = true; return false;
+                            }
+                        });
+                    }
+
+                    if (!isvalid) {
+                        errormsg = "您持有的备件:" + name + "数量不足！";
+                        return false;
+                    }
+                });
+
+                if (!isvalid) {
+                    growlAlert.danger(errormsg);
+                    return;
+                }
+            }
+
+            process_save();
+        }
+
+        //保存处理信息
+        function process_save() {
+            showPopLoading();
+            $.ajax({
+                url: "/admin/workorder/report",
+                type: "POST",
+                data: { "serviceModeId": $("#serviceModeId").val(), "processDesc": $("#processDesc").val(), "workOrderId": $("#workorderid").val() },
+                success: function (data) {
+                    hidePopLoading();
+                    if (data == "ok") {
+                        if ($("#hasStatement").val() == "true") {
+                           // recycle_save();//保存回收记录
+                        }
+                        else {
+                            window.location.reload();
+                        }
+                    }
+                },
+                error: function (data) { hidePopLoading(); showException(data); }
+            });
+        }
+
+       
+
+        //改变回单tab
+        function changepanel(id, li) {
+            $("#panel_" + id).siblings().addClass("hidden");
+            $("#panel_" + id).removeClass("hidden");
+            $(li).parent().siblings().removeClass("active");
+            $(li).parent().addClass("active");
+        }
+
+        //初始化fileinput
+        function initFileInput(ctrlName, uploadUrl, imageurl) {
+            var control = $('#' + ctrlName);
+            control.fileinput({
+                language: 'zh', //设置语言
+                uploadUrl: uploadUrl, //上传的地址
+                allowedPreviewTypes: ['image'],
+                allowedFileExtensions: ['jpg', 'png'],//接收的文件后缀
+                dropZoneEnabled: false,//是否显示拖拽区域
+                showPreview: true, //是否显示预览
+                uploadAsync: true,
+                showUpload: false, //是否显示上传按钮
+                showCaption: false,//是否显示标题
+                showRemove: false,
+                showCancel: false,
+                showClose: false,
+                showUploadedThumbs: false,
+                autoReplace: true,
+                browseClass: "btn default", //按钮样式
+                enctype: 'multipart/form-data',
+                validateInitialCount: true,
+                initialPreview: [ //预览图片的设置
+                     "<img src='" + imageurl + "' class='file-preview-image' alt='' title='' style='width:auto;height:160px;'/>",
+                ],
+                maxFileCount: 2, //表示允许同时上传的最大文件个数
+                browseIcon: "<i class='glyphicon glyphicon-picture'></i>",
+                maxFileSize: 2000
+            }).on("filebatchselected", function (event, files) {
+                control.fileinput('upload');
+            }).on("fileuploaded", function (event, data) {
+                $("#UrlImg").val(data.response);
+                $(".esh-file-view .esh-loading").addClass("hidden");
+            }).on('filepreupload', function (event, data, previewId, index) {
+                $(".esh-file-view .esh-loading").removeClass("hidden").css("left", (parseInt($(".esh-file-view .kv-file-content").width() / 2) - parseInt($(".esh-loading .loading-message").innerWidth() / 2)) + "px");
+            });
+        }
+
+        //启动编辑工单对话框
+        function startWorkOrderDialog(title) {
+            modalLoadding("#editworkDailog", title, 460)
+            $("#editworkDailog").modal();
+        }
+
+        //弹出编辑工单对话框
+        function showWorkOrderDialog(data) {
+            $("#editworkDailog .modal-content").html(data);//填充对话框
+            WorkOrder.init("/admin/customer/getcustomersbyname");//初始化对话框
+        }
+
+        //创建工单成功
+        function editWorkOrderSucess(data) { if (data == "ok") { $("#editworkDailog").modal("hide"); growlAlert.success("编辑工单成功"); setTimeout('window.location.reload()', 1500); } else { growlAlert.danger("编辑工单失败。"); } }
+</script>
+
+<!-- END PAGE SELF SCRIPTS -->
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption tile">
+                    工单详情
+                </div>
+                <div class="pull-right input-group">
+                    @Html.ActionLink("返回工单列表", "Index", null, new { @class = "btn btn-default" })
+                    @if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Save))
+                    {
+                        @Ajax.ActionLink("受理工单", "Accept", new { id = ViewBag.WorkOrder.Id },
+                     new AjaxOptions()
+                     {
+                         HttpMethod = "POST",
+                         OnFailure = "showException",
+                         OnSuccess = "editSucess"
+                     },
+                     new { @class = "btn btn-default" })
+                    }
+                    else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Accept))
+                    {
+                        @Ajax.ActionLink("工单派工", "Dispatch", new { id = ViewBag.WorkOrder.Id },
+             new AjaxOptions() {
+                 HttpMethod = "GET",
+                 OnSuccess = "showDialog",
+                 OnBegin = "startDialog('工单派工',240)",
+                 OnFailure = "showException",
+             },
+                new { @class = "btn btn-default" })
+                    }
+                    else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Complete))
+                    {
+                        @Ajax.ActionLink("回访", "returnvisit", new { id = ViewBag.WorkOrder.Id },
+             new AjaxOptions()
+             {
+                 HttpMethod = "GET",
+                 OnSuccess = "showDialog",
+                 OnBegin = "startDialog('回访',460)",
+                 OnFailure = "showException",
+             },
+                new { @class = "btn btn-default" })
+
+                    }
+                    <div class="btn-group margin-left-5">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                            更多操作&nbsp;<i class="fa fa-angle-down"></i>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li>
+                            @Ajax.ActionLink("编辑", "popedit", new { id = ViewBag.WorkOrder.Id },
+             new AjaxOptions()
+             {
+                 HttpMethod = "GET",
+                 OnSuccess = "showWorkOrderDialog",
+                 OnBegin = "startWorkOrderDialog('编辑工单')",
+
+             },
+             new { @class = "" })
+                            </li>
+                             @if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Dispatch))
+                             {
+                                <li>
+                                    @Ajax.ActionLink("重新指派", "Dispatch", new { id = ViewBag.WorkOrder.Id },
+         new AjaxOptions()
+         {
+             HttpMethod = "GET",
+             OnSuccess = "showDialog",
+             OnBegin = "startDialog('工单派工',240)",
+
+         },
+         new { @class = "" })
+                                </li>
+                             }
+                             @if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Complete)
+    || ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Dispatch))
+                             {
+                                 @*<li>
+                                     @Ajax.ActionLink("修改回单", "report", new { id = ViewBag.WorkOrder.Id },
+        new AjaxOptions()
+        {
+            HttpMethod = "GET",
+            OnSuccess = "showReportDialog",
+            OnBegin = "startReportDialog('填写回单')",
+            OnFailure = "showException"
+
+        },
+        new { @class = "" })
+                                     
+                                 </li>*@
+                             }
+
+                             <li><a class="" href="javascript:cancel(@ViewBag.WorkOrder.Id );">取消工单</a></li>
+                        </ul>
+                    </div> 
+                </div>
+             </div>
+            <div class="portlet-body">
+                <div class="esh-side-edit-wrap">
+                    <div class="esh-work-order-side">
+                        <ul class="esh-pub-ul">
+                            <li>
+                                <span>工单状态：</span>
+
+                                @if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Save))
+                                {
+                                    <span class="label label-newly">新建</span>
+                                }
+                                else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Accept))
+                                {
+                                    <span class="label label-warning">已受理</span>
+                                }
+                                else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Dispatch))
+                                {
+                                    <span class="label label-primary">已派工</span>
+                                }
+                                else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Complete))
+                                {
+                                    <span class="label label-dark">已完工</span>
+                                }
+                                else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Statment))
+                                {
+                                    <span class="label label-info">已结算</span>
+                                }
+                                else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.ReturnVisit))
+                                {
+                                    <span class="label label-success">已回访</span>
+                                }
+                                else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Close))
+                                {
+                                    <span class="label label-success">已关闭</span>
+                                }
+                                else if (ViewBag.WorkOrder.BillStatus.Equals(BillStatus.Cancel))
+                                {
+                                    <span class="label label-default">已取消</span>
+                                }
+
+                            </li>
+                            <li><span>客户名称：</span>@ViewBag.WorkOrder.CustomerName</li>
+                            <li><span>产品名称：</span>@ViewBag.WorkOrder.ProductName</li>
+                            <li><span>产品型号：</span>@ViewBag.WorkOrder.ProductModel</li>
+                            @*<li><span>设备编号: </span>@ViewBag.WorkOrder.SerialNo</li>*@
+                            <li><span>在保状态：</span>@(ViewBag.WorkOrder.GuaranteedState ? "在保" : "保外")</li>
+                            <li><span>保修期至：</span>@(ViewBag.WorkOrder.Warrenty != null ? ViewBag.WorkOrder.Warrenty.ToString("yyyy-MM-dd") : "")</li>
+
+
+                        </ul>
+                    </div>
+                    <div class="esh-work-order-side">
+                        <ul class="esh-pub-ul">
+                            <li>
+                                <span>工单类型：</span>
+                                @if (ViewBag.WorkOrder.ServiceType.Equals(ServiceType.Install))
+                                {
+                                    @:安装
+
+                                }
+                                else if (ViewBag.WorkOrder.ServiceType.Equals(ServiceType.Repair))
+                                {
+                                    @:维修
+
+                                }
+                            </li>
+                            <li class="clearfix">
+                                <p class="">
+                                    <span>服务描述：</span>
+                                    @if (ViewBag.WorkOrder.Description != null && ((string)ViewBag.WorkOrder.Description).Length > 30)
+                                    {
+                                        ((string)ViewBag.WorkOrder.Description).Substring(0, 30);
+                                        @:...
+                                    }
+                                    else
+                                    {
+                                        @ViewBag.WorkOrder.Description;
+                                    }
+
+                                    <a id="desDown" class="pull-right" href="javascript:;">展开<i class="fa fa-angle-double-down"></i></a>
+                                </p>
+                                <p class="hidden">
+                                    <span>服务描述：</span>
+                                    @ViewBag.WorkOrder.Description
+
+                                    <a id="desUp" class="pull-right" href="javascript:;">收起<i class="fa fa-angle-double-up"></i></a>
+                                </p>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="esh-work-order-side">
+                        <ul class="esh-pub-ul">
+                            <li><span>申告人：</span>@ViewBag.WorkOrder.SaleMan</li>
+                            <li><span>申告人电话：</span>@ViewBag.WorkOrder.SaleManPhone</li>
+
+                        </ul>
+                     </div>   
+                     <div class="esh-work-order-side">
+                                <ul class="esh-pub-ul esh-pub-last">
+                                    @*<li>
+
+
+                                    <span>优先级：</span>
+                                @if (ViewBag.WorkOrder.Priority.Equals(PriorityEnum.General))
+                                {
+                                    @:一般
+                                }
+                                else if (ViewBag.WorkOrder.Priority.Equals(PriorityEnum.Emergency))
+                                {
+                                    @:紧急
+                                }
+                                else if (ViewBag.WorkOrder.Priority.Equals(PriorityEnum.VeryUrgent))
+                                {
+                                    @:非常紧急
+                                }
+
+                            </li>*@
+                                    
+
+                                    <li><span>科室：</span>@ViewBag.WorkOrder.Office</li>
+                                    <li><span>联系人：</span>@ViewBag.WorkOrder.OfficePerson</li>
+                                    <li><span>职务：</span>@ViewBag.WorkOrder.OfficePosition</li>
+                                    <li><span>电话：</span>@ViewBag.WorkOrder.OfficeTel</li>
+                                    <li><span>手机：</span>@ViewBag.WorkOrder.OfficeMobile</li>
+                                    <li>
+                                        <span>
+                                            @if (ViewBag.WorkOrder.ServiceType.Equals(ServiceType.Install))
+                                            {
+                                            @:安装日期：
+                            }
+                                            else if (ViewBag.WorkOrder.ServiceType.Equals(ServiceType.Repair))
+                                            {
+                                            @:维修日期：
+
+                                            }
+                                    </span>@(ViewBag.WorkOrder.ServiceTime != null ? ViewBag.WorkOrder.ServiceTime.Value.ToString("yyyy-MM-dd") : "")
+                                
+                                    </li>
+                                    <li><a href='@Url.Action("PopAlbum","WorkOrder")'>附件</a>
+                                    </li>
+                         </ul>
+                        </div>
+                </div>
+                <div class="esh-detail-content">
+                    <div class="esh-tabbable-individual tabbable-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#" onclick="changetab('1')" data-toggle="tab" aria-expanded="true">处理信息</a>
+
+                            </li>
+                            <li class="">
+                                <a href="#" onclick="changetab('3')" data-toggle="tab" aria-expanded="false">
+                                    故障与配件
+                                </a>
+                            </li>
+                            @*<li class="">
+                                <a href="#" onclick="changetab('4')" data-toggle="tab" aria-expanded="false" >
+                                    附件
+                                </a>
+                            </li>*@
+                            <li class="">
+                                <a href="#" onclick="changetab('2')" data-toggle="tab" aria-expanded="false">
+                                    客户评价
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="table-scrollable clear-border" style="padding-left:7px" id="content1">
+                                <table class="table esh-work-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width:100px;" aria-data="">
+                                                活动
+                                            </th>
+                                            <th style="min-width:250px;" aria-data="">
+                                                活动描述
+                                            </th>
+
+                                            <th style="width:100px;">
+                                                处理人员
+                                            </th>
+                                            <th style="min-width: 100px;">
+                                                处理时间
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in ViewBag.WorkOrder.Activities)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <span class="occlusion"></span>
+                                                    <span>
+                                                        <i class="fa fa-dot-circle-o"></i>
+                                                        @item.Name
+                                                    </span>
+                                                </td>
+                                                <td>@item.Log </td>
+                                                <td>@item.OperaterName</td>
+                                                <td>@item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="panel hidden" id="content3">
+                                <div class="esh-settlement-item">
+                                    <p>
+                                        <span>配件</span>
+                                    </p>
+                                    <div class="table-scrollable">
+                                        <table class="table  dataTable table-bordered" name="tb_accessory">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th style="width:15%">备件编号</th>
+                                                    <th style="width:15%">备件名称</th>
+                                                    <th style="width:15%">备件型号</th>
+                                                    <th style="width:15%">使用数量</th>
+                                                    <th style="width:15%">新件序号</th>
+                                                    <th style="width:15%">旧件序号</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{int accIndex = 1; }
+                                                @foreach (var acc in ViewBag.WorkOrder.AccessoryEntry)
+                                                {
+                                                    <tr>
+                                                        <td>@accIndex</td>
+                                                        <td>@acc.AccessoryNumber</td>
+                                                        <td>@acc.AccessoryName</td>
+                                                        <td>@acc.AccessoryModel</td>
+                                                        <td>@acc.Count</td>
+                                                        <td>@acc.NewSerials</td>
+                                                        <td>@acc.OldSerials</td>
+                                                    </tr>
+                                                    accIndex++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="esh-settlement-item">
+                                    <p>
+                                        <span>故障</span>
+                                    </p>
+                                    <div class="table-scrollable">
+                                        <table class="table  dataTable table-bordered" name="tb_accessory">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th style="width:15%">故障</th>
+                                                    <th style="width:15%">原因</th>
+                                                    <th style="width:15%">措施</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{int faultIndex = 1; }
+                                                @foreach (var fault in ViewBag.WorkOrder.FaultEntry)
+                                                {
+                                                    <tr>
+                                                        <td>@faultIndex</td>
+                                                        <td>@fault.Fault.Name</td>
+                                                        <td>@fault.FaultReasonName</td>
+                                                        <td>@fault.FaultMeasureName</td>
+                                                    </tr>
+                                                    faultIndex++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel hidden" id="content2">
+                                @if (ViewBag.WorkOrder.ServiceEvalution == null)
+                                {
+                                    <div class="esh-nodataNote" style="height:240px">
+                                        <div class="esh-nodata-tip">
+
+                                            <i class="fa fa-file-text-o"></i>
+                                            <div class="con">暂无客户评价数据</div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <table class="table table-bordered esh-eval-table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="title">评价客户</td>
+                                                <td>@ViewBag.WorkOrder.CustomerName</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="title">评价结果</td>
+                                                <td>
+                                                    <div class="eval-rank-wrap">
+                                                        <div class="review-stars esh-eval-stars">
+                                                            <div class="stars-static">
+                                                                @{ var rank = "rank" + ViewBag.WorkOrder.ServiceEvalution.Evaluation;}
+                                                                <span class="sta-rank @rank"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if (ViewBag.WorkOrder.ServiceEvalution.Evaluation.Equals(EvaluationEnum.Exellent))
+                                                    {
+                                                        <Text>非常满意</Text>
+                                                    }
+                                                    else if (ViewBag.WorkOrder.ServiceEvalution.Evaluation.Equals(EvaluationEnum.Good))
+                                                    {
+                                                        <Text>满意</Text>
+                                                    }
+                                                    else if (ViewBag.WorkOrder.ServiceEvalution.Evaluation.Equals(EvaluationEnum.Normal))
+                                                    {
+                                                        <Text>一般</Text>
+                                                    }
+                                                    else if (ViewBag.WorkOrder.ServiceEvalution.Evaluation.Equals(EvaluationEnum.Worse))
+                                                    {
+                                                        <Text>不满意</Text>
+                                                    }
+                                                    else if (ViewBag.WorkOrder.ServiceEvalution.Evaluation.Equals(EvaluationEnum.Worst))
+                                                    {
+                                                        <Text>非常不满意</Text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="title">沟通摘要</td>
+                                                <td>@ViewBag.WorkOrder.ServiceEvalution.ReturnVisitDesc</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="title">回访时间</td>
+                                                <td>@ViewBag.WorkOrder.ServiceEvalution.CreationTime.ToString()</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                              }
+
+                            </div>
+
+
+
+
+                         
+
+
+                    </div>
+                 </div>
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<input id="userId" name="userId" type="hidden" value="@ViewBag.WorkOrder.AssignedPersonId">
+<input id="workOrderId" name="workOrderId" type="hidden" value="@ViewBag.WorkOrder.Id" />
+<div class="modal fade" id="editDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-modal-lg" id="reportDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editBigDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:780px">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-modal-lg" id="editworkDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+

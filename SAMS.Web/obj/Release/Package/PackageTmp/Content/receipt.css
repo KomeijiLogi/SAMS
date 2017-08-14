@@ -1,0 +1,147 @@
+﻿body {
+    /*font-family:cursive;*/
+    background:#ffffff;
+   
+}
+#bt_confirm_receipt{
+     align-content: center;
+     width: 80% ;
+     margin-left:30px;
+}
+
+.list{
+	/*margin:50px auto;*/
+	width: 100%;
+	height: auto;
+	border-radius: 5px;
+	border:1px solid #f4f4f4;
+    /*margin-bottom:50px;*/
+    border-radius:15px;     
+    
+}
+.list ul li{
+    
+	border-bottom:1px solid #f4f4f4;
+	width: 100%;
+	height: 70px;
+	line-height: 70px;
+	text-align: left;
+	color: #808080;
+	font-size: 15px;
+    background:#ffffff ;
+    /*filter:alpha(opacity=50);  
+    opacity: 0.5;*/  
+	
+}
+.pluginSpan{
+    /*right:0px;*/
+    height:40px;
+    width:40px;
+    transform:scale(2,2);
+    -ms-transform: scale(2,2);	           
+    -webkit-transform: scale(2,2);	       
+    -o-transform: scale(2,2);	          
+    -moz-transform: scale(2,2);	           
+    text-align:center;
+    line-height:60px;
+}
+.reasonSpan{
+    /*right:0px;*/
+    height:40px;
+    width:40px;
+    transform:scale(2,2);
+    -ms-transform: scale(2,2);	           
+    -webkit-transform: scale(2,2);	       
+    -o-transform: scale(2,2);	          
+    -moz-transform: scale(2,2);	           
+    text-align:center;
+    line-height:30px;
+}
+.input_pluginCount {
+
+    float:right;
+    margin-left:20px;
+    width:30%;
+    border:groove;
+    height:auto;
+
+}
+.li_pluginCount{
+
+    float:left;
+
+}
+ .mui-plus .plus {
+    display: inline;
+   }
+
+  .plus {
+        display: none;
+  }
+
+  #middlePopover {
+        position: fixed;
+        top: 16px;
+        right: 6px;
+ }
+
+  #middlePopover .mui-popover-arrow {
+        left: auto;
+        right: 6px;
+  }
+
+  p {
+       text-indent: 22px;
+  }
+
+   span.mui-icon {
+        font-size: 14px;
+        color: #007aff;
+        margin-left: -15px;
+        padding-right: 10px;
+  }
+
+ .mui-popover {
+            height: 300px;
+  }
+
+ .mui-content {
+            padding: 10px;
+ }
+
+.colorfulDiv {
+
+     padding:10px; 
+     width:300px; 
+     height:50px;
+     border: 2px solid #000000;
+     -moz-border-radius: 15px; 
+     -webkit-border-radius: 15px; 
+     border-radius:15px;                  /*圆角*/
+     /*display:inline;*/                  /*横向排列*/
+}
+
+.colorfulLi {
+    color: #007aff;
+
+}
+.colorfulCount {
+   float:right;
+   right:0px;
+   
+}
+
+.colorfulInput {
+    float:right; 
+    margin-right:0px;
+    border:hidden;
+    width:60%;
+    height:40px;
+    
+}
+
+.colorfulBg {
+
+  background:#ffffff;
+}
+

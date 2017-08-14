@@ -1,0 +1,66 @@
+﻿
+<link rel="stylesheet" href="~/libs/jquery-uniform/css/uniform.default.min.css"/>
+<script src="~/libs/jquery-uniform/jquery.uniform.min.js"></script>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">回访</h4>
+</div>
+<form action="/admin/workorder/returnvisit/@ViewBag.Id" class="form-horizontal" data-ajax="true" data-ajax-begin="showPopLoading" 
+      data-ajax-complete="hidePopLoading" data-ajax-failure="showException" data-ajax-success="editSucess" id="editForm" method="post">
+    <input id="ID" name="ID" type="hidden" value="@ViewBag.Id" />
+    <input id="WorkOrderID" name="WorkOrderID" type="hidden" value="@ViewBag.Id" /> 
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                问题解决情况
+            </label>
+            <div class="col-md-7 margin-top-5">
+                <input data-val="true" data-val-required="The IsResolved field is required." 
+                       id="IsResolved" name="IsResolved" type="checkbox" value="true" />
+                已解决
+            </div>
+        </div>
+       
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                满意度评价
+            </label>
+            <div class="col-md-7  margin-top-5">
+                <div class="radio-list">
+                    <label class="">
+                        <input type="radio" name="Evalution" value="5" checked>非常满意
+                    </label>
+                    <label class="">
+                        <input type="radio" name="Evalution" value="4">满意
+                    </label>
+                    <label class="">
+                        <input type="radio" name="Evalution" value="3">一般
+                    </label>
+                    <label class="">
+                        <input type="radio" name="Evalution" value="2">不满意
+                    </label>
+                    <label class="">
+                        <input type="radio" name="Evalution" value="1">非常不满意
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                沟通摘要
+            </label>
+            <div class="col-md-7">
+                <textarea class="form-control" cols="20" data-val="true" 
+                          data-val-length="描述长度不能超过200个字符" data-val-length-max="200" 
+                          data-val-regex="不能包含空字符" data-val-regex-pattern="^[^\s]+$" id="Description" name="Description" rows="3"></textarea>
+                <span class="help-block">200个字以内</span>
+                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <!-- END FORM-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="cancelbtn" data-dismiss="modal" class="btn btn-default">取消</button>
+        <button type="submit" class="btn green">提交并关闭工单</button>
+    </div>
+</form>

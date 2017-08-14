@@ -1,0 +1,89 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "工单信息";
+}
+@model SAMS.Web.Areas.StaffMobile.Models.UndoOrderViewModel
+@using SAMS.WorkOrders
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        .mui-table-view-cell:after {
+            left: 0%;
+        }
+    </style>
+</head>
+<body>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/homecss")
+    <div class="mui-content mui-scroll-wrapper" id="wrapper" style="overflow:auto;">
+        <div class="mui-scroll" id="scroller">
+          @*  <h4 class="mui-text-center title">@ViewBag.Title</h4>*@
+            @if (Model.WorkOrders.Items.Count > 0)
+            {
+            <ul class="mui-table-view" id="thelist">
+               
+                @foreach (var item in Model.WorkOrders.Items)
+                {
+
+                    <li class="mui-table-view-cell" id="touchArea" >
+                        <a href="@Url.Action("Detail","Home",new { id=@item.Id})">
+                            <div class="mui-table">
+                                <div class="mui-table-cell mui-col-xs-10">
+                                    <h4 class="mui-ellipsis-2" style="font-size:20px;">@item.CustomerName</h4>
+                                    <h5>
+                                        @item.ProductName | 
+                                        @if (item.ServiceType.Equals(ServiceType.Install))
+                                {
+                                            @:安装
+
+                                }
+                                else if (item.ServiceType.Equals(ServiceType.Repair))
+                                {
+                                            @:维修
+
+                                }
+                                        | @(item.DispatchTime.HasValue ? item.DispatchTime.Value.ToString("yyyy-MM-dd"):"")
+                                    </h5>
+
+                                </div>
+                                <div class="mui-table-cell mui-col-xs-2 mui-text-right">
+                                    <span class="mui-h5">
+
+                                        @if(item.BillStatus.Equals(BillStatus.Dispatch))
+                                {
+                                            @:待处理
+                                }
+                                else if (item.BillStatus.Equals(BillStatus.Complete))
+                                {
+                                            @:已回单
+                                }
+                                    </span>
+
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                }
+
+            </ul>
+            }
+            else
+            {
+                <div>
+                    <h5 class="mui-text-center">
+                        没有待办工单
+                    </h5>
+                </div>
+            }
+        </div>
+    </div>
+
+</body>
+
+</html>

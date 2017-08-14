@@ -1,0 +1,57 @@
+﻿@{
+    Layout = null;
+}
+@model IEnumerable<WeGoWorkOrderPro.Models.PluginEntry>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/search")
+    @Styles.Render("~/Content/muiindexlistcss")
+   
+
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">配件选择</h1>
+        <a id='done' class="mui-btn mui-btn-link mui-pull-right mui-btn-blue mui-disabled">完成</a>
+    </header>
+
+
+    <div class="mui-content">
+        <div id='list' class="mui-indexed-list">
+            <div class="mui-indexed-list-search mui-input-row mui-search">
+                <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="请输入搜索内容">
+            </div>
+            <div class="mui-indexed-list-bar">
+                
+            </div>
+            <div class="mui-indexed-list-alert"></div>
+            <div class="mui-indexed-list-inner">
+                <div class="mui-indexed-list-empty-alert">没有数据</div>
+                <ul class="mui-table-view">
+                    @foreach (var item in Model)
+                    {
+                        <li data-value="" data-tags="" class="mui-table-view-cell mui-indexed-list-item mui-checkbox ">
+                            <input name="pluginNameChecked"  type="checkbox" onchange="javascript: setPluginStorage('@item.pluginName',this)"/>@Html.DisplayFor(modelitem => item.pluginName)
+                        </li>
+                    }
+
+                </ul>
+            </div>
+
+
+                  
+            </div>
+
+        </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/pluginchosen")
+    @Scripts.Render("~/bundles/muiindexlist")
+</body>
+</html>

@@ -1,0 +1,141 @@
+﻿@model SAMS.Web.Areas.Admin.Models.Accessory.GetNewAccessoryViewModel
+<div class="table-scrollable">
+    <table class="table  dataTable table-bordered" id="tableList">
+        <thead>
+            <tr>
+                <th class="hidden">id</th>
+                <th style="width:100px;">
+                    备件编码
+                </th>
+                <th style="min-width:70px;">
+                    名称
+                </th>
+                <th style="min-width:70px;">
+                    规格
+                </th>
+                <th style="width:40px;">
+                    单位
+                </th>
+                <th class="@(Model.Type.Equals("StaffRefundNew")? "": "hidden")"  style="width:40px;">
+                    @(Model.Type.Equals("StaffRefundNew")? "持有数量": "当前库存")
+                </th>
+               
+
+                <th style="width:70px;">
+                    操作
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Accessories.Items)
+            {
+                <tr class="odd gradeX">
+                    <td class="hidden" name="Id">@item.AccessoryId</td>
+                   
+                    <td  name="Number">
+                        @item.AccessoryNumber
+                    </td>
+
+                    <td name="Name">@item.AccessoryName</td>
+                    <td name="Spec">
+                        @item.AccessoryModel
+                    </td>
+                    <td name="Unit">@item.AccessoryUnit</td>
+                  
+                    <td class="@(Model.Type.Equals("StaffRefundNew")? "": "hidden")" name="Count">
+                       @item.Count
+                    </td>
+                   
+                    <td>
+                       
+                        <button onclick="select_accessory('{&quot;ID&quot;:&quot;@item.AccessoryId &quot;,&quot;Number&quot;:&quot;@item.AccessoryNumber&quot;,&quot;Count&quot;:@item.Count,&quot;Name&quot;:&quot;@item.AccessoryName&quot;,&quot;Model&quot;:&quot;@item.AccessoryModel&quot;,&quot;Unit&quot;:&quot;@item.AccessoryUnit&quot;}')" 
+                                class="btn btn-default btn-xs black">
+                            <i class="fa fa-check"></i>选择
+                        </button>
+                    </td>
+                    
+                </tr>
+            }
+          
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <div class="col-md-5 col-sm-5">
+        <div class="dataTables_info" id="tableListInfo" role="status" aria-live="polite">
+            @if(Model.Accessories.TotalCount>0)
+            {
+            <lable>@Model.Start - @Model.End 条记录&nbsp;&nbsp;&nbsp;&nbsp;共 @Model.Accessories.TotalCount 条</lable>
+            }
+            else
+            {
+                <label>没有查询到所需数据</label>
+            }
+        </div>
+    </div>
+    <div class="col-md-7 col-sm-7">
+        <div class="dataTables_paginate paging_bootstrap_full_number">
+@if(Model.Accessories.TotalCount > 0)
+{
+            <ul class="pagination">
+                @if (Model.PageIndex == 1)
+                {
+                    <li class='disabled prev'>
+                        <a href='javascript:void(0)'>
+                            <i class='fa fa-angle-double-left'></i>
+                        </a>
+                    </li>
+                        <li class="disabled prev"><a href="javascript:void(0);"><i class='fa fa-angle-left'></i></a></li>
+                }
+                else
+                {
+                    <li class="prev"><a href="#" title="首页" onclick="changePageIndex(1)"><i class='fa fa-angle-double-left'></i></a></li>
+                        <li class="prev"><a href="#" title="上一页" onclick="changePageIndex(@Model.PageIndex -1)"><i class='fa fa-angle-left'></i></a></li>
+                }
+
+                @foreach (var i in Model.PageNumbers)
+                {
+                    if (Model.PageIndex.Equals(i))
+                    {
+                        <li class="active"><a href="#" onclick="changePageIndex(@i)">@(i.ToString())</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="#" onclick="changePageIndex(@(i.ToString()))">@(i.ToString())</a></li>
+                    }
+
+
+                }
+
+                @if (Model.PageIndex == Model.PageCount)
+                {
+                    <li class="disabled next">
+                        <a href="#" title="下一页" onclick="changePageIndex(@(Model.PageIndex + 1 ))">
+                            <i class='fa fa-angle-right'></i>
+                        </a>
+                    </li>
+                        <li class="disabled next">
+                            <a href="#" title="末页" onclick="changePageIndex(@Model.PageCount )">
+                                <i class='fa fa-angle-double-right'></i>
+                            </a>
+                        </li>
+                }
+                else
+                {
+                    <li class="next">
+                        <a href="#" title="下一页" onclick="changePageIndex(@(Model.PageIndex + 1 ))">
+                            <i class='fa fa-angle-right'></i>
+                        </a>
+                    </li>
+                        <li class="next">
+                            <a href="#" title="末页" onclick="changePageIndex(@Model.PageCount )">
+                                <i class='fa fa-angle-double-right'></i>
+                            </a>
+                        </li>
+                }
+            </ul>
+}
+        </div>
+    </div>
+
+</div>

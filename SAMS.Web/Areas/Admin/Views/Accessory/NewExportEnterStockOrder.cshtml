@@ -1,0 +1,376 @@
+﻿
+@{
+    ViewBag.Title = "NewExportEnterStockOrder";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "AccessoryStock";
+}
+
+<!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">备件管理</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-angle-down"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/accessorysetting">
+                                        备件设置
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="">
+                                    <a href=/admin/accessory/neworgstock>备件库存</a>
+                                </li>
+                                <li class="active">
+                                    <a href=/admin/accessory/newexportenterstockorder>备件出入库单</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newstaffpicking>员工领用备件情况</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newaccessoryuse>备件使用明细</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+               
+            </div>
+        </div>
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        备件出入库单
+                    </div>
+                    <div class="input-group pull-right">
+                        <div class="input-group input-medium ">
+                            <input class="form-control" id="number" maxlength="50" name="number" placeholder="输入出入库单编号..." type="text" value="" />
+                            <span class="input-group-btn">
+                                <button class="btn green" id="btnSearch" type="button"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="col-md-6 col-xs-6 clear-padding-left">
+                            <button class="btn green collapse" id="btnFilter">筛选</button>
+                        </div>
+                        <div class="col-md-6 col-xs-6 clear-padding-right">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        更多操作&nbsp;<i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:void(0)" onclick="exportExcel()">Excel导出 </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+                    <div class="esh-table-filter" id="filterContent">
+                        <ul class="esh-region-color">
+                            <li class="esh-filter-item clearfix">
+                                <span>单据类型：</span>
+                                <ul class="filter-option col-md-8 col-sm-9">
+                                    <li>
+                                        <label>
+                                            <input name="stockoperatetype" type="checkbox" value="1" /><input name="stockoperatetype" type="hidden" value="false" />入库单
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input name="stockoperatetype" type="checkbox" value="2" /><input name="stockoperatetype" type="hidden" value="false" />出库单
+                                        </label>
+                                    </li>
+                                </ul>
+
+                                <input type="hidden" id="stockoperatetype_hide" value="" />
+                            </li>
+
+                            <li class="esh-filter-item clearfix">
+                                <span>出入库类别：</span>
+                                <ul class="filter-option">
+                                    <li class="wipper select">
+                                        <select id="select-type" class="form-control">
+                                            <option value="">选择出入库类别</option>
+                                            <option value="848">系统出库</option>
+                                            <option value="849">系统入库</option>
+                                            <option value="staffPicking_new">员工领料</option>
+                                            <option value="staffRefund_new">员工退料</option>
+                                        </select>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="esh-filter-item clearfix hidden">
+                                <span>出入库人员：</span>
+                                <ul class="filter-option">
+                                    <li class="wipper select">
+                                        <select id="select-staff" class="form-control">
+                                            <option value="">选择出入库人员</option>
+                                            <option value="000c872e-c238-4bf4-986f-2e9d5fc2e079">张工</option>
+                                            <option value="55d87af7-e020-485a-ac6a-f9e1e8a712ee">李工</option>
+                                            <option value="953dc607-d48e-4d9f-9d83-53139fb17ea5">13561899216</option>
+                                        </select>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="esh-filter-item clearfix">
+                                <span>操作时间：</span>
+                                <ul class="filter-option input-daterange date-picker">
+                                    <li class="wipper">
+                                        <input class="form-control" id="startDate" name="startDate" onblur="clearDate(this)" placeholder="开始日期" type="text" value="" />
+                                    </li>
+                                    <li>至</li>
+                                    <li class="wipper">
+                                        <input class="form-control" id="endDate" name="endDate" onblur="clearDate(this)" placeholder="结束日期" type="text" value="" />
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="dataTable" class="dataTables_wrapper no-footer">
+                        @Html.Action("GetNewExportEnterStockOrder", "Accessory", new { PageIndex = 1, PageSize = 10 })
+                    </div>
+                </div>
+
+                <form action="/admin/accessory/getnewexportenterstockorder" data-ajax="true" 
+                      data-ajax-begin="showLoading" data-ajax-complete="hideLoading" 
+                      data-ajax-failure="showException" data-ajax-mode="replace" 
+                      data-ajax-success="initTable" data-ajax-update="#dataTable" 
+                      id="searchByRequest" method="post">
+                <input id="PageIndex" name="PageIndex" type="hidden" value="1" />
+                <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。"
+                        data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10" />
+                <input id="Sort" name="Sort" type="hidden" value="" />
+                <input id="Direction" name="Direction" type="hidden" value="" />
+                <input id="Where" name="Where" type="hidden" value="" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bs-example-modal-lg" id="editDailog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+
+<div class="modal fade bs-example-modal-lg" id="callDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-modal-lg" id="createworkDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createcustomerDailog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+      
+<!-- END CONTENT -->
+@section Scripts{
+<!-- BEGIN PAGE SELF SCRIPTS -->
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            initDataPicker();//设置时间控件
+            initEvent();//事件绑定
+            initTable();//初始化列表
+        });
+
+        //事件绑定
+        function initEvent()
+        {
+            $("#stockoperatetype_hide,#startDate,#endDate,#select-type,#select-staff").val("");
+            $("ul.filter-option input[type=checkbox]").attr("checked", false);
+            $("ul.filter-option input[type=checkbox]").parent().removeClass("checked");
+
+            //显示或隐藏筛选功能
+            $("#btnFilter").on('click', function () {
+                if ($(this).hasClass("collapse") && !$(this).hasClass("expand")) {
+                    $(this).removeClass("collapse").addClass("expand").text('取消筛选');
+                    $('#filterContent').slideDown(300);
+                }
+                else if ($(this).hasClass("expand") && !$(this).hasClass("collapse")) {
+                    $(this).removeClass("expand").addClass("collapse").text('筛选');
+                    $('#filterContent').slideUp(300);
+                    cancelFilter();
+                }
+            });
+
+            //取消筛选功能
+            function cancelFilter() {
+                $("#stockoperatetype_hide,#startDate,#endDate,#select-type,#select-staff").val("");
+                $("ul.filter-option input[type=checkbox]").attr("checked", false);
+                $("ul.filter-option input[type=checkbox]").parent().removeClass("checked");
+                changeQueryCondition();
+            };
+
+            //开始日期改变触发表单提交
+            $('.input-daterange input[name=startDate]').on("changeDate", function () {
+                blnfirst = false; changeQueryCondition();
+            });
+
+            //结束日期改变触发表单提交
+            $('.input-daterange input[name=endDate]').on("changeDate", function () {
+                var date1 = $('.input-daterange input[name=startDate]').val();
+                var date2 = $(this).val();
+                if (date2 >= date1) {
+                    changeQueryCondition();
+                }
+            });
+
+            //Checkbox选择触发表单提交
+            $("ul.filter-option input[type=checkbox]").on("click", function () {
+                var attrName = $(this).attr('name');
+                var subData = $("#" + attrName + "_hide").val();
+                if ($(this).attr('checked')) {
+                    subData += $(this).val() + ",";
+                } else {
+                    var a = $(this).val() + ",";
+                    subData = subData.replace(a, "");
+                }
+
+                $("#" + attrName + "_hide").val(subData);
+                changeQueryCondition();
+            });
+
+            //出入库类别
+            $("#select-type").change(function () { changeQueryCondition(); });
+
+            //出入库人员
+            $("#select-staff").change(function () { changeQueryCondition(); });
+
+            //输入名称回车查询
+            $("#number").keypress(function (e) {
+                if (e.which == 13) {
+                    changeQueryCondition();
+                }
+            });
+
+            //搜索按钮按下
+            $("#btnSearch").click(function () { changeQueryCondition(); })
+         }
+
+        ///初始化列表
+        function initTable() {
+            OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+            //单击行预览
+            $('td:not(:first)', $('#tableList tr')).click(function () {
+                var id = $(this).parent().find("input[type=checkbox]").val();//id值
+                if (id) {
+                    var title = $(this).parent().find("span[name=type]").html();
+                    modalLoadding("#editDailog", title, 460);
+                    $("#editDailog").modal();
+                    //调用action
+                    $.ajax({
+                        url: "/admin/accessory/newexportenterstockorderdetail",
+                        type: "get",
+                        data: { "id": id },
+                        success: function (data) {
+                            $(".modal-content").html(data);//填充对话框
+                            Metronic.initSlimScroll('.scroller');//滚动条
+                        },
+                        error: function (data) { showException(data); }
+                    });
+                }
+            });
+        }
+
+        //清空日期
+        var blnfirst = true;//首次执行标识
+        function clearDate(input) {
+            if (blnfirst) {
+                //为避免与onchangeDate事件的冲突
+                 return;
+            }
+
+            if (!$(input).val()) {
+                //日期清空时，重新查询
+                changeQueryCondition();
+            }
+        }
+
+        //改变索引页
+        function changePageIndex(index)
+        {
+            $("#PageIndex").val(index);
+            $("#searchByRequest").submit();
+        }
+
+        //改变查询条件
+        function changeQueryCondition()
+        {
+           //组装查询条件
+            var number = $("#number").val();
+            if (number.indexOf("输入") >= 0) {
+                number = "";
+            }
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            var type = $("#select-type").val();
+            var staffId = $("#select-staff").val();
+            var stockoperatetype = $("#stockoperatetype_hide").val();
+            var whereData = "{'stockoperatetype':[" + trimEnd(stockoperatetype) + "],'type':'" + type + "','staffId':'" + staffId + "','number':'" + number + "','startdate':'" + startDate + "','enddate':'" + endDate + "'}";
+            if ($("#Where").val() == whereData) {
+                return;
+            }
+            $("#Where").val(whereData);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, mode) {
+            $("#Sort").val(sort);
+            $("#Direction").val(mode);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //导出
+        function exportExcel() {
+            window.location = "/admin/accessory/exportnewstockorderexcel?Where=" + $("#Where").val();
+        };
+</script>
+
+<!-- END PAGE SELF SCRIPTS -->
+}
+
+

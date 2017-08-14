@@ -1,0 +1,23 @@
+﻿
+@model SAMS.Web.Areas.Admin.Models.Product.GetViewModel
+<ul id="sort-list" class="esh-field-list">
+    @foreach (var item in Model.Products.Items)
+    {
+        <li>
+            <a class="col-md-4 col-xs-4" data-ajax="true" data-ajax-begin="startDialog('编辑产品')"
+               data-ajax-method="GET" data-ajax-success="showDialog" href="/admin/product/edit/@item.Id">@item.Name</a>
+            <span class="col-md-4 col-xs-4 esh-txtellipsis ">@item.Model</span>
+            <div class="esh-control-bar">
+                <button onclick="editRecord('@item.Id')" class="btn btn-default btn-xs black">
+                    编辑
+                </button>
+                <button onclick="editBom('@item.Id')" class="btn btn-default btn-xs black">
+                    配件
+                </button>
+                <button onclick="deleteRecord('@item.Id')" class="btn btn-default btn-xs black">
+                    删除
+                </button>
+            </div>
+        </li>
+    }
+</ul>

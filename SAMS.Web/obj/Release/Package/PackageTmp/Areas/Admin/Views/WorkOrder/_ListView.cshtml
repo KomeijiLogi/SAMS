@@ -1,0 +1,25 @@
+﻿
+<div class="portlet-body side-menu-project-list-content" id="lst1" style="height: auto;">
+    <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+        <ul class="nav nav-pills nav-stacked esh-nav-pills">
+
+            <li class="@(ViewBag.ActiveID==1?"active":"")">
+                <a href="@Url.Action("index", "WorkOrder", new {area = "Admin",id=1})"><span>所有工单</span><span class="badge badge-success">@ViewBag.View1</span></a>
+            </li>
+
+            <li class="@(ViewBag.ActiveID==2?"active":"")">
+                <a href="@Url.Action("views", "WorkOrder", new {area = "Admin",id=2})"><span>未解决工单</span> <span class="badge badge-success">@ViewBag.View2</span></a>
+            </li>
+            <li class="@(ViewBag.ActiveID==3?"active":"")">
+                <a href="@Url.Action("views", "WorkOrder", new {area = "Admin",id=3})"><span>今日新增工单</span> <span class="badge badge-success">@ViewBag.View3</span></a>
+            </li>
+            <li class="@(ViewBag.ActiveID==4?"active":"")">
+                <a href="@Url.Action("views", "WorkOrder", new {area = "Admin",id=4})"><span>待回访工单</span> <span class="badge badge-success">@ViewBag.View4</span></a>
+            </li>
+            <li class="@(ViewBag.ActiveID==5?"active":"")">
+                <a href="@Url.Action("views", "WorkOrder", new {area = "Admin",id=5})"><span>待派工工单</span> <span class="badge badge-success">@ViewBag.View5</span></a>
+            </li>
+
+        </ul>
+    </div>
+</div>

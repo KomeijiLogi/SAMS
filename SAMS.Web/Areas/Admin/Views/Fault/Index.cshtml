@@ -1,0 +1,209 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "SystemSetting";
+}
+
+
+<!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">工单设置</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-hover="dropdown" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-reply  back"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/workorder">
+                                        返回工单管理
+                                    </a>
+                                    <a href="/admin/systemsetting">
+                                        返回设置主页
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+
+                            <div class="esh-nav-child">
+                                <div class="header">
+                                    <span><b>|</b>工单属性</span>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li class="">
+                                        <a href="/admin/product">产品目录</a>
+                                    </li>
+                                    <li class="active">
+                                        <a href="/admin/fault">故障目录</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="page-title">
+                        故障目录
+                        <div class="input-group pull-right">
+                            <a class="btn btn-default" href="javascript:create();">
+                                <i class="fa font-12 fa-plus"></i>
+                                新建故障
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="esh-setting-wrapper setting-main-field">
+                        <div class="tip-info">
+                            <p>故障目录指产品的故障列表。</p>
+                        </div>
+                        <div class="esh-field-column-header">
+                            <span class="col-md-4 col-xs-4 ">故障名称</span>
+                       
+                            <span class="col-md-4 col-xs-4 pull-right text-right padding-right-30">
+                                操作
+                            </span>
+                        </div>
+                        <div id="faultlst">
+
+                            @Html.Action("Get", "fault")
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editDailog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+<!-- BEGIN PAGE SELF SCRIPTS -->
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+        });
+
+        //查询数据
+        function getdata() {
+            showLoading();
+            $.ajax({
+                url: "/admin/fault/get",
+                type: "GET",
+                success: function (data) {
+                    hideLoading();
+                    $("#faultlst").html(data);
+                },
+                error: function (data) { hideLoading(); showException(data); }
+            });
+        }
+
+        //新建
+        function create() {
+            startDialog("新建故障");
+            $.ajax({
+                url: "/admin/fault/create",
+                type: "GET",
+                success: function (data) {
+                    showDialog(data);
+                },
+                error: function (data) { showException(data); }
+            });
+        }
+
+        //编辑
+        function editRecord(id) {
+            startDialog("编辑故障");
+            $.ajax({
+                url: "/admin/fault/edit",
+                data: { "id": id },
+                type: "GET",
+                success: function (data) {
+                    showDialog(data);
+                },
+                error: function (data) { showException(data); }
+            });
+        }
+
+        //删除单条记录
+        function deleteRecord(id) {
+            botbox.confirm("提示", "您确认删除吗?", function (result) {
+                if (result) {
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/fault/delete",
+                        type: "POST",
+                        data: { "ids": id },
+                        success: function (data) {
+                            hideLoading();
+                            editSucess(data);
+                        },
+                        error: function (data) { hideLoading(); showException(data); }
+                    });
+                }
+            });
+        }
+
+        //启动对话框
+        function startDialog(title) {
+            modalLoadding("#editDailog", title, 440)
+            $("#editDailog").modal();
+        }
+
+        //显示对话框内容
+        function showDialog(data) {
+            $(".modal-content").html(data);//填充对话框
+            initDialog();//初始化对话框
+        }
+
+        //初始化弹出的对话框
+        function initDialog() {
+            initSelect();//初始化select2控件
+            Metronic.initSlimScroll('.scroller');//滚动条
+            $("#editForm").removeData("validator");//删除验证器
+            $.validator.unobtrusive.parse("#editForm");//添加验证器
+          //  initFileInput("filePortrait", "/admin/product/uploadimg", $("#current_urlImg").val());
+            initUniform();
+        }
+
+        //编辑记录成功后的处理
+        function editSucess(data) {
+            if (data == "ok") { $("#editDailog").modal("hide"); growlAlert.success("操作成功"); getdata(); }
+            else { growlAlert.danger("操作失败"); }
+        }
+
+
+
+    </script>
+
+}
+
+

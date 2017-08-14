@@ -1,0 +1,600 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "提交工单";
+}
+@model SAMS.Web.Areas.StaffMobile.Models.CreateOrderViewModel
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+
+    <link rel="stylesheet" href="~/Content/mui.min.css" />
+    <link rel="stylesheet" href="~/Content/mui.indexedlist.css" />
+    <link rel="stylesheet" href="~/Content/mui.picker.min.css" />
+    <link rel="stylesheet" href="~/Content/mui.poppicker.css" />
+
+    <script type="text/javascript" src="~/Areas/StaffMobile/Scripts/zepto.min.js"></script>
+    <script type="text/javascript" src="~/Areas/StaffMobile/Scripts/mui.min.js"></script>
+    <script type="text/javascript" src="~/Areas/StaffMobile/Scripts/mui.indexedlist.js"></script>
+    <script type="text/javascript" src="~/Areas/StaffMobile/Scripts/mui.picker.min.js"></script>
+    <script type="text/javascript" src="~/Areas/StaffMobile/Scripts/mui.poppicker.js"></script>
+    <script type="text/javascript" src="~/Areas/StaffMobile/Scripts/city.data-3.js" charset="utf-8"></script>
+    @*<script type="text/javascript" src="~/Areas/StaffMobile/Scripts/product.data.js" charset="utf-8"></script>*@
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .mui-bar {
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        #done.mui-disabled {
+            color: gray;
+        }
+
+        .mui-table-view-cell:after {
+            left: 0%;
+        }
+
+        input {
+            border: none;
+             width:55%;
+        }
+         .inputCS {
+          max-width:55%;
+          border:none;
+        }
+        input[type=tel]{
+          border:none;
+          padding-left:0px;
+        }
+        select {
+            right: 0px;
+        }
+      
+        h4{
+          width:40%;
+         
+        }
+        .ui-alert {
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 16px;
+        }
+    </style>
+
+</head>
+
+<body>
+    @*@Styles.Render("~/Content/css")*@
+
+
+
+    <div class="mui-content mui-scroll-wrapper" id="wrapper" style="overflow:auto;display:block;z-index:998;">
+        <div class="mui-scroll" id="scroller">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell mui-input-row">
+                    <input type="hidden" value="" name="ProductId" id="ProductId" />
+
+                    <h4 class="mui-pull-left">产品名称</h4>
+                    <input class="mui-pull-right" placeholder="请选择产品名称" readonly="readonly" id="showProductPicker_name" name="ProductName" value="" />
+                </li>
+                <li class="mui-table-view-cell mui-input-row">
+                    <h4 class="mui-pull-left">产品型号</h4>
+                    <input class="mui-pull-right" placeholder="请选择产品型号" readonly="readonly" id="showProductPicker_type" name="ProductType" value="" />
+                </li>
+
+
+                <li class="mui-table-view-cell mui-input-row">
+                    <div id="showServicePicker">
+                        <h4 class="mui-pull-left" style="display:inline-block;">工单类型</h4>
+                        <span class="mui-pull-right mui-icon mui-icon-arrowright mui-pull-right" style="display:inline-block;"></span>
+                        @*<input type="hidden" id="serviceValue" name="serviceValue"/>*@ 
+                        <div id='serviceResult' class="ui-alert" style="margin:0px;padding-top:0px; width:60%;"></div>
+                        
+                        
+                    </div>
+                </li>
+
+
+            </ul>
+            <ul class="mui-table-view" style="margin-top:2vw;">
+                <li class="mui-table-view-cell mui-input-row">
+                    <div id="showCityPicker">
+                        <h4 class="mui-pull-left">所在地区</h4>
+                        <span class="mui-pull-right mui-icon mui-icon-arrowright"></span>
+                        <div id='cityResult' class="ui-alert" style="margin:0px;padding-top:0px;">
+                            
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-input-row" onclick="showHospital()">
+                    <input type="hidden" value="" name="CustomerId" id="CustomerId" />
+                    <h4 class="mui-pull-left">医院名称</h4>
+                    <span class="mui-pull-right mui-icon mui-icon-arrowright mui-pull-right" style="display:inline-block;" onclick="showHospital()"></span>
+                    <input class="mui-pull-right" id="fuzzyhospital" name="fuzzyhospital" readonly="readonly" onclick="showHospital()" style="padding-left:0px;max-width:40%;" value="" />
+
+                </li>
+                <li class="mui-table-view-cell mui-input-row">
+                    <h4 class="mui-pull-left">联系人</h4>
+                    <input class="mui-pull-right" placeholder="请输入联系人" id="OfficePerson" name="OfficePerson" value="" style="padding-left:0px;max-width:55%;"/>
+                </li>
+                <li class="mui-table-view-cell mui-input-row">
+                    <h4 class="mui-pull-left">科室</h4>
+                    <a class="mui-pull-right" id="officePop" href="#popwindows_offices" style="font-weight:300;font-size:14px;">提示</a>
+                    <input class="mui-pull-right" placeholder="请输入科室" list="Offices" id="Office" name="Office" autocomplete="on" value="" style="padding-left:10px;max-width:50%;"/>
+
+                </li>
+                <li class="mui-table-view-cell mui-input-row" style="display:none;">
+                    <h4 class="mui-pull-left">科室电话</h4>
+                    <input class="mui-pull-right inputCS" placeholder="请输入科室电话" type="tel" id="OfficeTel" name="OfficeTel" value="" />
+                </li>
+                <li class="mui-table-view-cell mui-input-row">
+                    <h4 class="mui-pull-left">手机号码</h4>
+                    <input class="mui-pull-right inputCS" placeholder="请输入手机号码" type="tel" id="OfficeMobile" name="OfficeMobile" value="" />
+                </li>
+
+
+
+            </ul>
+            <ul class="mui-table-view" style="margin-top:2vw;">
+                <li class="mui-table-view-cell">
+                    <h4 class="mui-pull-left">服务描述</h4>
+
+                    <textarea rows="3" placeholder="问题描述" id="Description" name="Description">
+                       
+                    </textarea>
+                </li>
+            </ul>
+
+            <button id="bt_commit" name="bt_commit" type="submit" class="mui-btn mui-btn-primary mui-btn-block" style="margin-top:2vw;" onclick="Save()">提交申请</button>
+        </div>
+
+    </div>
+
+
+
+
+
+    <div id="seekForHospital" style="display:block;">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="closeHospital()"></a>
+            <h1 class="mui-title">医院选择</h1>
+            <a id='done' class="mui-btn mui-btn-link mui-pull-right mui-btn-blue mui-disabled">完成</a>
+        </header>
+        <div class="mui-content" id="hospitalContent">
+            <div id='list' class="mui-indexed-list">
+                <div class="mui-indexed-list-search mui-input-row mui-search">
+                    <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="请输入搜索内容">
+                </div>
+                <div class="mui-indexed-list-bar" style="display:none;">
+                    @*<a>A</a>
+                        <a>B</a>
+                        <a>C</a>
+                        <a>D</a>
+                        <a>E</a>
+                        <a>F</a>
+                        <a>G</a>
+                        <a>H</a>
+                        <a>I</a>
+                        <a>J</a>
+                        <a>K</a>
+                        <a>L</a>
+                        <a>M</a>
+                        <a>N</a>
+                        <a>O</a>
+                        <a>P</a>
+                        <a>Q</a>
+                        <a>R</a>
+                        <a>S</a>
+                        <a>T</a>
+                        <a>U</a>
+                        <a>V</a>
+                        <a>W</a>
+                        <a>X</a>
+                        <a>Y</a>
+                        <a>Z</a>*@
+                </div>
+                <div class="mui-indexed-list-alert"></div>
+                <div class="mui-indexed-list-inner">
+                    <div class="mui-indexed-list-empty-alert">没有数据</div>
+                    <ul class="mui-table-view mui-input-group" id="customlist"></ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="popwindows_offices" class="mui-popover" style="height:50vw;overflow:auto;">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view"></ul>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+
+
+        var productJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Products));
+
+        var productData = [];
+
+
+        function exchangeProduct(){
+
+
+            for(var i=0;i<productJSON.Items.length;i++){
+                var curProduct=productJSON.Items[i];
+
+                var isExist=false;
+                //if exist
+                $.each(productData, function (i, item) {
+                    if (item.text == curProduct.Name ) {
+                        isExist=true;
+                        var child={value:curProduct.Id,text:curProduct.Model};
+                        item.children.push(child);
+                        return;
+                    }
+                });
+                if(!isExist)
+                {
+                    productData.push({
+                        value:curProduct.Name,
+                        text:curProduct.Name,
+                        children:[{
+                            value:curProduct.Id,
+                            text:curProduct.Model
+                        }]
+                    })
+                }
+
+
+            }
+
+        }
+
+        function btCommitEvent() {
+
+            window.location.href = "/staffMobile/Home/AskOrder";
+
+        }
+
+        function selectOffices(){
+            if($('#CustomerId').val()!=null){
+                var customerId=$('#CustomerId').val();
+                $.ajax({
+                    url:'/staffMobile/Home/GetCustomerOffices/',
+                    type:"POST",
+                    dataType:'json',
+                    contentType:'application/json',
+                    data:{'customerId':customerId},
+                    success:function(data){
+
+
+                    },error:function(data){
+
+
+                    }
+
+                });
+            }
+
+        }
+
+        (function($, doc) {
+            $.init();
+            $('body').on('shown', '.mui-popover', function (e) {});
+            $('body').on('hidden', '.mui-popover', function (e) {});
+
+
+
+            $.ready(function () {
+
+
+                var header = document.querySelector('header.mui-bar');
+                var list = document.getElementById('list');
+                var done = document.getElementById('done');
+                //calc hieght
+                list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
+                //create
+                window.indexedList = new mui.IndexedList(list);
+
+                mui('.mui-indexed-list-inner').on('change', 'input', function () {
+                    var count = list.querySelectorAll('input[type="radio"]:checked').length;
+                    var value = count ? "完成(" + count + ")" : "完成";
+                    done.innerHTML = value;
+                    if (count) {
+                        if (done.classList.contains("mui-disabled")) {
+                            done.classList.remove("mui-disabled");
+                        }
+                    } else {
+                        if (!done.classList.contains("mui-disabled")) {
+                            done.classList.add("mui-disabled");
+                        }
+                    }
+                });
+
+
+                done.addEventListener('tap', function () {
+                    var checkboxArray = [].slice.call(list.querySelectorAll('input[type="radio"]'));
+                    var checkedValues = [];
+                    var checkedIds = [];
+                    checkboxArray.forEach(function (box) {
+                        if (box.checked) {
+                            checkedValues.push(box.parentNode.innerText);
+                            checkedIds.push(box.parentNode.getElementsByClassName("csfind")[0].value);
+                        }
+                    });
+                    if (checkedValues.length > 0) {
+                        closeHospital();
+                        document.getElementById("fuzzyhospital").value = checkedValues;
+                        document.getElementById('CustomerId').value = checkedIds[0];
+                    } else {
+
+
+                    }
+                }, false);
+
+                exchangeProduct();
+                //服务类型选择
+                var servicePicker=new  $.PopPicker({
+                    
+                });
+                servicePicker.setData([{
+                    value: '1',
+                    text: '安装'
+                }, {
+                    value: '2',
+                    text: '维修'
+                }]);
+                var showServicePicker=doc.getElementById('showServicePicker');
+                var serviceResult=doc.getElementById('serviceResult');
+                showServicePicker.addEventListener('tap', function (event) {
+
+
+                    servicePicker.show(function (items) {
+                        serviceResult.innerText =  (items[0] || {}).text ;
+                        
+                    });
+
+                }, false);
+
+
+                //城市选择
+                var cityPicker = new $.PopPicker({
+                    layer: 3
+                });
+                cityPicker.setData(cityData3);
+                var showCityPicker = doc.getElementById('showCityPicker');
+                var cityResult = doc.getElementById('cityResult');
+
+                showCityPicker.addEventListener('tap', function (event) {
+
+
+                    cityPicker.show(function (items) {
+                        cityResult.innerText = (items[0] || {}).text + "-" + (items[1] || {}).text + "-" + (items[2] || {}).text;
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+
+                    });
+
+                }, false);
+
+                //产品选择
+                var productPicker = new $.PopPicker({
+                    layer: 2
+                });
+                productPicker.setData(productData);
+                var showProductPicker_name = doc.getElementById('showProductPicker_name');
+                var showProductPicker_type = doc.getElementById('showProductPicker_type');
+
+                showProductPicker_name.addEventListener('tap', function (event) {
+
+                    productPicker.show(function (items) {
+                        showProductPicker_name.value = items[0].text;
+                        showProductPicker_type.value = items[1].text;
+                        document.getElementById('ProductId').value=items[1].value;
+                    });
+
+                }, false);
+
+                showProductPicker_type.addEventListener('tap', function (event) {
+
+                    productPicker.show(function (items) {
+                        showProductPicker_name.value = items[0].text;
+                        showProductPicker_type.value = items[1].text;
+                        document.getElementById('ProductId').value=items[1].value;
+                    });
+
+                }, false);
+
+              });
+
+                 
+
+
+
+            })(mui, document);
+
+
+
+
+            function showHospital()
+        {
+
+                if ($('#cityResult').text() == ""||$('#cityResult').text() ==null) {
+                    mui.toast('请先选择地区，将根据地区来筛选客户!');
+                    return;
+                } else {
+                    var location = $('#cityResult').text();
+                    location = location.replace(/\s/g, "-");
+
+                    $.ajax({
+                        url: "/staffMobile/Home/GetCustomer/",
+                        type: "POST",
+                        dataType:'json',
+                        data: { 'location': location },
+                        success: function (data) {
+
+                            if (data.result.items.length>0) {
+                                for (var i = 0; i < data.result.items.length;i++){
+
+                                        var li = '<li data-value="" data-tags="" class="mui-table-view-cell mui-indexed-list-item mui-radio mui-left mui-input-row"><input name="radiohosp" type="radio" />';
+                                        li = li + '   ' + data.result.items[i].name + '';
+                                        li = li + '   <input type="hidden" value="' + data.result.items[i].id + '" id="csId" name="csId" class="csfind"/>'
+                                        li = li + '</li>';
+
+                                        $("#customlist").append(li);
+                                }
+
+                            }
+
+                            $("#seekForHospital").css("display", "block");
+                            $("#wrapper").css("display", "none");
+                        },
+                        error: function (data) {
+
+                            mui.alert('请求客户失败', "错误");
+
+                        }
+
+                    });
+
+                }
+
+
+
+            }
+
+
+            function closeHospital()
+            {
+                
+
+                $("#customlist").empty();                //清空列表防止重复创建
+                $("#seekForHospital").css("display", "none");
+                $("#wrapper").css("display", "block");
+
+                if($('#CustomerId').val()!=null&& $('#CustomerId').val()!=""){
+                    
+                    selectOffices();
+                }
+
+            }
+
+
+
+
+            function Save() {
+                var isValid = true;
+                var errmsg = "";
+                var productId = $('#ProductId').val();  //产品ID
+
+                if(!productId){
+                    mui.toast('请选择产品信息!');
+                    isValid =false;
+                    return;
+                }
+
+                var serviceType =0;
+                if($('#serviceResult').text()=="安装"){
+                    serviceType = 1; //服务类型
+                
+                }else if($('#serviceResult').text()=="维修"){
+                    serviceType = 2; 
+                }else{
+                
+                }
+                
+
+
+                var customerId = $('#CustomerId').val();      //客户Id
+
+                if(!customerId){
+                    mui.toast('请选择客户信息!');
+                    isValid = false;
+                    return;
+                }
+
+                var office = $('#Office').val();           //科室
+
+                var officePerson = $('#OfficePerson').val();   //联系人
+
+                if (!officePerson) {
+                    mui.toast('请输入联系人!');
+                    isValid = false;
+                    return;
+
+                }
+
+                var officeTel = $('#OfficeTel').val();           //科室电话
+
+                var officeMobile = $('#OfficeMobile').val();     //联系人手机
+
+                var description = $('#Description').text();        //问题描述
+
+                //var  officePosition=$('#cityResult').text();       //客户地址
+
+                var customerName= $("#fuzzyhospital").val();      //客户名称
+
+                $.ajax({
+                    url: "/staffMobile/Home/CreateOrUpdate/",
+                    type: "POST",
+                    contentType: 'application/json',
+                    data:
+                        JSON.stringify({
+                            'CustomerId':customerId,
+                            'Description': description,
+                            'Office': office,
+                            'OfficeMobile': officeMobile,
+                            'OfficePerson': officePerson,
+                            //'OfficePosition': officePosition,
+                            'OfficeTel': officeTel,
+                            'ServiceType': serviceType,
+                            'ProductId': productId,
+                            'CustomerName': customerName
+
+
+                        }),
+                    success: function (data) {
+                        if (data == "ok") {
+
+                            window.parent.location.href = "/StaffMobile/home/index";
+                        } else {
+
+                            mui.alert('保存失败', "错误");
+                        }
+
+                    },
+                    error: function (data) {
+
+                        mui.alert('保存失败', "错误");
+                    }
+
+                });
+
+            }
+
+
+    </script>
+
+</body>
+
+</html>
+

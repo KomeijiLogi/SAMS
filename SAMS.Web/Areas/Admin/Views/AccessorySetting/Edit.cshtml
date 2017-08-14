@@ -1,0 +1,120 @@
+﻿@model SAMS.Web.Areas.Admin.Models.AccessorySetting.EditViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "SystemSetting";
+}
+
+<!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">备件设置</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-hover="dropdown" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-reply  back"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/accessory/neworgstock">
+                                        返回备件管理
+                                    </a>
+                                    <a href="/admin/systemsetting">
+                                        返回设置主页
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="active">
+                                    <a href="/admin/accessorysetting">备件目录</a>
+                                </li>
+                               
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class=" page-title">
+                        编辑备件
+                        <small></small>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <form action="/admin/accessorysetting/edit" class="form-horizontal" 
+                          data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" 
+                          data-ajax-failure="showException" data-ajax-success="editSucess" id="editForm" method="post">
+                        <input id="ID" name="ID" type="hidden" value="@Model.Id" />
+                                     
+                        <div class="form-group">
+                            <div class="col-sm-5 col-md-5 col-lg-4">
+                                <label class="control-label margin-bottom-5">名称<span class="required">*</span></label>
+                                <input class="form-control" data-val="true" 
+                                       data-val-length="长度不能超过20个字符" data-val-length-max="20" data-val-regex="不能包含空字符" 
+                                       data-val-regex-pattern="^[^\s]+$" data-val-required="名称不能为空" id="Name" name="Name" placeholder="请输入名称" 
+                                       type="text" value="@Model.Name" />
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-lg-offset-1 col-sm-offset-1 col-sm-5 col-md-5 col-lg-4 esh-xs-form-top">
+                                <label class="control-label margin-bottom-5">型号<span class="required">*</span></label>
+                                <input class="form-control" data-val="true" data-val-length="长度不能超过20个字符" data-val-length-max="20" 
+                                       data-val-regex="不能包含空字符" data-val-regex-pattern="^[^\s]+$" data-val-required="型号不能为空" 
+                                       id="Model" name="Model" placeholder="请输入型号" type="text" value="@Model.Model" />
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Model" data-valmsg-replace="true"></span>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                           
+                            <div class="col-sm-5 col-md-5 col-lg-4">
+                                <label class="control-label margin-bottom-5">单位</label>
+                                <input class="form-control" data-val="true"
+                                       data-val-length="长度不能超过20个字符" data-val-length-max="20" data-val-regex="不能包含空字符"
+                                       data-val-regex-pattern="^[^\s]+$" id="Unit" name="Unit" placeholder="请输入单位" type="text" value="@Model.Unit" />
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Unit" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                      
+                        <div class="form-group ">
+                            <div class="col-md-4 margin-top-20">
+                                <a class="btn btn-default" href="/admin/accessorysetting">取消</a>
+                                <button type="submit" class="btn green">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    function editSucess(data) {
+        if (data == "ok") {
+            growlAlert.success("操作成功");
+            setTimeout('window.location = "/admin/accessorysetting"', 1000);
+        } else { growlAlert.danger("操作失败"); }
+    }
+</script>
+
+
+<!-- END PAGE CONTEN -->
+

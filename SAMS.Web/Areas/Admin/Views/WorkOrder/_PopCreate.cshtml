@@ -1,0 +1,118 @@
+﻿<!--布局 -->
+@model SAMS.Web.Areas.Admin.Models.WorkOrder.PopCreateViewModel
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">新建工单</h4>
+</div>
+<form action="/admin/workorder/create" class="form-horizontal" data-ajax="true" 
+      data-ajax-begin="showPopLoading" data-ajax-complete="hidePopLoading" data-ajax-failure="showException" 
+      data-ajax-success="editWorkOrderSucess" id="editWorkOrderForm" method="post">
+  
+       <div class="modal-body">
+        <div class="form-group">
+            <label class="control-label col-md-1-5">客户<span class="required">*</span></label>
+            <div class="col-md-6">
+                <input class="hidden form-control" value="@Model.CustomerId" id="CustomerID" name="CustomerID" />
+                <label class="control-label">@Model.CustomerName</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-1-5">产品<span class="required">*</span></label>
+            <div class="col-md-3">
+                @Html.DropDownList("ProductName", Model.ProductItemList, "选择产品名称", new { @class = "form-control" })
+                <input id="productdata" name="productdata" type="hidden" value='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Products))' />
+              
+                <input class="esh-hide-area" data-val="true" data-val-required="请选择产品名称和产品型号" id="ProductID" name="ProductID" type="text" value="" />
+                <span class="field-validation-valid esh-error-lable" data-valmsg-for="ProductID" data-valmsg-replace="true"></span>
+            </div>
+            <div class="col-md-3 clear-padding-left">
+                <select id="ProductType" name="ProductType" class="form-control"><option value="">选择产品型号</option></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-1-5">
+                工单类型<span class="required">*</span>
+            </label>
+            <div class="col-md-6">
+                <select id="ServiceType" name="ServiceType" class="form-control">
+                  
+                    <option value="">选择工单类型</option>
+                    <option value="2">维修</option>
+                    <option value="1">安装</option>
+                </select>
+                <input class="esh-hide-area " data-val="true" data-val-required="工单类型不能为空" id="ServiceTypeID" name="ServiceTypeID" type="text" value="">
+                <span class="field-validation-valid esh-error-lable" data-valmsg-for="ServiceTypeID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-1-5">
+                服务描述&nbsp;&nbsp;
+            </label>
+            <div class="col-md-6">
+                <textarea class="form-control" cols="20" data-val="true" data-val-length="描述长度不能超过500个字符" data-val-length-max="500" id="Description" name="Description" placeholder="问题描述..." rows="5"></textarea><span class="help-block">500个字以内</span>
+                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-1-5">
+                优先级&nbsp;&nbsp;
+            </label>
+            <div class="col-md-8">
+                <div class="radio-list">
+                    <label class="radio-inline">
+                        <input checked="checked" data-val="true" data-val-required="The Priority field is required." 
+                               name="Priority" type="radio" value="1" />一般
+                    </label>
+                    <label class="radio-inline">
+                        <input name="Priority" type="radio" value="2" /> 紧急
+                    </label>
+                    <label class="radio-inline">
+                        <input name="Priority" type="radio" value="3" />非常紧急
+                    </label>
+                </div>
+            </div>
+        </div>
+      
+        <div class="form-group">
+            <label class="control-label col-md-1-5">客户电话</label>
+            <div class="col-md-6">
+                <input class="form-control" data-val="true"  id="CustomerPhone" name="CustomerPhone" placeholder="请输入客户电话" type="text" 
+                       value="@Model.CustomerPhone" />
+                <span class="field-validation-valid esh-error-lable" data-valmsg-for="CustomerPhone" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-1-5">业务员<span class="required">*</span></label>
+            <div class="col-md-6">
+                <input class="form-control" data-val="true" id="SaleMan" name="SaleMan" placeholder="请输入业务员姓名" type="text"
+                        data-val-required="业务员姓名不能为空"  value="" />
+                <span class="field-validation-valid esh-error-lable" data-valmsg-for="SaleMan" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+           <div class="form-group">
+               <label class="control-label col-md-1-5">业务员电话<span class="required">*</span></label>
+               <div class="col-md-6">
+                   @*@Html.TextBoxFor(model => model.SaleManPhone, new
+               {
+                   @class = "form-control",
+                   data_val_required = "业务员电话不能为空",
+                   data_val_regex = "业务员手机格式不正确"
+                                ,
+                   data_val_regex_pattern = @"^([1][3-8]\d{9})|((\d{3,4}-)?\d{6,8})$"
+               })*@
+                   <input class="form-control" data-val="true" data-val-regex="手机号格式不正确" data-val-regex-pattern="^[1][3-8]\d{9}$" 
+                         data-val-required="手机号不能为空" id="SaleManPhone" name="SaleManPhone" 
+                          placeholder="请输业务员手机号" type="text" value="" 
+                         >
+                   <span class="field-validation-valid esh-error-lable" data-valmsg-for="SaleManPhone" data-valmsg-replace="true"></span>
+               </div>
+           </div>
+
+
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-default">取消</button>
+        <button type="button" onclick="submitWorkOrderForm()" class="btn green">保存</button>
+    </div>
+</form>

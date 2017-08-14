@@ -1,0 +1,43 @@
+﻿
+@{
+    Layout = null;
+}
+@model SAMS.Web.Areas.StaffMobile.Models.AccessoryViewModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="~/Content/mui.min.css" rel="stylesheet" />
+    <link href="~/Content/mui.indexedlist.css" rel="stylesheet" />
+   
+</head>
+
+<body>
+    <div class="mui-content">
+   @if (Model.MyAccessories.Items.Count > 0)
+   {
+       <ul class="mui-table-view">
+                        @foreach (var item in Model.MyAccessories.Items)
+                        {
+                            <li class="mui-table-view-cell">
+                                <input type="hidden" name="accID" value="@item.AccessoryId" />
+                                <a href="#">
+                                    @item.AccessoryName &nbsp; @item.AccessoryModel
+                                    <span class="mui-badge">@item.Count</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+   }
+   else
+   {
+       <div >
+         <h5 class="mui-text-center">您没有备件</h5> 
+       </div>
+   }
+    </div>
+</body>
+</html>

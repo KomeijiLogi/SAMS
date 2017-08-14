@@ -1,0 +1,176 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "SystemSetting";
+}
+
+  <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">备件设置</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-hover="dropdown" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-reply  back"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/accessory/neworgstock">
+                                        返回备件管理
+                                    </a>
+                                    <a href="/admin/systemsetting">
+                                        返回设置主页
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="active">
+                                    <a href="/admin/accessorysetting">备件目录</a>
+                                </li>
+                                @*<li class="">
+                                    <a href="/admin/accessorysetting/enterstocktypelist">入库类别</a>
+                                </li>
+                                <li class="">
+                                    <a href="/admin/accessorysetting/exportstocktypelist">出库类别</a>
+                                </li>*@
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="page-title">
+                        备件目录
+                        <div class="input-group pull-right">
+                            <div class="input-group input-medium ">
+                                <input class="form-control" id="accessoryCode" maxlength="50" 
+                                       name="accessoryCode" placeholder="输入备件编码/备件名" type="text" value="" />
+                                <span class="input-group-btn">
+                                    <button class="btn green" id="btnSearch" type="button"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="esh-setting-wrapper setting-main-field">
+                        <div class="tip-info clearfix">
+                            <span>备件目录，指公司为客户提供售后服务过程中可能用到的备件清单。</span>
+                            <a class="btn btn-default pull-right" href="/admin/accessorysetting/create">
+                                <i class="fa font-12 fa-plus"></i>
+                                新建备件
+                            </a>
+                        </div>
+
+                        <div class="esh-field-column-header">
+                            <span class="col-md-3 col-xs-3">名称</span>
+                            <span class="col-md-3 col-xs-3">规格</span>
+                            <span class="col-md-1 col-xs-1">单位</span>
+                            <span class="pull-right text-right padding-right-30">
+                                操作
+                            </span>
+                        </div>
+                        <div id="dataTable">
+                            @Html.Action("Get", "AccessorySetting", new { PageIndex = 1, PageSize = 10, Sort = "", Direction = "desc", Where = "{}" })
+                         
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form action="/admin/accessorysetting/get" data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" 
+          data-ajax-failure="showException" data-ajax-mode="replace" data-ajax-update="#dataTable" id="searchByRequest" method="post">
+    <input id="PageIndex" name="PageIndex" type="hidden" value="1" />
+    <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" 
+           data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10" />
+    <input id="Sort" name="Sort" type="hidden" value="" />
+    <input id="Direction" name="Direction" type="hidden" value="" />
+    <input id="Where" name="Where" type="hidden" value="" /></form>
+</div>
+<!-- END PAGE CONTEN -->
+@section Scripts{
+ <!-- BEGIN PAGE SELF SCRIPTS -->
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            initEvent();
+        });
+
+        //事件绑定
+        function initEvent() {
+            //输入名称回车查询
+            $("#accessoryCode").keypress(function (e) {
+                if (e.which == 13) {
+                    changeQueryCondition();
+                }
+            });
+
+            //搜索按钮按下
+            $("#btnSearch").click(function () { changeQueryCondition(); })
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            $("#searchByRequest").submit();
+        }
+
+        //改变查询条件
+        function changeQueryCondition() {
+            var accessoryCode = $("#accessoryCode").val();//关键字
+            if (accessoryCode.indexOf("输入") >= 0) {
+                accessoryCode = "";
+            }
+            //组装查询条件
+            var whereData = "{'searchkey':'" + accessoryCode + "'}";
+
+            $("#Where").val(whereData);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //删除单条记录
+        function deleteRecord(id) {
+            botbox.confirm("提示", "您确认删除吗?", function (result) {
+                if (result) {
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/accessorysetting/delete",
+                        type: "POST",
+                    data: { "id": id },
+                    success: function (data) {
+                        hideLoading();
+                        if (data == "ok") {
+                            growlAlert.success("删除成功");
+                            $("#searchByRequest").submit();
+                        }
+                    },
+                    error: function (data) { hideLoading(); growlAlert.danger("删除失败") }
+                });
+            }
+            });
+        }
+</script>
+
+<!-- END PAGE SELF SCRIPTS -->
+    }
+

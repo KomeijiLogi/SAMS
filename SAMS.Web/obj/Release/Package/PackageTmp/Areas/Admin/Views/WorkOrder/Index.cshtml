@@ -1,0 +1,354 @@
+﻿@using Abp.Web.Mvc.Extensions
+@using SAMS.Web.Areas.Admin.Models.WorkOrder
+@{
+    ViewBag.Title = "工单列表";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "WorkOrder";
+}
+
+@section Scripts
+{
+  
+   @* @Html.IncludeScript("~/Areas/Admin/Views/WorkOrder/_CreateOrEditModal.js")*@
+   @* @Html.IncludeScript("~/Areas/Admin/Views/WorkOrder/Index.js")*@
+     <!-- BEGIN PAGE SELF SCRIPTS -->
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            initDataPicker();//设置时间控件
+            initEvent();//事件绑定
+            initTable();//初始化列表
+        });
+
+        //事件绑定
+        function initEvent() {
+            initSelect();
+            //初始化控件样式
+            $("#state_hide,#startDate,#endDate").val("");
+            $("ul.filter-option input[type=checkbox]").attr("checked", false);
+            $("ul.filter-option input[type=checkbox]").parent().removeClass("checked");
+
+            //显示或隐藏筛选功能
+            $('body').on('click', '#btnFilter.collapse, #btnFilter.expand', function (e) {
+                if ($(this).hasClass("collapse")) {
+                    $(this).removeClass("collapse").addClass("expand").text('取消筛选');
+                    $('#filterContent').slideDown(300);
+                } else {
+                    $(this).removeClass("expand").addClass("collapse").text('筛选');
+                    $('#filterContent').slideUp(300);
+                }
+            });
+
+            //取消筛选功能
+            $("#btnFilter").click(function () {
+                if ($(this).hasClass("expand")) {
+                    $("#select-customer").select2("val", "")
+                    $("#select-serviceOrg,#select-product,#state_hide,#select-serviceCategory,#startDate,#endDate").val("");
+                    $("ul.filter-option input[type=checkbox]").attr("checked", false);
+                    $("ul.filter-option input[type=checkbox]").parent().removeClass("checked");
+                    changeQueryCondition();
+                }
+            });
+
+            //开始日期改变触发表单提交
+            $('.input-daterange input[name=startDate]').on("changeDate", function () {
+                blnfirst = false;
+                changeQueryCondition();
+            });
+
+            //结束日期改变触发表单提交
+            $('.input-daterange input[name=endDate]').on("changeDate", function () {
+                var date1 = $('.input-daterange input[name=startDate]').val();
+                var date2 = $(this).val();
+                if (date2 >= date1) {
+                    changeQueryCondition();
+                }
+            });
+
+            //Checkbox选择触发表单提交
+            $("ul.filter-option input[type=checkbox]").on("click", function () {
+                var attrName = $(this).attr('name');
+                var subData = $("#" + attrName + "_hide").val();
+                if ($(this).attr('checked')) {
+                    subData += $(this).val() + ",";
+                } else {
+                    var a = $(this).val() + ",";
+                    subData = subData.replace(a, "");
+                }
+
+                $("#" + attrName + "_hide").val(subData);
+                changeQueryCondition();
+            });
+
+            //输入名称回车查询
+            $("#workOrderNumber").keypress(function (e) {
+                if (e.which == 13) {
+                    changeQueryCondition();
+                }
+            });
+
+            selectCustomer("#select-customer");//选择客户
+            $("#select-customer").change(function () { changeQueryCondition(); });
+            $("#select-serviceOrg").change(function () { changeQueryCondition(); });//选择服务组织
+            //搜索按钮按下
+            $("#btnSearch").click(function () { changeQueryCondition(); });
+
+            //选择产品
+            $("#select-product").change(function () { changeQueryCondition(); });
+
+            //工单类型
+            $("#select-serviceCategory").change(function () { changeQueryCondition(); });
+        }
+
+        ///初始化列表
+        function initTable() {
+            OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+            //单击行跳转到明细页
+            $('td:not(:lt(2))', $('#tableList tr')).click(function () {
+                var id = $(this).parent().find("input[type=checkbox]").val();//id值
+                window.location = "/admin/workorder/details/" + id;
+            });
+        }
+
+        //清空日期
+        var blnfirst = true;//首次执行标识
+        function clearDate(input) {
+            if (blnfirst) {
+                //为避免与onchangeDate事件的冲突
+                 return;
+            }
+
+            if (!$(input).val()) {
+                //日期清空时，重新查询
+                changeQueryCondition();
+            }
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            $("#searchByRequest").submit();
+        }
+
+        //改变查询条件
+        function changeQueryCondition() {
+
+            //组装查询条件
+            var workOrderNumber = $("#workOrderNumber").val();
+            if (workOrderNumber.indexOf("输入") >= 0) {
+                workOrderNumber = "";
+            }
+
+            var customerId = $("#select-customer").val();//客户
+            var productId = $("#select-product").val();//产品id
+            var serviceCategoryId = $("#select-serviceCategory").val();//工单类型
+            var state = $("#state_hide").val();//状态
+            var startDate = $("#startDate").val();//开始时间
+            var endDate = $("#endDate").val();//结束时间
+            var organizationId = $("#organizationId").val();//组织id
+            var serviceOrgId = $("#select-serviceOrg").val();//服务组织id
+            var filter = "";//过滤器
+            if ($("#filter_hide").val()) {
+                filter = $("#filter_hide").val();
+            }
+            var whereData;
+            if ($("#filter_hide").val() == 'my') {
+                 whereData = "{'ServiceStaffID':'" + $("#serviceStaffId").val() + "','searchkey':'" + workOrderNumber + "','customerId':'" + customerId + "','productId':'" + productId + "','serviceCategoryId':'" + serviceCategoryId + "',  'state':[" + trimEnd(state) + "],'startdate':'" + startDate + "','enddate':'" + endDate + "'}";
+
+            }
+            else {
+                 whereData = "{'filter':'" + filter + "','searchkey':'" + workOrderNumber + "','customerId':'" + customerId + "','productId':'" + productId + "','serviceCategoryId':'" + serviceCategoryId + "',  'state':[" + trimEnd(state) + "],'startdate':'" + startDate + "','enddate':'" + endDate + "'}";
+
+            }
+            if ($("#Where").val() == whereData) {
+                return;
+            }
+            $("#Where").val(whereData);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, direction) {
+            $("#Sort").val(sort);
+            $("#Direction").val(direction);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //选择客户
+        function selectCustomer(id) {
+            $(id).select2({
+                minimumInputLength: 1,
+                formatInputTooShort: "请输入客户名称",
+                allowClear: true,
+                id: function (item) {
+                    return item.Key
+                },
+                ajax: {
+                    url: "/admin/customer/getcustomers",
+                    type: "get",
+                    dataType: 'json',
+                    data: function (term) {
+                        return {
+                            name: term
+                        };
+                    },
+                    results: function (data) { // parse the results into the format expected by Select2.
+                        return {
+                            results: data
+                        };
+                    }
+                },
+                formatResult: function (item) { return item.Value }, // omitted for brevity, see the source of this page
+                formatSelection: function (item) { return item.Value }, // omitted for brevity, see the source of this page
+                escapeMarkup: function (m) {
+                    return m;
+                }
+            });
+        }
+
+        //启动新建工单对话框
+        function startDialog(title) {
+            modalLoadding("#createworkDailog", title, 460)
+            $("#createworkDailog").modal();
+        }
+
+        //弹出新建工单对话框
+        function showDialog(data) {
+            $("#createworkDailog .modal-content").html(data);//填充对话框
+            WorkOrder.init("/admin/customer/getcustomersbyname");//初始化对话框
+        }
+
+        //导出excel
+        function exportExcel() {window.location = "/admin/workorder/exportexcel?Where=" + $("#Where").val();}
+
+        //创建工单成功
+        function editWorkOrderSucess(data) { if (data == "ok") { $("#createworkDailog").modal("hide"); changeQueryCondition();} else { growlAlert.danger("新建工单失败。"); } }
+
+</script>
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="side-menu-sidebar">
+            <div class="portlet portlet-nav">
+                <div class="portlet-title">
+                    <div class="caption" data-toggle="" data-target=".side-menu-project-list-content">
+                        <span class="uppercase">工单视图</span>
+                        <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                    </div>
+
+                </div>
+            </div>
+            @Html.Action("ListView", "WorkOrder", new { id=ViewBag.ID})
+            @*<div class="portlet-body side-menu-project-list-content" id="lst1" style="height: auto;">
+                <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                    <ul class="nav nav-pills nav-stacked esh-nav-pills">
+
+                        <li class="active">
+                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=1})"><span>所有工单</span><span class="badge badge-success">@ViewBag.Views1</span></a>
+                        </li>
+
+                        <li class="">
+                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=2})"><span>截止到昨日未解决工单</span> <span class="badge badge-success">@ViewBag.Views2</span></a>
+                        </li>
+                        <li class="">
+                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=3})"><span>今日新增工单</span> <span class="badge badge-success">@ViewBag.Views3</span></a>
+                        </li>
+                        <li class="">
+                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=4})"><span>今日已解决工单</span> <span class="badge badge-success">@ViewBag.Views4</span></a>
+                        </li>
+                        <li class="">
+                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=5})"><span>所有未解决工单</span> <span class="badge badge-success">@ViewBag.Views5</span></a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>*@
+        </div>
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">工单列表</div>
+                    <div class="input-group pull-right">
+                        <div class="input-group input-medium">
+                            <input class="form-control" id="workOrderNumber" maxlength="50" name="workOrderNumber" placeholder="输入工单编号/客户名称" type="text" value="">
+                            <span class="input-group-btn">
+                                <button class="btn green" id="btnSearch" type="button"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="col-md-6 col-xs-6 clear-padding-left">
+                           
+                            <a class="btn green" data-ajax="true" data-ajax-begin="startDialog('新建工单')" 
+                               data-ajax-method="GET" data-ajax-success="showDialog" 
+                               href="/admin/workorder/popcreateworkordercustomer">新建</a>
+
+                            @*<button class="btn green collapse" id="btnFilter">筛选</button>*@
+
+                        </div>
+                        @*<div class="col-md-6 col-xs-6 clear-padding-right">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        更多操作&nbsp;
+                                        <i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:;" onclick="exportExcel()">
+                                                Execl导出
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                @*<div class="btn-group">
+                                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            列&nbsp;<i class="fa fa-angle-down"></i>
+                                        </button>
+                                        <div id="tableList_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+                                            <label>
+                                                <div class="checker"><span class="checked"><input type="checkbox" checked="" data-column="2"></span></div>客户
+                                            </label>
+                                        </div>
+                                    </div>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="WorkOrderTable" class="dataTables_wrapper no-footer">
+                        @Html.Action("GetList", "WorkOrder",new  {PageIndex=1,PageSize=10,Sort= "CreationTime", Direction ="desc",Where= "{filter: "+ ViewBag.ID+"}" })
+                    </div>
+                    @using (Ajax.BeginForm("GetList","WorkOrder",
+                        new AjaxOptions() {
+                        UpdateTargetId = "WorkOrderTable"  ,
+                        OnBegin = "showLoading",
+                        OnComplete= "hideLoading",
+                        OnFailure= "showException",
+                        OnSuccess = "initTable"
+                    }
+                    ,new { id="searchByRequest"})) {
+
+                        <input type="hidden" id="filter_hide" value="">
+
+                        <input id="PageIndex" name="PageIndex" type="hidden" value="1">
+                        <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。"
+                               data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10">
+                        <input id="Sort" name="Sort" type="hidden" value="">
+                        <input id="Direction" name="Direction" type="hidden" value="">
+                        <input id="Where" name="Where" type="hidden"
+                               value="{filter:@ViewBag.ID}">
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

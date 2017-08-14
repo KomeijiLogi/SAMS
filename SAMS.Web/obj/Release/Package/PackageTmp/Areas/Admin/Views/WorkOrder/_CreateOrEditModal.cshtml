@@ -1,0 +1,171 @@
+﻿
+@using Abp.Extensions
+@using SAMS.Web.Areas.Admin.Models.Common.Modals
+@model SAMS.Web.Areas.Admin.Models.WorkOrder.CreateOrEditWorkOrderModalViewModel
+@Html.Partial("~/Areas/Admin/Views/Common/Modals/_ModalHeader.cshtml",
+    new ModalHeaderViewModel(Model.IsEditMode ? "编辑工单"  : "新建工单"))
+
+<form class="form-horizontal" id="editWorkOrderForm">
+    <div class="modal-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                客户资料
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    @Html.HiddenFor(model => model.WorkOrder.Id, new { @class = "form-control" })
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">
+                            客户名称
+                            <span class="required" >*</span>
+                        </label>
+                        <div class="col-md-10 clear-md-padding">
+                            @Html.TextBoxFor(model => model.WorkOrder.CustomerName, new { @class = "form-control",placeholder= "请输入客户名称",data_val_required = "客户名称不能为空" })
+                            @Html.ValidationMessageFor(m => m.WorkOrder.CustomerName,"",new { @class= "esh-error-lable" })
+                            @Html.HiddenFor(model => model.WorkOrder.CustomerId, new { @class="form-control"})
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">电话</label>
+                        <div class="col-md-10  clear-md-padding">
+                            @Html.TextBoxFor(model => model.WorkOrder.CustomerPhone, new { @class = "form-control", placeholder = "请输入客户电话" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">所属区域 <span class="required">*</span></label>
+                        <div class="col-md-10 clear-padding-right" name="area">
+                            <div class="col-md-4 clear-padding-left">
+                                <select class="form-control select2" id="sel_pro" name="sel_pro"  >
+                                    <option value="">省份</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 clear-padding-left">
+                                <select class="form-control select2" id="sel_city" name="sel_city"  >
+                                    <option value="">城市</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 clear-padding-left">
+                                <select class="form-control select2" id="sel_distr" name="sel_distr"  >
+                                    <option value="">区县</option>
+                                </select>
+                            </div>
+                            
+                            <div class="clearfix">
+                                @Html.TextBoxFor(model => model.WorkOrder.Area, new { @class = "esh-hide-area" , data_val_required = "区域不能为空" })
+                                @Html.ValidationMessageFor(m => m.WorkOrder.Area, "", new { @class = "esh-error-lable" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">邮箱</label>
+                        <div class="col-md-10  clear-md-padding">
+                            @Html.TextBoxFor(model => model.WorkOrder.CustomerEmail, new { @class = "form-control", placeholder = "请输入客户邮箱" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">详细地址</label>
+                        <div class="col-md-10  clear-md-padding">
+                            @Html.TextAreaFor(model => model.WorkOrder.Address, new { @class = "form-control", cols = "20" ,row = 3,placeholder= "详细地址信息100个字以内" })
+                       
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                业务员资料
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">业务员 <span class="required">*</span></label>
+                        <div class="col-md-10 clear-md-padding">
+                            @Html.TextBoxFor(model => model.WorkOrder.SaleMan, new { @class = "form-control" ,data_val_required="业务员不能为空"})
+                           
+                            @Html.ValidationMessageFor(model => model.WorkOrder.SaleMan,"",  new { @class = "esh-error-lable" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">手机<span class="required">*</span></label>
+                        <div class="col-md-10 clear-md-padding">
+                            @Html.TextBoxFor(model => model.WorkOrder.SaleManPhone, new { @class = "form-control" ,
+                                data_val_required="电话号码不能为空",data_val_regex = "业务员手机格式不正确" 
+                                ,data_val_regex_pattern =@"^([1][3-8]\d{9})|((\d{3,4}-)?\d{6,8})$" })
+                           
+                            @Html.ValidationMessageFor(model => model.WorkOrder.SaleManPhone, "", new { @class = "esh-error-lable" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                业务信息
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">产品名称<span class="required">*</span></label>
+                        
+                        <div class="col-md-10 clear-md-padding">
+                            @Html.DropDownList("ProductName", Model.ProductItemList, "选择产品名称", new { @class= "form-control"})
+                            <input id="productdata" name="productdata" type="hidden" value='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Products))'/>
+                        
+                            @Html.HiddenFor(model => model.WorkOrder.ProductId, new { @class = "form-control",data_val_required = "请选择产品名称和产品型号"
+                       })
+             
+                            @Html.ValidationMessageFor(model => model.WorkOrder.ProductId, "", new { @class = "esh-error-lable" })
+                           
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">产品型号<span class="required">*</span></label>
+                        <div class="col-md-10 clear-md-padding">
+                         
+                            @Html.DropDownList("ProductModel", Model.ModelItemList, "选择产品型号", new { @class = "form-control" })
+
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">工单类型<span class="required">*</span></label>
+                        <div class="col-md-10  clear-md-padding">
+                            @Html.EnumDropDownListFor(model => model.WorkOrder.ServiceType, htmlAttributes:new { @class= "form-control"  })
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="WorkOrder.ServiceType" data-valmsg-replace="true"></span>
+                        
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label pull-left single-word">优先级<span class="required">*</span></label>
+                        <div class="col-md-10 clear-md-padding">
+                            @Html.EnumDropDownListFor(model => model.WorkOrder.Priority, "选择优先级", new { @class = "form-control" })
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="WorkOrder.Priority" data-valmsg-replace="true"></span>
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <div class="col-md-12">
+                        <label class="control-label pull-left single-word">服务描述</label>
+                        <div class="col-md-11 clear-md-padding">
+                             
+                             @Html.TextAreaFor(model => model.WorkOrder.Description, new { @class = "form-control", cols = 20, row = 3 })
+                          
+                        </div>
+                    </div>
+                </div>
+               
+
+            </div>
+        </div>
+    </div>
+</form>
+@Html.Partial("~/Areas/Admin/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

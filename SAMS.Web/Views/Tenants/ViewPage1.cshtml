@@ -1,0 +1,242 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>工作汇报</title>
+    <script>
+			var __globalData = {
+				id:'590d6ed0e4b0e139e6f20e84',
+				appId: '20001',
+				pubaccId: 'XT-010e1b90-c139-496a-abed-cd44f915378d',
+				eid:'101',
+				openId: 'af6766a7-d65f-11e6-b810-00505681025b',
+				appId: '20001',
+				userName: '王晓臣',
+				userId: '',
+				groupId: '',
+				showTeamReport: ''
+			};
+
+    </script>
+    <style>
+        #fileDetail span {
+            display: block;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/workreport/css/swiper.min.css?7ff975e5dbf6d3897af88ef62dcff1" />
+    <link rel="stylesheet" href="/workreport/css/reset.css?299c955ac7875655e3ec555f6ef6f24" />
+    <link rel="stylesheet" href="/workreport/css/workreport-list.css?d2706b6874435e0671af4d6a6e320f7" />
+    <link rel="stylesheet" href="/workreport/css/workreport-start.css?49e030d38d394cbff55da51bc4c56f9" />
+    <link rel="stylesheet" href="/workreport/css/workreport-detail.css?df1ddd3e1bcf5b8edc26e51c74b83377" />
+
+    <!-- 日历组件 -->
+    <link rel="stylesheet" href="/workreport/css/calendar.css?f678b36a753fd6f98f21c6fa49b77b2" />
+    <link rel="stylesheet" href="/workreport/css/report-time.css?5cda2b80fd79d2ba184d9914e366" />
+    <!-- 日历组件 -->
+    <link rel="stylesheet" href="/workreport/css/animate.css?b27759f2861db43ac473d1f4e9cfad5f" />
+
+
+    <!--添加上传图片组件  -->
+    <link rel="stylesheet" href="/workreport/css/client_visit.css?60f06bdfe84710e71da431f6aa592fd3" />
+    <script src="/workreport/js/core/zepto.min.js?c33c9d7be5ab43de999950a1cdf2eabe"></script>
+    <script src="/workreport/js/common/mTouch.js?9d11f017da220f6828c5b9a91ea8044"></script>
+    <!--添加上传图片组件  -->
+    <script src="/workreport/js/common/swiper3.0.4.min.js?6968162ae8306bf0f2594d843e9e5e23"></script>
+    <script src="/workreport/js/common/upload.js?6842fa4a4a8adae0b86aa89dae82b9ae"></script>
+    <script src="/workreport/js/common/preview.js?24342898d0bd52f5aabeb6d8489ce1f"></script>
+    <script src="/workreport/js/core/xtjs.js?4886858b7c6a18f80c43714b5e446b"></script>
+    <script src="/workreport/js/app/takenotes.js?3c902a196a28daf528c487f4552cac"></script>
+    <script src="/workreport/js/app/util.js?8d688abb44399ea78a4e8122a9e81a45"></script>
+
+    <!-- 日历组件 -->
+    <script src="/res/js/qingjs.js" type="js" />
+    <script src="/workreport/js/core/time-picker-util.js?e1649a78b52268258ae32bb6206d2f"></script>
+    <script src="/workreport/js/core/widget.js?e28b2be5d2dc7ccb22d976f405e66d0"></script>
+    <script src="/workreport/js/core/calendar.js?a0289597a216bb3ec8066cdee6b6422"></script>
+    <script src="/workreport/js/core/report-time-picker.js?d09fa236c4b01effddf958bece6317b8"></script>
+    <script src="/workreport/js/core/selector-date.js?7eaeeb82b16db23872927da1fca2ee1"></script>
+    <script src="/workreport/js/core/selector-week.js?16e0b6e1b2b7fc29422f49fff5537a0"></script>
+    <!-- 日历组件 -->
+
+    <script src="/workreport/js/app/workreport-list.js?bfc138e89da7164e31f2da56cc7a6a"></script>
+    <script src="/workreport/js/app/workreport-start.js?6593a758e7458ab392ca5d609274885c"></script>
+    <script src="/workreport/js/app/workreport-detail.js?bf9cf74d096ba6a29d2906d52058b1"></script>
+    <script src="/workreport/js/app/client-visit.js?e88c78c830ea597f17da942f549975b"></script>
+    <script src="/workreport/js/app/group-workreport-create.js?4b7d1d335bc84a1238eef6fb54ce7"></script>
+    <!-- weinre调试用 -->
+    <!--  <script src="http://sharetest.kdweibo.cn:8080/target/target-script.js#workreport"></script>-->
+    Referer: http://wb.weigaoholding.com:8090/workreport/js/app/workreport-start.js?6593a758e7458ab392ca5d609274885c
+    <script>
+(function(){
+        var dpr = window.devicePixelRatio;
+        if(window.devicePixelRatio >= 1.5) {
+            dpr = 2;
+        }
+        document.documentElement.setAttribute('data-dpr', dpr);
+	document.documentElement.style.fontSize = document.documentElement.clientWidth / 6.4 + 'px';
+})();
+    </script>
+</head>
+<body class="start-body">
+    <div class="date-panel border">
+        <div class="ws-report-date clearfix">
+            <div>
+                <span class="date_label">汇报类型</span>
+                <ul class="date-list clearfix group-workreport-selectortype">
+                    <li class="previous" data-type="WORK_DAY">日报</li>
+                    <li class="current" data-type="WORK_WEEK">周报</li>
+                    <!-- <li class="next" data-type="WORK_MONTH">月报</li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="select-time-container bsizing2">
+        <!--选择日期-->
+        <div class="workreport-list-datetime clearfix bsizing2">
+            <div class="workreport-list-submitdate fl bsizing2">
+                <div class="create-date-title">日报日期</div>
+                <div class="create-date-time">3月16日 星期三</div>
+            </div>
+            <div class="datetime-right fr bsizing2">
+                <span class="datetime-yesterday selector-date">昨天</span>
+                <span class="datetime-today time-slected selector-date">今天</span>
+                <span class="other-day selector-date">明天</span>
+            </div>
+        </div>
+
+
+        <!--选择周-->
+        <div class="workreport-list-weektime clearfix bsizing2 none">
+            <div class="workreport-list-submitweek fl bsizing2">
+                <div class="create-week-title">周报日期</div>
+                <div class="create-week-time">3月16日-4月7日</div>
+            </div>
+            <div class="weektime-right fr">
+                <span class="last-week selector-week">上周</span>
+                <span class="now-week selector-week week-selected">本周</span>
+                <span class="other-week selector-week">下周</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="report-content">
+        <div class="report-textarea">
+            <textarea class="report-content_input" placeholder="请输入日报内容"></textarea>
+        </div>
+        <div class="report-content-bottom">
+            <div class="lastest-savetime">
+                <img src="/workreport/images/save-time_03.png" alt="">
+                <span class="savetime">暂未保存</span>
+            </div>
+            <div class="border border-t upload-img">
+                <!--上传图片-->
+                <div class="clearfix upload-btn" id="children-bg">
+                    <label class="label">选择图片</label>
+                    <span class="tips" id="imageCount">已添加0张</span>
+                    <!--上传图片按钮  -->
+                    <span class="upload-addbtn">
+
+                        <input type="file" accept="image/jpeg,image/jpg,image/png,image/jp2,image/bmp" id="file">
+                    </span>
+
+                </div>
+                <div class="upload-img-list"></div>
+            </div>
+            <div class="border border-t upload-img" id="forMobile">
+
+                <div class="file-title upload-btn">
+                    <label class="label">选择附件</label>
+                    <span class="tips" id="fujianCount">已添加<span id="fileCount">0</span>个</span>
+
+                    <span class="upload-addbtn fileIdString" id="forMobile">
+                        <input type="text" name="file" id="fileFujian" class="file-input" accept="*" multiple="multiple" readonly>
+                    </span>
+
+                </div>
+
+                <div id="fileDetail"></div>
+            </div>
+        </div>
+    </div>
+    <div id="tipGroup"></div>
+    <div class="group-btn">
+        <button class="btn-full-w share-btn">提交</button>
+    </div>
+
+    <!--插件结构  -->
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+
+        </div>
+        <!-- 如果需要分页器 -->
+        <div class="swiper-pagination"></div>
+        <div class="curPage"></div>
+        <!-- 如果需要导航按钮 -->
+        <div class="swiper-button-prev gobtn"></div>
+        <div class="swiper-button-next gobtn"></div>
+    </div>
+    <!--图片正在上传点击提交按钮提示层-->
+    <div class="upload-tishi">图片正在上传，请稍后...</div>
+    <!--提示弹层-->
+    <div class="overlayer"></div>
+    <!--success-tips提交成功-->
+    <div class="success-tips">
+        <!-- <p class="title">已提交给【<span class="department-name"></span>】负责人</p>
+        <p class="leaders blue"></p> -->
+        提交成功
+    </div>
+    <div class="model-box">
+        <p class="share-text">你的部门还没有设置负责人<br>先把你的工作成果分享给同事吧</p>
+        <div class="group-btn">
+            <button class="btn-no share-cancel-btn">取消</button>
+            <button class="btn-yes share-colleague-btn">分享给同事</button>
+        </div>
+    </div>
+    <div class="model-box2">
+        <p class="title">是否提交给【<span class="department-name"></span>】负责人</p>
+        <p class="leaders green"></p>
+        <div class="group-btn group-btn2">
+            <button class="btn-no click-cancale-director">取消</button>
+            <button class="btn-yes click-to-director">确定</button>
+        </div>
+    </div>
+    <div id="userinfo-ps"></div>
+
+    <div class="loading">
+        <div class="circle-container container1 vertical-middle">
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+            <div class="circle4"></div>
+        </div>
+        <div class="circle-container container2 vertical-middle">
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+            <div class="circle4"></div>
+        </div>
+    </div>
+
+    <!-- 选择周 -->
+    <div class="show-week-container">
+        <ul></ul>
+    </div>
+
+
+    <!-- 选择日期 -->
+    <div class="selector-date-container">
+        <ul></ul>
+    </div>
+
+    <script>
+			reportStart.init();
+    </script>
+</body>
+</html>

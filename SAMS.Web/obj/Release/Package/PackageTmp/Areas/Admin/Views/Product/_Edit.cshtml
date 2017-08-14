@@ -1,0 +1,59 @@
+﻿@model SAMS.Web.Areas.Admin.Models.Product.EditViewModel
+
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">编辑产品</h4>
+</div>
+<form action="/admin/product/edit" class="form-horizontal" data-ajax="true" 
+      data-ajax-begin="showPopLoading" data-ajax-complete="hidePopLoading" data-ajax-failure="showException" 
+      data-ajax-success="editSucess" id="editForm" method="post">
+    <div class="modal-body">
+        <div class="scroller" style="height: 380px" data-always-visible="1" data-rail-visible1="1">
+            <!-- BEGIN FORM-->
+            <input id="Id" name="Id" type="hidden" value="@Model.Id" />
+
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    产品名称<span class="required">*</span>
+                </label>
+                <div class="col-md-7">
+                    <input class="form-control" data-val="true" data-val-length="产品名称长度不能超过50个字符" 
+                           data-val-length-max="50" data-val-regex="产品名称不能包含空字符" 
+                           data-val-regex-pattern="^[^\s]+$" data-val-remote="产品已存在"
+                           data-val-remote-additionalfields="*.Name,*.Id,*.Model" 
+                           data-val-remote-url="/admin/product/checkproduct" 
+                           data-val-required="产品名称不能为空" id="Name" name="Name" 
+                           placeholder="请输入产品名称" type="text" value="@Model.Name" />
+                    <span class="field-validation-valid esh-error-lable" 
+                          data-valmsg-for="Name" data-valmsg-replace="true">
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    产品型号<span class="required">*</span>
+                </label>
+                <div class="col-md-7">
+                    <input class="form-control" data-val="true" 
+                           data-val-length="产品型号长度不能超过50个字符" 
+                           data-val-length-max="50" data-val-regex="产品型号不能包含空字符" 
+                           data-val-regex-pattern="^[^\s]+$" data-val-remote="产品已存在" 
+                           data-val-remote-additionalfields="*.Model,*.Id,*.Name" 
+                           data-val-remote-url="/admin/product/checkproduct" 
+                           data-val-required="产品型号不能为空" 
+                           id="Model" name="Model" placeholder="请输入产品型号" type="text" value="@Model.Model" />
+                    <span class="field-validation-valid esh-error-lable" data-valmsg-for="Model" data-valmsg-replace="true"></span>
+                </div>
+            </div>
+
+
+            <!-- END FORM-->
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="cancelbtn" data-dismiss="modal" class="btn btn-default">取消</button>
+        <button type="submit" class="btn green">确定</button>
+    </div>
+</form>

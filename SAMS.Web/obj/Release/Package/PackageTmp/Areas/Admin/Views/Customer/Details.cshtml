@@ -1,0 +1,312 @@
+﻿@model SAMS.Web.Areas.Admin.Models.Customer.DetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "Customer";
+}
+
+  <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+
+    <div class="col-md-12">
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption title">
+                    客户详情
+                </div>
+                <div class="input-group pull-right">
+                    <a class="btn btn-default" href="/admin/customer">返回客户列表</a>
+                    <a class="btn btn-default" data-ajax="true" data-ajax-begin="startDialog('新建工单')" 
+                       data-ajax-method="GET" data-ajax-success="showDialog" 
+                       href="/admin/workorder/popcreate/@(Model.Customer.Id)?Name=@(Model.Customer.Name)&Mobile=@(Model.Customer.Mobile)">新建工单</a>                    <button class="btn btn-default" onclick="deleteRecord('ca36a4c8-b765-4987-918c-0776732c33b6')">删除客户</button>
+
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="esh-side-edit-wrap">
+                    <div class="" id="div-customer">
+                        <div class="esh-work-order-side">
+                            <label class="font-md esh-txtellipsis code">@(Model.Customer.Name)</label>
+                            <a class="pull-right" href="javascript:showeditor();">
+                                <i class="fa fa-pencil font-13"></i>&nbsp;编辑
+                            </a>
+                        </div>
+                        <div class="esh-work-order-side">
+                            <ul class="esh-pub-ul">
+                                <li><span>电话：</span>@Model.Customer.Mobile</li>
+                                <li><span>邮箱：</span>@Model.Customer.Email</li>
+                                <li><span>区域：</span>@Model.Customer.Area</li>
+                                <li><span>详细地址：</span>@Model.Customer.Address</li>
+
+                            </ul>
+                        </div>
+                        <div class="esh-work-order-side">
+                            <ul class="esh-pub-ul">
+                                <li><span>创建日期：</span>@Model.Customer.CreationTime.ToString("yyyy-MM-dd")</li>
+                                <li><span>最近服务：</span>@(Model.LastServiceTime.HasValue?Model.LastServiceTime.Value.ToString("yyyy-MM-dd hh:mm:ss"):"")</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <form action="/admin/customer/edit" class="hidden" data-ajax="true" data-ajax-begin="showLoading" 
+                          data-ajax-complete="hideLoading" data-ajax-failure="showException" 
+                          data-ajax-success="editSucess" id="editForm" method="post">
+                        <input id="ID" name="ID" type="hidden" value="@Model.Customer.Id" />                        
+                        <div class="form-group">
+                            <label>客户名称</label>
+                            <input class="form-control" data-val="true" data-val-length="名称长度不能超过50个字符" 
+                                   data-val-length-max="50" data-val-regex="不能包含空字符" data-val-regex-pattern="^[^\s]+$" 
+                                   data-val-required="名称不能为空" id="Name" name="Name" placeholder="请输入客户名称" type="text" 
+                                   value="@Model.Customer.Name" />
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>电话</label>
+                            <input class="form-control" data-val="true" 
+                                   @*data-val-regex="手机号格式不正确" data-val-regex-pattern="^[1][3-8]\d{9}$" data-val-remote="手机号已存在" 
+                                   data-val-remote-additionalfields="*.Mobile,*.ID" data-val-remote-url="/admin/customer/checktelnumber" 
+                                   data-val-required="手机号不能为空"*@ 
+                                   id="Mobile" name="Mobile" placeholder="请输入客户电话" type="text" value="@Model.Customer.Mobile" />
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="Mobile" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>邮箱</label>
+                            <input class="form-control" data-val="true" data-val-regex="请输入正确的Email格式！" 
+                                   data-val-regex-pattern=@Html.Raw(@"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$") id="Mail" name="Mail" 
+                                   placeholder="请输入客户邮箱" type="text" value="@Model.Customer.Email" />
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="Mail" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>所属区域</label>
+                            <select class="form-control select2" id="sel_pro" name="sel_pro" data_val="true" data_val_required="区域不能为空">
+                                <option value="">省份</option>
+                            </select>
+                            <select class="form-control select2" style="margin-top:2px" id="sel_city" name="sel_city" data-val="true" data-val-required="区域不能为空">
+                                <option value="">城市</option>
+                            </select>
+                            <select class="form-control select2" style="margin-top:2px" id="sel_distr" name="sel_distr" data-val="true" data-val-required="区域不能为空">
+                                <option value="">区县</option>
+                            </select>
+                            <div class="clearfix">
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Area" data-valmsg-replace="true"></span>  
+                                <input class="esh-hide-area" data-val="true" data-val-length="区域长度不能超过50个字符" data-val-length-max="50" 
+                                       data-val-required="区域不能为空" id="Area" name="Area" type="text" value="@Model.Customer.Area" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>详细地址</label>
+                            <textarea class="form-control" cols="20" data-val="true" data-val-length="地址长度不能超过100个字符" data-val-length-max="100" 
+                                      data-val-regex="不能包含空字符" data-val-regex-pattern="^[^\s]+$" @*data-val-required="地址不能为空"*@ 
+                                      id="Address" name="Address" placeholder="详细地址信息..." rows="3">
+                                @Model.Customer.Address
+                            </textarea><span class="help-block">100个字以内</span>
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="Address" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group margin-top-25">
+                            <a class="btn btn-default" href="javascript:hiddeneditor();">取消</a>
+                            <button type="submit" class="btn green">保存</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="esh-detail-content">
+                    <div class="esh-tabbable-individual tabbable-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="" onclick="changeUrl('/admin/workorder/getlist')" data-toggle="tab" aria-expanded="false">
+                                    历史工单
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="dataTable" class="dataTables_wrapper no-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input id="PageIndex" name="PageIndex" type="hidden" value="1" />
+    <input id="PageSize" name="PageSize" type="hidden" value="10" />
+    <input id="Sort" name="Sort" type="hidden" value="" />
+    <input id="Direction" name="Direction" type="hidden" value="" />
+    <input id="Where" name="Where" type="hidden" value="" />
+    <input id="customerID" name="customerID" type="hidden" value="@Model.Customer.Id" />
+    <input id="Url" name="Url" type="hidden" value="" />
+    <div class="modal fade" id="editDailog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+@section Scripts
+{
+ <!-- BEGIN PAGE SELF SCRIPTS -->
+
+<script type="text/javascript" src="~/libs/bootstrap-tabdrop/js/bootstrap-tabdrop.js"></script>
+<script type="text/javascript" src="~/Content/admin/scripts/editworkorder.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#Url").val("/admin/workorder/getlist");//初始Url
+            $("#Where").val("{'customerId':'" + $("#customerID").val() + "'}");//初始检索条件
+            getData();//获取列表数据
+            initEditSide();//初始化侧栏
+            initDialog();//初始化区域
+        });
+
+        //获取列表数据
+        function getData() {
+            if ($('#customerID').val() == "") {
+                $('#customerID').val(1);
+            }
+            if ($("#Url").val()) {
+                showLoading();
+                $.ajax({
+                    url: $("#Url").val(),
+                    type: "Post",
+                    
+                    data: { "Where": JSON.stringify({ CustomerId: $('#customerID').val(), SearchKey: "", Filter:""}), "Sort": $("#Sort").val(), "Direction": $("#Direction").val(), "PageIndex": $("#PageIndex").val(), "PageSize": $("#PageSize").val() },
+                    success: function (data) {
+                        hideLoading();
+                        $("#dataTable").html(data);
+                        initTable();
+                    },
+                    error: function (data) { hideLoading(); showException(data); }
+                });
+            }
+        }
+
+        ///初始化列表
+        function initTable() {
+            OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+
+            //单击行跳转到明细页
+            $('td:not(:first,:last)', $('#tableList tr')).click(function () {
+                var id = $(this).parent().find("input[type=checkbox]").val();//id值
+                window.location = "/admin/workorder/details/" + id;
+            });
+        }
+
+        //改变url
+        function changeUrl(url) {
+            $("#Url").val(url);
+            getData();
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            getData();
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, direction) {
+            $("#Sort").val(sort);
+            $("#Direction").val(direction);
+            $("#PageIndex").val(1);//页索引置为1
+            getData();
+        }
+
+        //获取省市区域的值
+        function getAreaVal() {
+            //获取省市区的值
+            var area = $("#sel_pro").select2('data').text + "-" + $("#sel_city").select2('data').text + "-" + $("#sel_distr").select2('data').text;
+            if ($("#sel_pro").val() && $("#sel_city").val() && $("#sel_distr").val()) {
+                $("#Area").val(area).focus().blur();
+
+            }
+            else { $("#Area").val(""); }
+        }
+
+        //显示编辑器
+        function showeditor() {
+            $("#div-customer").addClass("hidden");
+            $("#editForm").removeClass("hidden");
+        }
+
+        //隐藏编辑器
+        function hiddeneditor() {
+            $("#div-customer").removeClass("hidden");
+            $("#editForm").addClass("hidden");
+        }
+
+        //初始化弹出的对话框
+        function initDialog() {
+            initArea("#sel_pro", "#sel_city", "#sel_distr", $("#Area").val());//初始化省市区域
+            initSelect();//初始化select2控件
+            Metronic.initSlimScroll('.scroller');//滚动条
+            $("#editForm").removeData("validator");//删除验证器
+            $.validator.unobtrusive.parse("#editForm");//添加验证器
+            $("#s2id_sel_distr input").blur(function () { getAreaVal(); });
+            initDataPicker();//设置时间控件
+            initUniform();
+        }
+
+        //删除单条记录
+        function deleteRecord(id) {
+            botbox.confirm("提示", "您确认删除吗?", function (result) {
+                if (result) {
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/customer/delete",
+                        type: "POST",
+                        data: { "ids": id },
+                        success: function (data) {
+                            hideLoading();
+                            debugger;
+                            if (data == "ok") {window.location = "/admin/customer"; }
+                            else { growlAlert.danger("删除失败"); }
+                        },
+                        error: function (data) { hideLoading(); growlAlert.danger("删除失败") }
+                    });
+                }
+            });
+        }
+
+        //编辑记录成功后的处理
+        function editSucess(data) {
+            if (data != null) {
+                window.location.reload();
+            } else { growlAlert.danger("操作失败"); }
+        }
+
+        //初始化编辑区侧栏
+        function initEditSide() {
+            EditSideView();
+            Metronic.addResizeHandler(function () {
+                EditSideView();
+            });
+
+            function EditSideView() {
+                if (Metronic.getViewPort().width <= 992) {
+                    $(".esh-side-edit-wrap").css("height", "auto");
+                } else {
+                    $(".esh-side-edit-wrap").css("height", ($(document).height() - parseInt($(".esh-side-edit-wrap").offset().top)) + "px");
+                }
+            }
+        }
+
+        //启动对话框
+        function startDialog(title) {
+            modalLoadding("#createworkDailog", title, 460)
+            $("#createworkDailog").modal();
+        }
+
+        //弹出对话框
+        function showDialog(data) {
+            $("#createworkDailog .modal-content").html(data);//填充对话框
+            WorkOrder.init();//初始化对话框
+        }
+
+        //创建工单成功
+        function editWorkOrderSucess(data) { if (data == "ok") { $("#createworkDailog").modal("hide"); growlAlert.success("新建工单成功！"); getData(); } else { growlAlert.danger("新建工单失败。"); } }
+</script>
+
+<!-- END PAGE SELF SCRIPTS -->
+    }
+

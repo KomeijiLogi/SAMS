@@ -1,0 +1,139 @@
+﻿@{
+    Layout = null;
+
+}
+@model SAMS.Web.Areas.StaffMobile.Models.DetailViewModel
+
+@using SAMS.WorkOrders
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    
+    <link href="~/Content/mui.min.css" rel="stylesheet">
+</head>
+<body class="colorfulBody">
+   
+    <header class="mui-bar mui-bar-nav" id="detailHeader">
+        
+        <a class="mui-icon mui-icon-home mui-pull-left"  href="/staffMobile/Home/Index" target="_blank" ></a>
+        <h1 class="mui-title">工单详情</h1>         
+        <button class="mui-btn mui-btn-blue mui-btn-link mui-pull-right" onclick="btConfirmEvent()">回单</button>
+
+        @*<span class="mui-pull-right mui-center" id="menubars" onclick="btConfirmEvent()">回单</span>*@
+
+    </header>
+
+    <!--弹出窗体部分-->
+    @*<div id="popover" class="mui-popover">
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view">
+                  
+                    <li class="mui-table-view-cell">
+                        <span class="mui-icon mui-icon-compose"><a href="#" id="popfont">修改回单</a></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>*@
+
+    <div class="mui-content">
+        <div class="mui-content-padded" style="margin:0px">
+              <div class="mui-input-group">
+                <div class="mui-input-row">
+                    <label>工单编号</label>
+                    <input type="text" readonly value="No.@Model.WorkOrder.Id">
+                </div>
+                <div class="mui-input-row">
+                    <label>服务类型</label>
+                    <input type="text" readonly value="@(Model.WorkOrder.ServiceType.Equals(ServiceType.Install)?"安装":"维修")">
+                </div>
+          <div class="mui-input-row">
+              <label>派工时间</label>
+              <input type="text" readonly value="@Model.WorkOrder.DispatchTime.Value.ToString("yyyy-MM-dd HH:mm:ss")">
+          </div>
+          <div class="mui-input-row">
+              <label>产品</label>
+              <input type="text" readonly value="@Model.WorkOrder.ProductName">
+          </div>
+          <div class="mui-input-row">
+              <label>型号</label>
+              <input type="text" readonly value="@Model.WorkOrder.ProductModel">
+          </div>
+          <div class="mui-input-row">
+              <label>客户</label>
+              <input type="text" readonly value="@Model.WorkOrder.CustomerName">
+          </div>
+        <div class="mui-input-row">
+            <label>联系人</label>
+            <input type="text" readonly value="@Model.WorkOrder.OfficePerson">
+        </div>
+        <div class="mui-input-row">
+            <label>联系电话</label>
+            <input type="text" readonly value="@Model.WorkOrder.OfficeMobile">
+        </div>
+          <div class="mui-input-row">
+              <label>客户区域</label>
+              <input type="text" readonly value="@Model.WorkOrder.CustomerArea">
+          </div>
+          <div class="mui-input-row" style="height:20vw">
+              <label>详细地址</label>
+              <textarea id="textarea" rows="3" readonly> @Model.WorkOrder.Address</textarea>
+          </div>
+          
+          <div class="mui-input-row">
+              <label>申告人</label>
+              <input type="text" readonly value="@Model.WorkOrder.SaleMan">
+          </div>
+          <div class="mui-input-row">
+              <label>申告电话</label>
+              <label style="padding-left:0px"><a href="tel:@Model.WorkOrder.SaleManPhone">@Model.WorkOrder.SaleManPhone</a></label>   
+          </div>
+                <div class="mui-input-row"  style="height:20vw">
+                    <label>备注</label>
+                    <textarea id="textarea" rows="3" readonly>@Model.WorkOrder.Description</textarea>
+                </div>
+            </div>
+        </div>
+        @if (Model.WorkOrder.BillStatus.Equals(BillStatus.Complete))
+        {
+        <button id="bt_confirm" name="bt_confirm" type="submit" class="mui-btn mui-btn-primary mui-btn-block"
+                 onclick="btConfirmEvent()">
+            修改回单
+        </button>
+        }
+        else if (Model.WorkOrder.BillStatus.Equals(BillStatus.Dispatch))
+        {
+            <button id="bt_confirm" name="bt_confirm" type="submit" class="mui-btn mui-btn-primary mui-btn-block" style="margin-top:2vw;"
+                    onclick="btConfirmEvent()">
+                填写回单
+            </button>
+        }
+        else 
+            {
+            <button id="bt_confirm" name="bt_confirm" type="submit" class="mui-btn mui-btn-primary mui-btn-block" style="margin-top:2vw;"
+                    onclick="btConfirmEvent()">
+                查看回单
+            </button>
+        }
+
+    </div>
+    <script type="text/javascript">
+        function btConfirmEvent() {
+            window.location.href = "/staffMobile/Home/Receipt/"+@Model.WorkOrder.Id;
+        }
+
+        function aConfirmEvent(){
+            window.location.href="/staffMobile/Home/Index";
+        }
+    </script>
+   
+    <script src="~/Areas/StaffMobile/Scripts/mui.min.js"></script>
+    @*<script src="~/Areas/StaffMobile/Scripts/detail.js"></script>*@
+</body>
+
+
+</html>

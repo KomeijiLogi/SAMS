@@ -1,0 +1,320 @@
+﻿
+@{
+    ViewBag.Title = "CreateNewexportStockOrder";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+}
+ <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">备件管理</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-angle-down"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/accessorysetting">
+                                        备件设置
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="active">
+                                    <a href=/admin/accessory/neworgstock>备件库存</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newexportenterstockorder>备件出入库单</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newstaffpicking>员工领用备件情况</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newaccessoryuse>备件使用明细</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        备件出库
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <form action="/admin/accessory/createnewexportstockorder" class="form-horizontal" data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" data-ajax-failure="showException" data-ajax-success="editSucess" id="editConditionForm" method="post">
+                        <input id="OperatorID" name="OperatorID" type="hidden" value="" />
+                        <input id="ID" name="ID" type="hidden" value="" />
+                        <input id="Number" name="Number" type="hidden" value="" />
+                        <input id="RecipientID" name="RecipientID" type="hidden" value="" />
+                        <input data-val="true" data-val-required="The StockType field is required." id="StockType" name="StockType" type="hidden" value="@ViewBag.StockType" />
+                        <input id="CategoryID" name="CategoryID" type="hidden" value="@ViewBag.CategoryID" />
+                        <input data-val="true" data-val-required="The StockOperateType field is required."
+                                id="StockOperateType" name="StockOperateType" type="hidden" value="@ViewBag.Type" />
+                        <input id="detail" name="detail" type="hidden" value="" />                            
+                        <div class="table-toolbar">
+                            @*<label class="pull-left control-label clear-md-padding ">出库类别<span class="required">*</span></label>
+                            <div class="col-md-3 clear-md-padding ">
+                                <select id="select-type" class="form-control">
+                                    <option value="848">系统出库</option>
+                                </select>
+                                <span id="span-type-error" class="esh-error-lable hidden">出库类别为必填项。</span>
+                            </div>*@
+                            <label class="pull-left control-label clear-md-padding-left @(ViewBag.Type.Equals("ExportStockNew") ? "hidden":"")">领料人员</label>
+                            <div class="col-md-3 clear-md-padding @(ViewBag.Type.Equals("ExportStockNew") ? "hidden":"")">
+                                @if (ViewBag.Type.Equals("ExportStockNew"))
+                                {
+                                    <select id="select-staff" class="form-control" onchange="changeStaff()"></select>
+                                }
+                                else
+                                {
+                                @Html.DropDownList("select-staff", ViewBag.UserList as SelectList, new { @class = "form-control", onchange = "changeStaff()" })
+                                }
+                            </div>
+
+                            @*<label class="pull-left control-label clear-md-padding-left " style="padding-left:15px;">收货单位(人员)</label>
+                            <div class="col-md-3 clear-md-padding ">
+                                <input class="form-control" data-val="true" data-val-length="长度不能超过20个字符" data-val-length-max="20" id="RecipientName" name="RecipientName" placeholder="请输入收货单位或人员" type="text" value="" />
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="RecipientName" data-valmsg-replace="true"></span>
+                            </div>*@
+                            <a id="btn-add" class="pull-right btn btn-sm btn-default esh-sm-stock-top" href="javascript:void(0);" 
+                               onclick="add_accessory('@ViewBag.Type')">
+                                <i class="fa fa-check font-12"></i>&nbsp;选择备件
+                            </a>
+                        </div>
+                        <div class="table-scrollable">
+                            <table class="table table-width table-striped dataTable table-bordered table-hover" id="ul-area">
+                                <thead>
+                                    <tr>
+                                        <th style="width:100px;">
+                                            备件编码
+                                        </th>
+                                        <th style="min-width:70px">
+                                            名称
+                                        </th>
+                                        <th style="min-width:70px">
+                                            规格
+                                        </th>
+                                       
+                                        <th style="width:80px">
+                                            单位
+                                        </th>
+                                        <th style="width:80px;">
+                                            库存数量
+                                        </th>
+                                        <th style="width:80px;">
+                                            
+                                            @(ViewBag.Type.Equals("ExportStockNew") ? "出库数量" : "领取数量")
+                                        </th>
+                                        <th style="width:70px;">
+                                            操作
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <span id="span-condition-error" class="clear-padding-top">请选择需要出库的备件。</span>
+                        <div class="row margin-top-20">
+                            <div class="col-md-7 col-lg-6">
+                                <label class="control-label margin-bottom-5">备注</label>
+                                <input class="form-control" data-val="true" data-val-length="长度不能超过50个字符" data-val-length-max="50" data-val-regex="不能包含空字符" data-val-regex-pattern="^[^\s]+$" id="Remark" name="Remark" placeholder="请输入您要备注的信息" type="text" value="" />
+                                <span class="field-validation-valid esh-error-lable" data-valmsg-for="Remark" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        <div class="margin-top-25">
+                            <a class="btn btn-default" href="/admin/accessory/neworgstock">取消</a>
+                            <button type="button" onclick="submitform()" class="btn green">保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table id="ul-Accessory" class="hidden">
+        <tbody>
+            <tr>
+                <td>
+                    <span class="hidden" name="accessoryID"></span>
+                    <span name="accessoryCode"></span>
+                </td>
+                <td>
+                    <span name="accessoryName"></span>
+                </td>
+                <td>
+                    <span name="accessorySpec"></span>
+                </td>
+            
+                <td>
+                    <span name="accessoryUnit"></span>
+                </td>
+                <td>
+                    <span name="accessoryCount"></span>
+                </td>
+                <td>
+                    <input name="count" type="number" class="" value="1" min="1" max="100" onchange="changecount(this)" />
+                </td>
+                <td>
+                    <a class="btn btn-default btn-xs esh-btn-del" onclick="del_accessory(this)"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="modal fade bs-example-modal-lg" id="editDailog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+@section Scripts{
+<script type="text/javascript" src="/Content/admin/scripts/selectAccessory.js"></script>
+<script type="text/javascript">
+        //启动对话框
+        function startDialog(title) {
+            modalLoadding("#editDailog", title, 460)
+            $("#editDailog").modal();
+        }
+
+        //添加备件
+        function add_accessory(type,organizationId)
+        {
+            startDialog("选择备件");
+            $.ajax({
+                url: "/admin/accessory/selectnewaccessory",
+                type: "Get",
+                data: { "type": type,  "staffId": $("#select-staff").val() },
+                success: function (data) {
+                    showDialog(data);
+                },
+                error: function (data) { showException(data); }
+            });
+        }
+
+        //选择备件
+        function select_accessory(val)
+        {
+            $("#span-condition-error").addClass("hidden");
+            var accessory = eval("(" + val + ")");
+            var hasExist=false;//是否存在
+            $("#ul-area  tbody tr").each(function () {
+                if ($(this).find("span[name=accessoryID]").html() == accessory.ID)
+                {
+                    hasExist = true;
+                    if (Number($(this).find("input[name=count]").val()) + 1 <= Number($(this).find("input[name=count]").attr("max"))) {
+                        $(this).find("input[name=count]").val(Number($(this).find("input[name=count]").val()) + 1);
+                    }
+                    return;
+                }
+            });
+            if (!hasExist)
+            {
+                var tr = $("#ul-Accessory tbody");
+                tr.find("span[name=accessoryID]").html(accessory.ID);
+                tr.find("span[name=accessoryName]").html(accessory.Name);
+                tr.find("span[name=accessoryCode]").html(accessory.Number);
+                tr.find("span[name=accessorySpec]").html(accessory.Spec);
+                tr.find("span[name=accessoryUnit]").html(accessory.Unit);
+                tr.find("span[name=accessoryCount]").html(accessory.Count);
+                tr.find("input[name=count]").val(1).attr("max", accessory.Count);
+                $("#ul-area tbody").append(tr.html());
+            }
+        }
+
+        //删除备件
+        function del_accessory(btn) {
+            $(btn).parent().parent().remove();
+            if ($("#ul-area  tbody").has("tr").length <= 0) {
+                $("#span-condition-error").html("请选择需要出库的备件。");
+                $("#span-condition-error").removeClass("hidden").removeClass("esh-error-lable");
+            }
+        }
+
+        //弹出选择备件窗体
+        function showDialog(data) {
+            $(".modal-content").html(data);//填充对话框
+            SelectAccessory.init();
+        }
+
+        //创建记录成功后的处理
+        function editSucess(data) { if (data == "ok") {  growlAlert.success("操作成功"); setTimeout('window.location = "/admin/accessory/neworgstock"', 1000);  } else { growlAlert.danger("操作失败"); } }
+
+        //改变出库数量
+        function changecount(input) {
+            var count = $(input).val();
+            var stock = $(input).parent().parent().find("span[name=accessoryCount]").html();
+            if (Number(count) > Number(stock)) {
+                $(input).val(stock);
+                $(input).attr("max", stock);
+            }
+        }
+
+        //提交表单
+        function submitform() {
+            //出库类型
+            if ($("#StockOperateType").val() == "StaffPickingNew") {//员工领料
+                $("#CategoryID").val("");
+                $("#RecipientID").val($("#select-staff").val());
+                $("#RecipientName").val($("#select-staff option:selected").text());
+            }
+            else {//备件出库
+                $("#CategoryID").val($("#select-type").val());
+                //if (!$("#CategoryID").val()) {
+                //    $("#span-type-error").removeClass("hidden");
+                //    return;
+                //}
+                $("#RecipientID").val("");
+            }
+
+            //备件为空验证
+            if (!$("#ul-area  tbody tr").length) {
+                $("#span-condition-error").html("请选择需要出库的备件。");
+                $("#span-condition-error").removeClass("hidden").addClass("esh-error-lable");
+                return;
+            }
+
+            var valid_stock = true;//库存验证
+            var details = new Array();
+            $("#ul-area  tbody tr").each(function () {
+                var count = $(this).find("input[name=count]").val();
+                var stock = $(this).find("span[name=accessoryCount]").html();
+                if (Number(count) > Number(stock)) {
+                    valid_stock = false; return;
+                }
+                var detail = "{'AccessoryID':'" + $(this).find("span[name=accessoryID]").html() + "','Count':'" + $(this).find("input[name=count]").val() + "'}";
+                details.push(detail);
+            });
+
+            if (!valid_stock)
+            {
+                $("#span-condition-error").html("库存数量不足！");
+                $("#span-condition-error").removeClass("hidden").addClass("esh-error-lable");
+                return;
+            }
+            $("#detail").val(JSON.stringify(details));
+
+            $("#editConditionForm").submit();
+        }
+</script>
+}
+
+

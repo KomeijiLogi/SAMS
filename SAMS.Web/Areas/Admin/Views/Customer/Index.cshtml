@@ -1,0 +1,406 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "Customer";
+}
+
+ <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+
+
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target=".side-menu-project-list-content">
+                            <span class="uppercase">客户管理</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body side-menu-project-list-content" id="lst1">
+                    <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                        <ul class="nav nav-pills nav-stacked esh-nav-pills">
+                            <li class="active">
+                                <a href="/admin/customer">客户资料</a>
+                            </li>
+                           
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        客户列表
+                    </div>
+                    <div class="input-group pull-right">
+                        <div class="input-group input-medium ">
+                            <input class="form-control" id="customerName" maxlength="50" name="customerName" placeholder="输入客户名称/手机号/邮箱..." type="text" value="" />
+                            <span class="input-group-btn">
+                                <button class="btn green" id="btnSearch" type="button"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="col-md-6 col-xs-6 clear-padding-left">
+                            <a class="btn green" data-ajax="true" data-ajax-begin="startcustomerDialog('新建客户')" data-ajax-method="GET" data-ajax-success="showcustomerDialog" href="/admin/customer/create">新建</a>
+                            <button class="btn green collapse" id="btnFilter">筛选</button>
+                        </div>
+                        <div class="col-md-6 col-xs-6 clear-padding-right">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        更多操作&nbsp;<i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:void(0)" id="btnDelete">批量删除</a>
+                                        </li>
+
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:void(0)" onclick="exportExcel()">Excel导出 </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="esh-table-filter" id="filterContent">
+                        <ul class="esh-region-color">
+                            <li class="esh-filter-item clearfix">
+                                <span>所属区域：</span>
+                                <ul class="filter-option" id="main_area">
+                                    <li class="wipper">
+                                        <select style="width:120px" class="form-control main-select" id="main_sel_pro" name="main_sel_pro">
+                                            <option value="">省份</option>
+                                        </select>
+                                    </li>
+                                    <li class="wipper">
+                                        <select style="width:120px" class="form-control main-select" id="main_sel_city" name="main_sel_city">
+                                            <option value="">城市</option>
+                                        </select>
+                                    </li>
+                                    <li class="wipper">
+                                        <select style="width:120px" class="form-control main-select" id="main_sel_distr" name="main_sel_distr">
+                                            <option value="">区县</option>
+                                        </select>
+                                    </li>
+                                </ul>
+                                <input type="hidden" id="main_area_hide" value="" />
+                            </li>
+
+                            <li class="esh-filter-item clearfix">
+                                <span>创建日期：</span>
+                                <ul class="filter-option input-daterange date-picker">
+                                    <li class="wipper">
+                                        <input class="form-control" id="startDate" name="startDate" onblur="clearDate(this)" placeholder="开始日期" type="text" value="" />
+                                    </li>
+                                    <li>至</li>
+                                    <li class="wipper">
+                                        <input class="form-control" id="endDate" name="endDate" onblur="clearDate(this)" placeholder="结束日期" type="text" value="" />
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="esh-filter-item clearfix">
+                                <span>最近服务：</span>
+                                <ul class="filter-option input-daterange date-picker">
+                                    <li class="wipper">
+                                        <input class="form-control" id="startserviceDate" name="startserviceDate" onblur="clearDate(this)" placeholder="开始日期" type="text" value="" />
+                                    </li>
+                                    <li>至</li>
+                                    <li class="wipper">
+                                        <input class="form-control" id="endserviceDate" name="endserviceDate" onblur="clearDate(this)" placeholder="结束日期" type="text" value="" />
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="dataTable" class="dataTables_wrapper no-footer">
+
+                        @Html.Action("Get", "Customer", new { PageIndex = 1, PageSize = 10, Sort = "CreationTime", Direction = "desc", Where = "{}" })
+
+
+
+
+                    </div>
+                </div>
+
+                <form action="/admin/customer/get" data-ajax="true" data-ajax-begin="showLoading" data-ajax-complete="hideLoading" data-ajax-failure="showException" data-ajax-mode="replace" data-ajax-success="initTable" data-ajax-update="#dataTable" id="searchByRequest" method="post">
+                <input id="PageIndex" name="PageIndex" type="hidden" value="1" />
+                <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10" />
+                <input id="Sort" name="Sort" type="hidden" value="" />
+                <input id="Direction" name="Direction" type="hidden" value="" />
+                <input id="Where" name="Where" type="hidden" value="" /></form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- END PAGE CONTEN -->
+<!-- BEGIN PAGE SELF SCRIPTS -->
+@section Scripts{
+
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            initDataPicker();//设置时间控件
+            initEvent();//事件绑定
+            initTable();//初始化列表
+        });
+
+        //事件绑定
+        function initEvent() {
+            //显示或隐藏筛选功能
+            $("#btnFilter").on('click', function () {
+                if ($(this).hasClass("collapse") && !$(this).hasClass("expand")) {
+                    $(this).removeClass("collapse").addClass("expand").text('取消筛选');
+                    $('#filterContent').slideDown(300);
+                }
+                else if ($(this).hasClass("expand") && !$(this).hasClass("collapse")) {
+                    $(this).removeClass("expand").addClass("collapse").text('筛选');
+                    $('#filterContent').slideUp(300);
+                    cancelFilter();
+                }
+            });
+
+            //取消筛选功能
+            function cancelFilter() {
+                $("#type_hide,#isEnabled_hide,#startDate,#endDate,#startserviceDate,#endserviceDate").val("");
+                $("ul.filter-option input[type=checkbox]").attr("checked", false);
+                $("ul.filter-option input[type=checkbox]").parent().removeClass("checked");
+
+                if ($("#main_sel_pro").select2('data').text != "省份") {
+                    $("#main_area select").select2("val", "");
+                    $("#main_sel_city,#main_sel_distr").empty();
+                }
+                changeQueryCondition();
+            };
+
+            //开始日期改变触发表单提交
+            $('.input-daterange input[name=startDate]').on("changeDate", function () {
+                blnfirst = false; changeQueryCondition();
+            });
+
+            //结束日期改变触发表单提交
+            $('.input-daterange input[name=endDate]').on("changeDate", function () {
+                var date1 = $('.input-daterange input[name=startDate]').val();
+                var date2 = $(this).val();
+                if (date2 >= date1) {
+                    changeQueryCondition();
+                }
+            });
+
+            //开始日期改变触发表单提交
+            $('.input-daterange input[name=startserviceDate]').on("changeDate", function () {
+                blnfirst = false; changeQueryCondition();
+            });
+
+            //结束日期改变触发表单提交
+            $('.input-daterange input[name=endserviceDate]').on("changeDate", function () {
+                var date1 = $('.input-daterange input[name=startserviceDate]').val();
+                var date2 = $(this).val();
+                if (date2 >= date1) {
+                    changeQueryCondition();
+                }
+            });
+
+
+            //Checkbox选择触发表单提交
+            $("ul.filter-option input[type=checkbox]").on("click", function () {
+                var attrName = $(this).attr('name');
+                var subData = $("#" + attrName + "_hide").val();
+                if ($(this).attr('checked')) {
+                    subData += $(this).val() + ",";
+                } else {
+                    var a = $(this).val() + ",";
+                    subData = subData.replace(a, "");
+                }
+                $("#" + attrName + "_hide").val(subData);
+                changeQueryCondition();
+            })
+
+            //输入名称回车查询
+            $("#customerName").keypress(function (e) {
+                if (e.which == 13) {
+                    changeQueryCondition();
+                }
+            });
+
+            //初始化首页省市区域
+            initArea("#main_sel_pro", "#main_sel_city", "#main_sel_distr", $("#main_area").val());
+            $(".main-select").select2({
+                placeholder: "Select",
+                allowClear: true
+            });
+
+            $("#main_area select").change(function () { changeQueryCondition(); }); //首页所属区域变化
+
+            //搜索按钮按下
+            $("#btnSearch").click(function () { changeQueryCondition(); })
+            $("#btnDelete").click(function () { deleteRecords(); });
+        }
+
+        ///初始化列表
+        function initTable() {
+            OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+            //单击行跳转到明细页
+            $('td:not(:first,:last)', $('#tableList tr')).click(function () {
+                var id = $(this).parent().find("input[type=checkbox]").val();//id值
+                window.location = "/admin/customer/details/" + id;
+            });
+        }
+
+        //清空日期
+        var blnfirst = true;//首次执行标识
+        function clearDate(input) {
+            if (blnfirst) {
+                //为避免与onchangeDate事件的冲突
+                return;
+            }
+
+            if (!$(input).val()) {
+                //日期清空时，重新查询
+                changeQueryCondition();
+            }
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            $("#searchByRequest").submit();
+        }
+
+        //改变查询条件
+        function changeQueryCondition() {
+            //组装查询条件
+            var customerName = $("#customerName").val();
+
+            if (customerName.indexOf("输入") >= 0) {
+                customerName = "";
+            }
+
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            var startserviceDate = $("#startserviceDate").val();
+            var endserviceDate = $("#endserviceDate").val();
+
+            var area = "";
+
+            if ($("#main_sel_pro").select2('data').text != "省份") {
+                area = $("#main_sel_pro").select2('data').text;
+            }
+            if ($("#main_sel_city").select2('data').text != "城市") {
+                area = "-" + $("#main_sel_city").select2('data').text;
+            }
+            if ($("#main_sel_distr").select2('data').text != "区县") {
+                area = "-" + $("#main_sel_distr").select2('data').text;
+            }
+
+            var whereData = "{'area':'" + area + "','name':'" + customerName + "','startdate':'" + startDate + "','enddate':'" + endDate + "','startservicedate':'" + startserviceDate + "','endservicedate':'" + endserviceDate + "'}";
+            if ($("#Where").val() == whereData) {
+                return;
+            }
+            $("#Where").val(whereData);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, direction) {
+            $("#Sort").val(sort);
+            $("#Direction").val(direction);
+            $("#PageIndex").val(1);//页索引置为1
+            $("#searchByRequest").submit();
+        }
+
+        //批量删除记录
+        function deleteRecords() {
+            //获取选择的id
+            var ids = new Array();
+            $("#tableList tbody input[type='checkbox']").each(function () {
+                if ($(this).attr("checked")) ids.push($(this).val());
+            });
+
+            if (ids.length == 0) { botbox.alert("提示", "您还没有选择要删除的记录!"); return; }//判断选中的记录数
+
+            botbox.confirm("提示", "您确认删除吗?", function (result) {
+                if (result) {
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/customer/delete",
+                        type: "POST",
+                        data: { "ids": ids },
+                        success: function (data) {
+                            hideLoading();
+                            if (data == "ok") {
+                                $("#searchByRequest").submit();
+                                growlAlert.success("删除成功")
+                            }
+                            else { growlAlert.danger("删除失败"); }
+
+                        },
+                        error: function (data) { hideLoading(); showException(data); }
+                    });
+                }
+            });
+        }
+
+        //删除单条记录
+        function deleteRecord(id) {
+            botbox.confirm("提示", "您确认删除吗?", function (result) {
+                if (result) {
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/customer/delete",
+                        type: "POST",
+                        data: { "ids": id },
+                        success: function (data) {
+                            hideLoading();
+                            if (data == "ok") { $("#searchByRequest").submit(); growlAlert.success("删除成功"); }
+                            else { growlAlert.danger("删除失败"); }
+                        },
+                        error: function (data) { hideLoading(); growlAlert.danger("删除失败"); }
+                    });
+                }
+            });
+        }
+
+        //编辑单条记录
+        function editRecord(id) {
+            startcustomerDialog('编辑客户');
+            $.ajax({
+                url: "/admin/customer/edit",
+                type: "Get",
+                data: { "id": id },
+                success: function (data) {
+                    showcustomerDialog(data);
+                },
+                error: function (data) { showException(data); }
+            });
+        }
+
+        //导出excel
+        function exportExcel() {
+            window.location = "/admin/customer/exportexcel?Where=" + $("#Where").val();
+        }
+</script>
+    }
+
+<!-- END PAGE SELF SCRIPTS -->
+
+
+

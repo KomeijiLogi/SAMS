@@ -1,0 +1,356 @@
+﻿
+@{
+    ViewBag.Title = "NewStaffPicking";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+}
+
+  <!-- BEGIN PAGE CONTENT-->
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target="#lst1">
+                            <span class="uppercase">备件管理</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                        <div class="btn-group pull-right esh-set-btn-group">
+                            <a href="javascript:;" class="esh-set-group" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa  fa-angle-down"></i>
+                            </a>
+                            <ul class="esh-pub-menu dropdown-menu pull-right">
+                                <li>
+                                    <a href="/admin/accessorysetting">
+                                        备件设置
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portlet-body side-menu-project-list-content" id="lst1">
+                        <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="">
+                                    <a href=/admin/accessory/neworgstock>备件库存</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newexportenterstockorder>备件出入库单</a>
+                                </li>
+                                <li class="active">
+                                    <a href=/admin/accessory/newstaffpicking>员工领用备件情况</a>
+                                </li>
+                                <li class="">
+                                    <a href=/admin/accessory/newaccessoryuse>备件使用明细</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        员工领用备件情况
+                    </div>
+                </div>
+
+                <div class="portlet-body">
+                    <div class="table-toolbar form-horizontal margin-top-5">
+                        <label class="pull-left control-label clear-md-padding">选择员工</label>
+                        <div class="col-md-3 clear-md-padding">
+                            @Html.DropDownList("select-staff", ViewBag.UserList as SelectList, "请选择员工", new { @class = "form-control" })
+                            @*<select id="select-staff" class="form-control">
+                                <option value="">请选择员工</option>
+                                <option value="000c872e-c238-4bf4-986f-2e9d5fc2e079">张工</option>
+                                <option value="55d87af7-e020-485a-ac6a-f9e1e8a712ee">李工</option>
+                                <option value="953dc607-d48e-4d9f-9d83-53139fb17ea5">13561899216</option>
+                            </select>*@
+                        </div>
+                    </div>
+
+                    <div class="esh-detail-content margin-top-30">
+                        <div class="esh-tabbable-individual tabbable-custom">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a href="" onclick="changeUrl('/admin/accessory/getnewstaffpicking','1')" data-toggle="tab" aria-expanded="false">
+                                        领料记录
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="changeUrl('/admin/accessory/getnewstaffrefund','2')" data-toggle="tab" aria-expanded="false">
+                                        退料记录
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="changeUrl('/admin/accessory/getnewstaffuse','3')" data-toggle="tab" aria-expanded="false">
+                                        使用记录
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="changeUrl('/admin/accessory/getnewstaffstock','4')" data-toggle="tab" aria-expanded="false">
+                                        持有备件
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="dataTable" class="dataTables_wrapper no-footer">
+                                </div>
+                                <div id="table-no-data1" class="hidden">
+                                    <div class="table-scrollable">
+                                        <table class="table table-striped dataTable table-bordered table-hover" id="tableList">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table-checkbox">
+                                                        <input type="checkbox" class="group-checkable" data-set="#tableList .checkboxes" />
+                                                    </th>
+                                                    <th style="width:100px;">
+                                                        备件编码
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        名称
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        规格
+                                                    </th>
+                                                    
+                                                    <th style="width:80px;">
+                                                        单位
+                                                    </th>
+                                                    <th style="width:40px;">
+                                                        数量
+                                                    </th>
+                                                    <th style="width:150px;">
+                                                        领料时间
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div style="height: 240px;">
+                                        <div class="esh-nodataNote">
+                                            <div class="esh-nodata-tip">
+                                                <i class='icon icon-info'></i>
+                                                <div class="con">请先选择服务人员</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="table-no-data2" class="hidden">
+                                    <div class="table-scrollable">
+                                        <table class="table table-striped dataTable table-bordered table-hover " id="tableList">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table-checkbox">
+                                                        <input type="checkbox" class="group-checkable" data-set="#tableList .checkboxes" />
+                                                    </th>
+                                                    <th style="width:100px;">
+                                                        备件编码
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        名称
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        规格
+                                                    </th>
+                                                    
+                                                    <th style="width:80px;">
+                                                        单位
+                                                    </th>
+                                                    <th style="width:40px;">
+                                                        数量
+                                                    </th>
+                                                    <th style="width:150px;">
+                                                        退料时间
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div style="height: 240px;">
+                                        <div class="esh-nodataNote">
+                                            <div class="esh-nodata-tip">
+                                                <i class='icon icon-info'></i>
+                                                <div class="con">请先选择服务人员</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="table-no-data3" class="hidden">
+                                    <div class="table-scrollable">
+                                        <table class="table table-striped dataTable table-bordered table-hover " id="tableList">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table-checkbox">
+                                                        <input type="checkbox" class="group-checkable" data-set="#tableList .checkboxes" />
+                                                    </th>
+                                                    <th style="min-width:100px;">
+                                                        工单编号
+                                                    </th>
+                                                    <th style="width:100px;">
+                                                        备件编码
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        名称
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        规格
+                                                    </th>
+                                                    
+                                                    <th style="width:80px;">
+                                                        单位
+                                                    </th>
+                                                    <th style="width:80px;">
+                                                        使用数量
+                                                    </th>
+                                                    <th style="width:150px;">
+                                                        使用时间
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div style="height: 240px;">
+                                        <div class="esh-nodataNote">
+                                            <div class="esh-nodata-tip">
+                                                <i class='icon icon-info'></i>
+                                                <div class="con">请先选择服务人员</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="table-no-data4" class="hidden">
+                                    <div class="table-scrollable">
+                                        <table class="table table-striped dataTable table-bordered table-hover " id="tableList">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table-checkbox">
+                                                        <input type="checkbox" class="group-checkable" data-set="#tableList .checkboxes" />
+                                                    </th>
+                                                    <th style="width:100px;">
+                                                        备件编码
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        名称
+                                                    </th>
+                                                    <th style="min-width:70px;">
+                                                        规格
+                                                    </th>
+                                                    
+                                                    <th style="width:80px;">
+                                                        单位
+                                                    </th>
+                                                    <th style="width:80px;">
+                                                        数量
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div style="height: 240px;">
+                                        <div class="esh-nodataNote">
+                                            <div class="esh-nodata-tip">
+                                                <i class='icon icon-info'></i>
+                                                <div class="con">请先选择服务人员</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input id="PageIndex" name="PageIndex" type="hidden" value="1" />
+                <input id="PageSize" name="PageSize" type="hidden" value="10" />
+                <input id="Sort" name="Sort" type="hidden" value="" />
+                <input id="Direction" name="Direction" type="hidden" value="" />
+                <input id="Where" name="Where" type="hidden" value="" />
+                <input id="Url" name="Url" type="hidden" value="" />
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+<!-- BEGIN PAGE SELF SCRIPTS -->
+@section Scripts{
+<script type="text/javascript">
+        var index = '1';
+        $(document).ready(function () {
+            initEvent();//事件绑定
+            $("#Url").val("/admin/accessory/getnewstaffpicking");
+            $("#dataTable").html($("#table-no-data1").html());
+        });
+
+        //事件绑定
+        function initEvent() {
+            $("#select-staff").change(function () {
+                changeQueryCondition();
+            });
+        }
+
+        //获取列表数据
+        function getData() {
+            if ($("#select-staff").val()&&$("#Url").val()) {
+                showLoading();
+                $.ajax({
+                    url: $("#Url").val() + "?staffID=" + $("#select-staff").val(),
+                    type: "Post",
+                    data: { "Where": $("#Where").val(), "Sort": $("#Sort").val(), "Direction": $("#Direction").val(), "PageIndex": $("#PageIndex").val(), "PageSize": $("#PageSize").val() },
+                    success: function (data) {
+                        hideLoading();
+                        $("#dataTable").html(data);
+                        initTable();
+                    },
+                    error: function (data) { hideLoading(); showException(data); }
+                });
+            }
+            else {
+                $("#dataTable").html($("#table-no-data" + index).html());
+            }
+        }
+
+        ///初始化列表
+        function initTable() {
+            OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+        }
+
+        //改变url
+        function changeUrl(url, tabindex) {
+            index = tabindex;
+            $("#Url").val(url);
+            $("#PageIndex").val(1);//页索引置为1
+            getData();
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            getData();
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, mode) {
+            $("#Sort").val(sort);
+            $("#Direction").val(mode);
+            $("#PageIndex").val(1);//页索引置为1
+            getData();
+        }
+
+        //改变查询条件
+        function changeQueryCondition() {
+            var whereData = "{'stocktype':'new'}";//库存类别备件;
+            $("#Where").val(whereData);
+            $("#PageIndex").val(1);//页索引置为1
+            getData();
+        }
+</script>
+
+<!-- END PAGE SELF SCRIPTS -->
+}
+

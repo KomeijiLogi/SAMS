@@ -1,0 +1,457 @@
+﻿@using SAMS.WorkOrders
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+@model SAMS.Web.Models.WorkOrder.WorkOrderViewModel
+
+<div class="weui_tab">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-weight: 300;
+        }
+
+        a {
+            color: #666;
+        }
+
+        .info {
+            background-color: #fff8e1;
+            font-weight: 300;
+        }
+
+        .weui_tab a {
+            color: #555;
+        }
+
+        .weui_navbar {
+            line-height: 20px;
+        }
+
+        .weui_media_box.weui_media_text .weui_media_info {
+            margin-top: 0px;
+        }
+
+        .weui_tabbar {
+            height: 50px;
+        }
+
+        .weui_tabbar_icon {
+            height: 20px;
+        }
+
+        .weui_bar_item_on .weui_tabbar_icon i {
+            color: #09BB07;
+        }
+
+        .weui_cell_bd i {
+            color: #666;
+        }
+
+        .dayu_cells {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sticky-fixed {
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            z-index: 9998;
+        }
+
+        .weui-header-right a {
+            padding-left: 10px;
+        }
+    </style>
+    <style>
+        .weui_cell_ft {
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .weui_cell_bd {
+            font-size: 16px;
+        }
+
+        .weui_cells_title {
+            margin-top: 10px;
+        }
+
+        #allmap {
+            width: 100%;
+            height: 200px;
+            display: block;
+        }
+
+            #allmap img {
+                height: 1rem;
+            }
+
+        .weui_media_box {
+            padding: 10px 15px 5px;
+        }
+
+        .weui_panel_hd {
+            color: #333;
+        }
+
+        .weui_media_box .weui_media_title, .weui_media_box .weui_media_desc {
+            color: #666;
+            line-height: 22px;
+            padding: 0;
+        }
+
+        .weui_panel .icon {
+            margin-right: 2px;
+        }
+
+        label {
+            font-weight: 700;
+        }
+
+        .content .weui_media_desc:after {
+            border-bottom: 1px solid #D9D9D9;
+        }
+    </style>
+    
+    <div class="weui-header bg-blue">
+        <div class="weui-header-left"> <a class="icon icon-109 f-white" href="javascript :;" onClick="javascript :history.back(-1);">返回</a>  </div>
+        <h1 class="weui-header-title">工单详情</h1>
+        <div class="weui-header-right" ><a class="f-white" href="/WorkOrder/Edit/@Model.bill.Id">回单</a> </div>
+    </div>
+    <div class="weui_tab_bd">
+        <div class="weui_panel weui_panel_access">
+            <div class="weui_media_box weui_media_small_appmsg">
+                <div class="weui_cells weui_cells_access">
+                    <div class="weui_cell" style="line-height:12px;">
+                        <div class="weui_cell_hd">
+                            <span class="icon icon-67 f14 f-orange btn"></span>
+                        </div>
+                        <div class="weui_cell_bd weui_cell_primary">
+
+                            <label class="f14">@Model.bill.Number</label>
+                        </div>
+                        <div class="right block">
+                           
+                                @if (Model.bill.BillStatus.Equals(BillStatus.Release))
+                                {
+                                    <span class="weui_btn f12 weui_btn_mini weui_btn_primary">
+                                       下达
+                                      
+                                    </span>
+                                }
+                            @if (Model.bill.BillStatus.Equals(BillStatus.Appoint))
+                            {
+                                <span class="weui_btn f12 weui_btn_mini weui_btn_primary">
+                                    已预约
+
+                                </span>
+                            }
+                            @if (Model.bill.BillStatus.Equals(BillStatus.Doing))
+                            {
+                                <span class="weui_btn f12 weui_btn_mini weui_btn_primary">
+                                    已开始
+
+                                </span>
+                            }
+                            @if (Model.bill.BillStatus.Equals(BillStatus.Complete))
+                            {
+                                <span class="weui_btn f12 weui_btn_mini weui_btn_primary">
+                                    已完工
+
+                                </span>
+                            }
+                            @if (Model.bill.BillStatus.Equals(BillStatus.Inspect))
+                            {
+                                <span class="weui_btn f12 weui_btn_mini weui_btn_primary">
+                                    已验收
+
+                                </span>
+                            }
+                            @if (Model.bill.BillStatus.Equals(BillStatus.Close))
+                            {
+                                <span class="weui_btn f12 weui_btn_mini weui_btn_primary">
+                                    关闭
+
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui_panel_bd">
+                    <div class="weui_media_box weui_media_appmsg">
+                        <div class="weui_media_bd">
+                            @*<h4 class="weui_media_title">李强<small style="margin-left:10px;">13561899216</small></h4>*@
+                            <p class="weui_media_desc">下达时间：@Model.bill.ReleaseTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                            </p>
+                            <p class="weui_media_desc">服务类型：
+                                @(Model.bill.ServiceType.Equals(ServiceType.Install)?"安装":"维修")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        <div class="weui_panel weui_panel_access">
+                <div class="weui_media_box weui_media_small_appmsg">
+                    <div class="weui_cells weui_cells_access">
+                        <div class="weui_cell" style="line-height:12px;">
+                            <div class="weui_cell_hd">
+                                <span class="icon icon-40 f-green "></span>
+                            </div>
+                            <div class="weui_cell_bd weui_cell_primary">
+                                <label class="f14">客户信息</label>
+                            </div>
+                            <div class="right block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui_panel_bd">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                            @Model.bill.CustomerName
+                        </div>
+                        <div class="weui_cell_ft f12">客户</div>
+                    </div>
+                    @if (!String.IsNullOrEmpty(Model.bill.CustomerPhone))
+                    {
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                                @Model.bill.CustomerPhone
+                        </div>
+                        <div class="weui_cell_ft f12">电话</div>
+                    </div>
+                    }
+                    @if (!String.IsNullOrEmpty(Model.bill.CustomerLinkMan))
+                    {
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                            @Model.bill.CustomerLinkMan
+                        </div>
+                        <div class="weui_cell_ft f12">联系人</div>
+                    </div>
+                    }
+                </div>
+            </div>
+        <div class="weui_panel weui_panel_access">
+                <div class="weui_media_box weui_media_small_appmsg">
+                    <div class="weui_cells weui_cells_access">
+                        <div class="weui_cell" style="line-height:12px;">
+                            <div class="weui_cell_hd">
+                                <span class="icon icon-40 f-green "></span>
+                            </div>
+                            <div class="weui_cell_bd weui_cell_primary">
+                                <label class="f14">设备信息</label>
+                            </div>
+                            <div class="right block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui_panel_bd">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                           @Model.bill.EquipmentName
+                        </div>
+                        <div class="weui_cell_ft f12">设备</div>
+                    </div>
+@if (!String.IsNullOrEmpty(Model.bill.SerialNo))
+{
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                            @Model.bill.SerialNo
+                        </div>
+                        <div class="weui_cell_ft f12">编号</div>
+                    </div>
+}
+@if (!String.IsNullOrEmpty(Model.bill.EquipmentModel))
+{
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                            @Model.bill.EquipmentModel
+                        </div>
+                        <div class="weui_cell_ft f12">型号</div>
+                    </div>
+}
+                </div>
+            </div>
+@if (!String.IsNullOrEmpty(Model.bill.SaleMan))
+{
+        <div class="weui_panel weui_panel_access">
+            <div class="weui_media_box weui_media_small_appmsg">
+                <div class="weui_cells weui_cells_access">
+                    <div class="weui_cell" style="line-height:12px;">
+                        <div class="weui_cell_hd">
+                            <span class="icon icon-40 f-green "></span>
+                        </div>
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <label class="f14">销售员信息</label>
+                        </div>
+                        <div class="right block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+         
+            <div class="weui_panel_bd">
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary f14">
+                        @Model.bill.SaleMan
+                    </div>
+                    <div class="weui_cell_ft f12">姓名</div>
+                </div>
+                @if (!String.IsNullOrEmpty(Model.bill.SaleManPhone))
+                {
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary f14">
+                        @Model.bill.SaleManPhone
+                    </div>
+                    <div class="weui_cell_ft f12">电话</div>
+                </div>
+                }
+
+            </div>
+        </div>
+}
+@if (Model.bill.FaultEntry != null && Model.bill.FaultEntry.Count > 0)
+{
+        <div class="weui_panel weui_panel_access">
+            <div class="weui_media_box weui_media_small_appmsg">
+                <div class="weui_cells weui_cells_access">
+                    <div class="weui_cell" style="line-height:12px;">
+                        <div class="weui_cell_hd">
+                            <span class="icon icon-40 f-green "></span>
+                        </div>
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <label class="f14">故障信息</label>
+                        </div>
+                        <div class="right block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui_panel_bd">
+               @{int i = 0;}
+               @foreach (var fault in Model.bill.FaultEntry)
+               {
+
+                    <div class="weui_cell">
+                        <div class="weui_cell_hd">@(i+1).</div>
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                            @fault.Fault.Name
+                        </div>
+                        <div class="weui_cell_ft f12">故障</div>
+                    </div>
+                   if (!String.IsNullOrEmpty(fault.FaultReasonName))
+                   {
+                    <div class="weui_cell">
+                        <div class="weui_cell_hd">&nbsp;&nbsp;</div>
+                        <div class="weui_cell_bd weui_cell_primary f14">
+                            @fault.FaultReasonName
+                        </div>
+                        <div class="weui_cell_ft f12">原因</div>
+                    </div>
+                   }
+                   i++;
+               }
+                </div>
+        </div>
+}
+@if (Model.bill.MaterialEntry != null && Model.bill.MaterialEntry.Count > 0)
+{
+        <div class="weui_panel weui_panel_access">
+            <div class="weui_media_box weui_media_small_appmsg">
+                <div class="weui_cells weui_cells_access">
+                    <div class="weui_cell" style="line-height:12px;">
+                        <div class="weui_cell_hd">
+                            <span class="icon icon-40 f-green "></span>
+                        </div>
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <label class="f14">配件信息</label>
+                        </div>
+                        <div class="right block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui_panel_bd">
+@{int j = 0;}
+@foreach (var material in Model.bill.MaterialEntry)
+{
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">1.</div>
+                    <div class="weui_cell_bd weui_cell_primary f14">
+                        @material.MaterialName
+                    </div>
+                    <div class="weui_cell_ft f12">名称</div>
+                </div>
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">&nbsp;&nbsp;</div>
+                    <div class="weui_cell_bd weui_cell_primary f14">
+                      @material.Qty @material.MaterialUnit
+                    </div>
+                    <div class="weui_cell_ft f12">数量</div>
+                </div>
+                if(!String.IsNullOrEmpty(material.NewSerialNo))
+                {
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">&nbsp;&nbsp;</div>
+                    <div class="weui_cell_bd weui_cell_primary f14">
+                        @material.NewSerialNo
+                    </div>
+                    <div class="weui_cell_ft f12">新件编号</div>
+                </div>
+                }
+                if (!String.IsNullOrEmpty(material.OldSerialNo))
+                {
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">&nbsp;&nbsp;</div>
+                    <div class="weui_cell_bd weui_cell_primary f14">
+                        @material.OldSerialNo
+                    </div>
+                    <div class="weui_cell_ft f12">旧件编号</div>
+                </div>
+                }
+    j++;
+}
+            </div>
+        </div>
+}
+        @if (!String.IsNullOrEmpty(Model.bill.Description))
+        {
+        <div class="weui_panel weui_panel_access">
+            <div class="weui_media_box weui_media_small_appmsg">
+                <div class="weui_cells weui_cells_access">
+                    <div class="weui_cell" style="line-height:12px;">
+                        <div class="weui_cell_hd">
+                            <span class="icon icon-40 f-green "></span>
+                        </div>
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <label class="f14">相关描述</label>
+                        </div>
+                        <div class="right block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui_panel_bd">
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary f14">
+                        @Model.bill.Description
+                    </div>
+                   
+                </div>
+                
+
+            </div>
+        </div>
+        }
+    </div>
+</div>
+
+
+

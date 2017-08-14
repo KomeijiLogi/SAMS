@@ -1,0 +1,96 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "申请工单列表 ";
+}
+@model SAMS.Web.Areas.StaffMobile.Models.AskOrderViewModel
+
+@using SAMS.WorkOrders
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        .mui-table-view-cell:after {
+            left: 0%;
+        }
+    </style>
+</head>
+<body>
+    @Styles.Render("~/Content/css")
+
+    <div class="mui-content mui-scroll-wrapper" id="wrapper" style="overflow:auto;">
+        <div class="mui-scroll" id="scroller">
+            @if (Model.WorkOrders.Items.Count > 0)
+            {
+                <ul class="mui-table-view" id="thelist">
+
+                    @foreach (var item in Model.WorkOrders.Items) {
+                         <li class="mui-table-view-cell" id="touchArea" >
+                             <a href="@Url.Action("CommitOrder","Home",new { id=@item.Id})">
+                                 <div class="mui-table">
+                                      <div class="mui-table-cell mui-col-xs-10">
+                                          <h4 class="mui-ellipsis-2" style="font-size:20px;">@item.CustomerName</h4>
+                                          <h5>
+                                              @item.ProductName |
+                                              @if (item.ServiceType.Equals(ServiceType.Install))
+                                              {
+                                                  @:安装
+
+                                              }
+                                              else if (item.ServiceType.Equals(ServiceType.Repair))
+                                              {
+                                                  @:维修
+
+                                              }
+                                              | @(item.DispatchTime.HasValue ? item.DispatchTime.Value.ToString("yyyy-MM-dd") : "")
+                                          </h5>
+                                       </div>
+                                     <div class="mui-table-cell mui-col-xs-2 mui-text-right">
+                                         <span class="mui-h5">
+
+                                             @if (item.BillStatus.Equals(BillStatus.Save))
+                                             {
+                                                 @:已申请
+                                              }
+                                             else if (item.BillStatus.Equals(BillStatus.Cancel))
+                                             {
+
+                                                 @:未通过
+                                             }
+                                             else if (item.BillStatus.Equals(BillStatus.Assinged))
+                                             {
+
+                                                 @:已派工
+
+                                             }
+                                             else
+                                             {
+
+                                                 @:已派工 
+                                             }
+
+
+
+                                         </span>
+                                     </div>
+                                  </div>
+                             </a>
+                         </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div>
+                    <h5 class="mui-text-center">
+                        没有申请工单
+                    </h5>
+                </div>
+
+            }
+            <a class="mui-btn mui-btn-primary mui-btn-outlined " href="@Url.Action("CreateOrder","Home")" style="left:2vw;right:2vw;width:95%;top:5vw;">新增申请</a>
+        </div>
+    </div>
+</body>
+</html>

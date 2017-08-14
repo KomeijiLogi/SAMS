@@ -1,0 +1,72 @@
+﻿@using Abp.Timing
+@model SAMS.Web.Areas.Admin.Models.Layout.HeaderViewModel
+@{
+    Layout = null;
+}
+<div class="page-header-inner" >
+    <div class="page-logo">
+        <a href="@Url.Action("Index", "Dashboard")" target="_blank">
+            @*<img src="~/Content/admin/img/logo.png" alt="logo" class="logo-default"  />*@
+            @*<img src="~/Content/admin/img/wegologo.png" alt="logo" class="logo-default" style="height:2vw;filter:invert(100%);"/>*@
+            <h4 style="color:#FFFFE0;font-family:'Microsoft YaHei';">售后管理系统</h4>
+        </a>
+        
+    </div>
+    <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+    </a>
+    <div class="pull-right">
+        <form action="/admin/workorder/search"  class="search-form search-form-expanded" method="get">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <a href="javascript:;" class="btn submit"><i class="icon-magnifier"></i></a>
+                </span>
+                <input type="text" class="form-control" maxlength="50" placeholder="输入工单编号/客户名称..." name="number">
+            </div>
+        </form>
+        <div class="top-menu">
+            <ul class="nav navbar-nav pull-right">
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true" title="新建" >
+                        <i class="fa fa-plus"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-default">
+                        <li>
+                            <a href="javascript:;" onclick="createWorkOrder()">
+                               <i class="icon-doc" ></i>
+                                新建工单
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" onclick="createCustomer()">
+                                <i class="icon-user-follow"></i>
+                                新建客户
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown dropdown-user" >
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
+                        <img  class="img-circle"  src="/Content/admin/img/def_user_icon.jpg" />
+                        <span class="username username-hide-on-mobile">@Model.LoginInformations.User.Surname</span>
+                        <i class="fa fa-angle-down">
+                        </i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-default" >
+                        <li>
+                            <a href="@Url.Action("editpassword", "Personal", new {area = "Admin"})" >
+                                    <i class="icon-key"></i>修改密码
+                                </a>
+                        </li>
+                        <li>
+                         @*<a href="@Url.Action("logout", "Account", new { area = "" })">*@
+                            <a href="/Account/logout">
+                                <i class="icon-logout"></i>退出系统
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+   
+</div>

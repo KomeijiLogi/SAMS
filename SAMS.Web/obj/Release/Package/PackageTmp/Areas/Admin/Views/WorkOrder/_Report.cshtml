@@ -1,0 +1,245 @@
+﻿@using Abp.Extensions
+@using SAMS.Web.Areas.Admin.Models.Common.Modals
+@model SAMS.Web.Areas.Admin.Models.WorkOrder.ReportModel
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">回单信息</h4>
+
+</div>
+<div class="modal-body" style="padding-left:25px">
+    <div class="esh-tabbable-individual tabbable-custom">
+        <ul class="nav nav-tabs ">
+            <li class="active">
+                <a href="javascript:;" onclick="changepanel('1',this)">
+                    处理信息
+                </a>
+            </li>
+            <li class="">
+                <a href="javascript:;" onclick="changepanel('2',this)">
+                    故障与配件
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="scroller" style="height: 410px" data-always-visible="1" data-rail-visible1="1">
+                <!-- BEGIN FORM-->
+                <div class="form-horizontal margin-top-10" id="panel_1">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label class="control-label pull-left">设备编码<span class="required">*</span></label>
+                            <div class="col-md-5 clear-md-padding ">
+                                @Html.TextBoxFor(model => model.WorkOrder.SerialNo, new { @class = "form-control", placeholder = "请输入设备编码", data_val_required = "设备编码不能为空" })
+                                @Html.ValidationMessageFor(m => m.WorkOrder.SerialNo, "", new { @class = "esh-error-lable" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label class="control-label pull-left">客户电话<span class="required">*</span></label>
+                            <div class="col-md-5 clear-md-padding ">
+                                @Html.TextBoxFor(model => model.WorkOrder.CustomerPhone, new { @class = "form-control", placeholder = "请输入客户电话", data_val_required = "客户电话不能为空" })
+                                @Html.ValidationMessageFor(m => m.WorkOrder.CustomerPhone, "", new { @class = "esh-error-lable" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label class="control-label pull-left">处理信息</label>
+                            <div class="col-md-8 clear-md-padding ">
+                                <textarea id="processDesc" class="form-control" rows="3" maxlength="150" placeholder="请输入处理信息">@Model.WorkOrder.Description </textarea>
+                                <span class="help-block">150个字以内 </span>
+                            </div>
+                        </div>
+                    </div>
+                   @* <div class="form-group clear-margin-bottom">
+                        <div class="col-md-12">
+                            <label class="control-label pull-left">
+                                相关图片&nbsp;
+                            </label>
+                            <div class="col-md-7">
+                                <div class="esh-file-view">
+
+                                    <input id="UrlImg" name="UrlImg" type="hidden" value="" />
+                                    <input id="current_urlImg" name="current_urlImg" type="hidden" value="/Content/admin/img/not-img.jpg" />
+                                    <input id="filePortrait" name="filePortrait[]" type="file" class="file-loading" accept="image/jpeg,image/png,image/jpg" value="">
+                                    <div class="esh-fileinput-tip clearfix">
+                                        图片的格式仅限jpg，png格式，大小不超过2M<br />
+                                        建议尺寸为：240px*160px（宽*高）
+                                    </div>
+                                    <div class="esh-loading hidden">
+                                        <div class="loading-message "><div class="block-spinner-bar"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                       *@
+                </div>
+                <input id="workorderid" name="workorderid" type="hidden" value="@Model.WorkOrder.Id" />
+                @*<input id="workordernumber" name="workordernumber" type="hidden" value="W201702170001" />*@
+                @*<input id="hasStatement" name="hasStatement" type="hidden" value="true" />*@
+                <div class="panel hidden" id="panel_2">
+                    <input id="statementorderid" name="statementorderid" type="hidden" value="" />
+                    <input id="statementstate" name="statementstate" type="hidden" value="PendingStatement" />
+                    <input id="staffStocks" name="staffStocks" type="hidden" value="@Model.StaffStocks" />
+                
+
+                    <div class="" id="div-statementOrder">
+                       
+                        <div class="esh-settlement-item">
+                            <p>
+                                <span>故障&nbsp;</span>
+                                <a class="pull-right btn btn-default btn-xs " onclick="add_statmentorder_service()"> <i class="fa fa-plus"></i>添加</a>
+                            </p>
+                            <div class="table-scrollable">
+                                <table class="table  dataTable table-bordered" name="tb_service">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th style="width:60%">故障</th>
+                                            <th>原因</th>
+                                            
+                                            <th style="width:110px">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="hidden">
+                                            <td><span name="serviceNo"></span></td>
+                                            <td>
+                                                <span class="hidden" name="serviceID"></span>
+      
+                                                <span name="serviceName"></span>
+                                            </td>
+                                            <td>
+                                                <span name="servicePrice"></span>
+                                            </td>
+                                          
+                                            <td>
+                                                <button class="btn btn-default btn-xs black " onclick="delete_statmentorder_service(this)" name="deleted">
+                                                    <i class="fa fa-trash-o"></i> 删除
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @{int faultIndex = 1; }
+                                        @foreach (var fault in Model.WorkOrder.FaultEntry)
+                                        {
+                                            <tr>
+                                                <td>@faultIndex</td>
+                                                <td><span class="hidden" name="faultID">@fault.Fault.Id</span>
+                                                    <span name="faultName">@fault.Fault.Name</span>
+                                                </td>
+                                                <td><span class="hidden" name="reasonID">@fault.FaultReasonId</span>
+                                                    <select  name="reasonName"></select>
+                                                </td>
+                                                <td>
+                                                <button class="btn btn-default btn-xs black " onclick="delete_fault(this)" name="deleted">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    删除
+                                                </button>
+                                                </td>
+                                            </tr>
+                                            faultIndex++;
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="esh-settlement-item">
+                            <p>
+                                <span>备件&nbsp;</span>
+                                <a class="pull-right btn btn-default btn-xs " onclick="add_statmentorder_accessory('true')"> <i class="fa fa-plus"></i>添加</a>
+                            </p>
+                            <div class="table-scrollable">
+                                <table class="table  dataTable table-bordered" name="tb_accessory">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th style="width:15%">备件编号</th>
+                                            <th style="width:15%">备件名称</th>
+                                            <th style="width:15%">备件型号</th>
+                                            <th style="width:7%">使用数量</th>
+
+                                            <th style="width:110px">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="hidden">
+                                            <td><span name="accessoryNo"></span></td>
+                                            <td>
+                                                <span name="accessoryCode"></span>
+                                            </td>
+                                            <td>
+                                                <span class="hidden" name="accessoryID"></span>
+                                                <span class="hidden" name="IsCharged"></span>
+                                                <span name="accessoryName"></span>
+                                            </td>
+                                            <td>
+                                                <span name="accessoryType"></span>
+                                            </td>
+                                            <td>
+                                                <span name="accessoryCount" class="hidden">1</span>
+                                                <input name="count" type="number" max="100" value="1" min="1" onchange="change_accessory_count(this)" />
+                                            </td>
+                                            <td>
+                                                <input name="backcount" type="number" max="100" value="0" min="0" />
+                                            </td>
+                                            @*<td>
+                                <span name="accessoryPrice"></span>
+                            </td>
+                            <td>
+                                <span name="accessoryAmount"></span>
+                            </td>*@
+                                            <td>
+                                                <button class="btn btn-default btn-xs black " onclick="delete_statement_accessory(this)" name="deleted">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    删除
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @{int accIndex = 1; }
+                                        @foreach (var acc in Model.WorkOrder.AccessoryEntry)
+                                        {
+                                            <tr>
+                                                <td><span name="accessoryNo">@accIndex</span></td>
+                                                <td><span name="accessoryCode">@acc.AccessoryNumber</span></td>
+                                                <td>
+                                                    <span class="hidden" name="accessoryID">@acc.AccessoryId</span>
+
+                                                    <span name="accessoryName">@acc.AccessoryName</span>
+                                                </td>
+                                                <td><span name="accessoryType">@acc.AccessoryModel</span></td>
+                                                <td>
+                                                    <span name="accessoryCount" class="hidden">@acc.Count</span>
+                                                    <input name="count" type="number" max="100" value="1" min="1"
+                                                           onchange="change_accessory_count(this)" />
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-default btn-xs black " onclick="delete_statement_accessory(this)" name="deleted">
+                                                        <i class="fa fa-trash-o"></i>
+                                                        删除
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            accIndex++;
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                  
+                    </div>
+
+                </div>
+                <!-- END FORM-->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-default">取消</button>
+    <button type="button" onclick="report_save()" class="btn green">确定</button>
+</div>
+
