@@ -41,7 +41,8 @@ namespace SAMS.Web.Areas.Admin.Startup
                         ScriptPaths.SweetAlert,
                         ScriptPaths.Toastr,
                         ScriptPaths.MomentJs,
-                        ScriptPaths.Bootstrap_DateRangePicker,
+                        ScriptPaths.Bootstrap_DatePicker,
+                        ScriptPaths.Bootstrap_DatePicker_zh,
                         ScriptPaths.Bootstrap_Select,
                         ScriptPaths.Underscore,
                         ScriptPaths.Abp,
@@ -57,17 +58,20 @@ namespace SAMS.Web.Areas.Admin.Startup
                         ScriptPaths.JQuery_Unobtrusive,
                         ScriptPaths.JQuery_Unobtrusive_validate,
                         ScriptPaths.Bootstrap_Growl,
-                        ScriptPaths.Bootstrap_Box
+                        ScriptPaths.Bootstrap_Box,
+                        ScriptPaths.Bootstrap_Tabdrop,
+                        ScriptPaths.Bootstrap_Fileinput,
+                        ScriptPaths.Bootstrap_Fileinput_zh
                     ).ForceOrdered()
                 );
 
             //COMMON (for MPA)
-            bundles.Add(
-                new ScriptBundle("~/Bundles/Admin/Common/js")
-                   // .IncludeDirectory("~/Areas/Admin/Common/Scripts", "*.js", true)
-                   // .Include("~/Areas/Admin/Views/Common/Modals/_LookupModal.js")
-                    .ForceOrdered()
-                );
+            //bundles.Add(
+            //    new ScriptBundle("~/Bundles/Admin/Common/js")
+            //       // .IncludeDirectory("~/Areas/Admin/Common/Scripts", "*.js", true)
+            //       // .Include("~/Areas/Admin/Views/Common/Modals/_LookupModal.js")
+            //        .ForceOrdered()
+            //    );
 
             //METRONIC
             AddAppMetrinicCss(bundles, isRTL: false);
@@ -99,12 +103,13 @@ namespace SAMS.Web.Areas.Admin.Startup
                     .Include(StylePaths.Morris)
                     .Include(StylePaths.SweetAlert)
                     .Include(StylePaths.Toastr)
-                    .Include(StylePaths.Bootstrap_DateRangePicker)
+                    .Include(StylePaths.Bootstrap_DatePicker)
                     .Include(StylePaths.Bootstrap_Switch)
                     .Include(StylePaths.Bootstrap_Select)
                     .Include(StylePaths.JQuery_Jcrop)
                     .Include(StylePaths.Select2)
-                    
+                    .Include(StylePaths.Bootstrap_Tabdrop)
+                    .Include(StylePaths.Bootstrap_Fileinput)
                     .ForceOrdered()
                 );
         }
@@ -114,7 +119,7 @@ namespace SAMS.Web.Areas.Admin.Startup
             bundles.Add(
                 new StyleBundle("~/Bundles/Admin/metronic/css" + (isRTL ? "RTL" : ""))
                     .Include("~/metronic/assets/global/css/components-rounded" + (isRTL ? "-rtl" : "") + ".css", new CssRewriteUrlWithVirtualDirectoryTransform())
-                    .Include("~/metronic/assets/global/css/plugins-md" + (isRTL ? "-rtl" : "") + ".css", new CssRewriteUrlWithVirtualDirectoryTransform())
+                    .Include("~/metronic/assets/global/css/plugins" + (isRTL ? "-rtl" : "") + ".css", new CssRewriteUrlWithVirtualDirectoryTransform())
                     .Include("~/metronic/assets/admin/layout/css/layout" + (isRTL ? "-rtl" : "") + ".css", new CssRewriteUrlWithVirtualDirectoryTransform())
                     //.Include("~/metronic/assets/admin/layout/css/themes/light" + (isRTL ? "-rtl" : "") + ".css", new CssRewriteUrlWithVirtualDirectoryTransform())
                     .Include("~/metronic/assets/admin/layout/css/custom.css" , new CssRewriteUrlWithVirtualDirectoryTransform())

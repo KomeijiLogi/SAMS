@@ -7,56 +7,32 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Abp.Domain.Entities.Auditing;
 using SAMS.Areas;
+using Abp.Domain.Entities;
+
 namespace SAMS.Customers
 {
-    [Table("T_BD_Customer")]
-    public class Customer: FullAuditedEntity
-    {
-        public const int MaxNumberLength = 50;
-        public const int MaxNameLength = 50;
-        public const int MaxAddressLength = 100;
-        public const int MaxDescriptionLength = 2048;
+   
+    [Table("t_bd_Customer")]
+    public class Customer : Entity<string>
+        {
+            public const int MaxNumberLength = 500;
+            public const int MaxNameLength = 500;
+            public const int MaxAddressLength = 1000;
 
-        [StringLength(MaxNumberLength)]
-        public virtual string Number { get; set; }
+            [StringLength(MaxNumberLength)]
+            public virtual string Code { get; set; }
 
-        [StringLength(MaxNumberLength)]
-        public virtual string Number1 { get; set; }
+            [StringLength(MaxNameLength)]
+            public virtual string Name { get; set; }
 
-        [StringLength(MaxNumberLength)]
-        public virtual string Number2 { get; set; }
+            public virtual string ProvinceName { get; set; }
+            public virtual string ProvinceId { get; set; }
+            public virtual string CityName { get; set; }
+            public virtual string CityId { get; set; }
 
-        [StringLength(MaxNameLength)]
-        public virtual string Name { get; set; }
-
-        [StringLength(MaxAddressLength)]
-        public virtual string Area { get; set; }//黑龙江省-大庆市-肇州镇
-
-        [StringLength(MaxAddressLength)]
-        public virtual string Address { get; set; }
-
-        [StringLength(MaxDescriptionLength)]
-        public virtual string Description { get; set; }
-        /// <summary>
-        ///联系人
-        /// </summary>
-        //[StringLength(MaxNameLength)]
-        //public virtual string ContactPerson { get; set; }
-
-        /// <summary>
-        /// 手机
-        /// </summary>
-        [StringLength(MaxNameLength)]
-        public virtual string Mobile { get; set; }
-
-        /// <summary>
-        /// EMail
-        /// </summary>
-        [StringLength(MaxNameLength)]
-        public virtual string Email { get; set; }
+            [StringLength(MaxAddressLength)]
+            public virtual string Address { get; set; }
 
 
-
-
-    }
+        }
 }

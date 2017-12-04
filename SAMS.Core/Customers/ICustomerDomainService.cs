@@ -24,8 +24,8 @@ namespace SAMS.Customers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Customer Get(int id);
-      
+        Customer Get(string id);
+
 
     }
 }

@@ -1,0 +1,146 @@
+﻿@{
+    Layout = null;
+}
+@*@model SAMS.Web.Areas.StaffMobile.Models.WorkOrder.ExpenseModel*@
+@model SAMS.Web.Areas.StaffMobile.Models.ExpenseModel
+@using SAMS.WorkOrders
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="~/Content/mui.min.css" rel="stylesheet" />
+    <link href="~/Content/mui.indexedlist.css" rel="stylesheet" />
+    <link href="~/Content/custom.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="mui-content">
+        <form class="mui-input-group">
+            <input type="hidden" name="orderID" id="orderID" value="@Model.WorkOrder.Id" />
+            <div class="mui-input-row">
+                <label for="trafficUrban">市内交通费<i style="color:red;">*</i></label>
+                <input type="number" id="trafficUrban"  name="trafficUrban" placeholder="请填写市内交通费" value="@Model.WorkOrder.TrafficUrban"/>
+            </div>
+            <div class="mui-input-row">
+                <label for="trafficLong">长途交通费<i style="color:red;">*</i></label>
+                <input type="number" id="trafficLong" name="trafficLong" placeholder="请填写长途交通费" value="@Model.WorkOrder.TrafficLong"/>
+            </div>
+            <div class="mui-input-row">
+                <label for="hotelEx">住宿费<i style="color:red;">*</i></label>
+                <input type="number" id="hotelEx" name="hotelEx" placeholder="请填写住宿费" value="@Model.WorkOrder.HotelEx"/>
+            </div>
+            <div class="mui-input-row">
+                <label for="supply">补助<i style="color:red;">*</i></label>
+                <input type="number" id="supply" name="supply" placeholder="请填写补助" value="@Model.WorkOrder.Supply"/>
+            </div>
+            <div class="mui-input-row" style="margin-top:1rem !important;">
+                <label for="otherEx">其他费用<i style="color:red;">*</i></label>
+                <input type="number" id="otherEx" name="otherEx" placeholder="请填写其他费用" value="@Model.WorkOrder.OtherEx"/>
+            </div>
+        </form>
+        
+    </div>
+    <div class="mui-btn-row mui-row mui-text-center">
+        <button id="bt_confirm_expense" name="bt_confirm_expense" class="mui-btn mui-btn-primary mui-col-xs-5" style="height:2.5rem;margin:0.45rem;">费用确认</button>&nbsp;
+        
+        <button id="bt_cancel_expense" name="bt_cancel_expense" class="mui-btn mui-btn-warning  mui-col-xs-5" style="height:2.5rem;margin:0.45rem;">取消</button>
+    </div>
+    <script src="~/Areas/StaffMobile/Scripts/zepto.min.js"></script>
+
+    <script src="~/Areas/StaffMobile/Scripts/mui.min.js"></script>
+    <script type="text/javascript" src="http://wb.weigaoholding.com:8090/res/js/qingjs.js"></script>
+    <script>
+
+        mui.init();
+
+        mui.ready(function () {
+            bindEvent();
+
+        });
+
+        console.log($("#orderID").val());
+        XuntongJSBridge.call('setWebViewTitle', { 'title': '差旅费详情' });
+        function bindEvent() {
+
+            $("#bt_confirm_expense").on('tap', function () {
+
+                var trafficUrban = $("#trafficUrban").val();
+                
+                var trafficLong = $("#trafficLong").val();
+                var hotelEx = $("#hotelEx").val();
+                var supply = $("#supply").val();
+                var otherEx = $("#otherEx").val();
+
+                if (!trafficUrban){
+                    trafficUrban = 0;
+                }
+                if (!trafficLong){
+                    trafficLong = 0;
+                }
+                if (!hotelEx){
+                    hotelEx = 0;
+                }
+                if (!supply){
+                    supply = 0;
+                }
+                if (!otherEx){
+                    otherEx = 0;
+                }
+                //根据orderID查询receipt，然后再保存一次
+                $.ajax({
+                    url: '/staffMobile/Home/Expense/',
+                    type: "POST",
+                    contentType: 'application/json',
+                    data:
+                    (
+                        JSON.stringify({
+                            'BillId': $('#orderID').val(),
+                            'TrafficUrban': trafficUrban,
+                            'TrafficLong': trafficLong,
+                            'HotelEx': hotelEx,
+                            'Supply': supply,
+                            'OtherEx': otherEx
+                        })
+                    )
+                }).done(function (data) {
+                    if (data == 'ok') {
+                        mui.toast('保存成功');
+                        var id = $("#orderID").val();
+
+                        window.location.href = '/StaffMobile/Home/Detail/' + id;
+                    }
+
+                }).fail(function (e) {
+
+                });
+
+
+            });
+            $("#bt_cancel_expense").on('tap', function () {
+                //跳转回receipt工单
+
+                var btnArray = ['是', '否'];
+                
+                var id = $("#orderID").val();
+
+                mui.confirm('即将跳转回回单详情页', '确认提醒', btnArray, function (e) {
+                    if (e.index == 0) {
+                        window.location.href  = '/StaffMobile/Home/Detail/' + id;
+                    } else {
+
+
+                    }
+
+                });
+               
+
+            });
+
+        }
+
+       
+
+    </script>
+</body>
+</html>

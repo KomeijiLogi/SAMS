@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 namespace SAMS.Products.Dtos
 {
-    public class GetDetailInput:EntityDto
+    public class GetDetailInput:EntityDto<string>
     {
     }
 }

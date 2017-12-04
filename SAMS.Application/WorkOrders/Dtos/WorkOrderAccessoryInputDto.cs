@@ -7,7 +7,7 @@ namespace SAMS.WorkOrders.Dtos
    
     public class WorkOrderAccessoryInputDto 
     {
-        public virtual int AccessoryId { get; set; }
+        public virtual string AccessoryId { get; set; }
         public virtual int Count { get; set; }
         /// <summary>
         /// 新件序号

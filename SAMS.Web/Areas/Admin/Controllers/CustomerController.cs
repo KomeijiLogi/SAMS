@@ -28,7 +28,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public ActionResult Details(int id)
+        public ActionResult Details(string id)
         {
             var input=new GetDetailInput() { Id = id };
             var customer = _customerAppService.GetDetail(input);
@@ -57,87 +57,88 @@ namespace SAMS.Web.Areas.Admin.Controllers
             
             return PartialView("_Get", viewModel);
         }
-        public PartialViewResult Edit(int id)
-        {
-            var input = new GetDetailInput() { Id = id };
-            var customer = _customerAppService.GetDetail(input);
-            var viewModel = new GetDetailViewModel()
-            {
-                Address = customer.Address,
-                Area=customer.Area,
-                Name=customer.Name,
-                Mobile=customer.Mobile,
-                Id=customer.Id,
-                Email=customer.Email,
-                CreationTime=customer.CreationTime,
-                Description=customer.Description,
-                Number1=customer.Number1,
-                Number2=customer.Number2
-            };
+        //public PartialViewResult Edit(string id)
+        //{
+        //    var input = new GetDetailInput() { Id = id };
+        //    var customer = _customerAppService.GetDetail(input);
+        //    var viewModel = new GetDetailViewModel()
+        //    {
+        //        Address = customer.Address,
+        //        Area=customer.Area,
+        //        Name=customer.Name,
+        //        Mobile=customer.Mobile,
+        //        Id=customer.Id,
+        //        Email=customer.Email,
+        //        CreationTime=customer.CreationTime,
+        //        Description=customer.Description,
+        //        Number1=customer.Number1,
+        //        Number2=customer.Number2
+        //    };
 
-            return PartialView("_Edit", viewModel);
-        }
-        public PartialViewResult Create()
-        {
+        //    return PartialView("_Edit", viewModel);
+        //}
+        //public PartialViewResult Create()
+        //{
 
-            return PartialView("_Create");
-        }
-        [HttpPost]
-        public ContentResult Create(CreateViewModel input)
-        {
-            var createInput = new CreateInput()
-            {
-                Address = input.Address,
-                Area=input.Area,
-                Description=input.Description,
-                Email=input.Email,
-                Mobile=input.Mobile,
-                Name=input.Name,
-                Number1=input.Number1,
-                Number2=input.Number2
-            };
-            _customerAppService.Create(createInput);
-            return Content("ok");
-        }
-        [HttpPost]
-        public ContentResult Edit(EditViewModel model)
-        {
+        //    return PartialView("_Create");
+        //}
+        //[HttpPost]
+        //public ContentResult Create(CreateViewModel input)
+        //{
+        //    var createInput = new CreateInput()
+        //    {
+        //        Address = input.Address,
+        //        Area=input.Area,
+        //        Description=input.Description,
+        //        Email=input.Email,
+        //        Mobile=input.Mobile,
+        //        Name=input.Name,
+        //        Number1=input.Number1,
+        //        Number2=input.Number2
+        //    };
+        //    _customerAppService.Create(createInput);
+        //    return Content("ok");
+        //}
+        //[HttpPost]
+        //public ContentResult Edit(EditViewModel model)
+        //{
 
-            var editInput = new EditInput()
-            {
-                Id = model.Id,
-                Address = model.Address,
-                Area = model.Area,
-                Description = model.Description,
-                Email = model.Email,
-                Mobile = model.Mobile,
-                Name = model.Name,
-                Number1 = model.Number1,
-                Number2 = model.Number2
-            };
-            _customerAppService.Edit(editInput);
-            return Content("ok");
-        }
+        //    var editInput = new EditInput()
+        //    {
+        //        Id = model.Id,
+        //        Address = model.Address,
+        //        Area = model.Area,
+        //        Description = model.Description,
+        //        Email = model.Email,
+        //        Mobile = model.Mobile,
+        //        Name = model.Name,
+        //        Number1 = model.Number1,
+        //        Number2 = model.Number2
+        //    };
+        //    _customerAppService.Edit(editInput);
+        //    return Content("ok");
+        //}
         //[HttpPost]
         //public ContentResult Delete(int ids)
         //{
         //    _customerAppService.Delete(ids);
         //    return Content("ok");
         //}
-        [HttpPost]
-        public ContentResult Delete(int[] ids)
-        {
-            for (int i = 0; i < ids.Length; i++)
-            {
-                _customerAppService.Delete(ids[i]);
-            }
-            return Content("ok");
-        }
+        //[HttpPost]
+        //public ContentResult Delete(int[] ids)
+        //{
+        //    for (int i = 0; i < ids.Length; i++)
+        //    {
+        //        _customerAppService.Delete(ids[i]);
+        //    }
+        //    return Content("ok");
+        //}
 
+     
         [DontWrapResult]
         public JsonResult GetCustomersByName(string name)
         {
-            var customers=_customerAppService.GetCustomerByName(name);
+            var customers = _customerAppService.GetCustomerByName(name);
             if (customers.Items.Count == 0)
             {
                 List<GetCustomerByNameDto> list = new List<GetCustomerByNameDto>();
@@ -149,5 +150,12 @@ namespace SAMS.Web.Areas.Admin.Controllers
                 return Json(customers.Items, JsonRequestBehavior.AllowGet);
             }
         }
+        public PartialViewResult GetCustomersUL(string name)
+        {
+            var customers = _customerAppService.GetCustomerByName(name);
+            ViewBag.Customers = customers;
+            return PartialView("_CustomerUL");
+        }
+
     }
 }

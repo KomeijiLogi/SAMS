@@ -1,0 +1,23 @@
+﻿.body {
+ height:500px;
+}
+#popover {
+   height: 150px;
+   width: 200px;
+}
+
+#popfont {
+    font-family: "微软雅黑";
+    color: #000000;
+    font-size: 15px;
+ }
+#bt_confirm{
+    align-content: center;
+    width: 80% ;
+    margin:20px
+ }
+
+.colorfulBody {
+
+  height:400px initial;
+}

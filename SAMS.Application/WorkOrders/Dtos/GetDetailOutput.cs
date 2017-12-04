@@ -19,7 +19,7 @@ namespace SAMS.WorkOrders.Dtos
         /// <summary>
         /// 客户Id
         /// </summary>
-        public virtual int CustomerId { get; set; }
+        public virtual string CustomerId { get; set; }
         /// <summary>
         /// 客户名称
         /// </summary>
@@ -48,6 +48,14 @@ namespace SAMS.WorkOrders.Dtos
         /// </summary>
         public virtual string SaleManPhone { get; set; }
         /// <summary>
+        /// 销售组织
+        /// </summary>
+        public virtual string SaleOrg { get; set; }
+        /// <summary>
+        /// 出库单号
+        /// </summary>
+        public virtual string IssueBill { get; set; }
+        /// <summary>
         /// 设备名称
         /// </summary>
         public virtual string ProductName { get; set; }
@@ -58,7 +66,7 @@ namespace SAMS.WorkOrders.Dtos
         /// <summary>
         /// 设备Id
         /// </summary>
-        public virtual int ProductId { get; set; }
+        public virtual string ProductId { get; set; }
 
         /// <summary>
         /// 设备序列号
@@ -131,7 +139,12 @@ namespace SAMS.WorkOrders.Dtos
         /// 优先级
         /// </summary>
         public virtual PriorityEnum Priority { get; set; }
-   
+
+        /// <summary>
+        /// 照片
+        /// </summary>
+        public virtual ICollection<WorkOrderPhoto> Photos { get; set; }
+
 
         public virtual DateTime CreationTime { get; set; }
         /// <summary>
@@ -143,8 +156,7 @@ namespace SAMS.WorkOrders.Dtos
         /// 配件分录
         /// </summary>
         public ICollection<WorkOrderAccessoryDto> AccessoryEntry { get; set; }
-
-        public ICollection<WorkOrderPhotoDto> Photos { get; set; }
+        
         /// <summary>
         /// 活动日志
         /// </summary>
@@ -163,18 +175,18 @@ namespace SAMS.WorkOrders.Dtos
         public virtual string Dealfa { get; set; }
 
         //市内交通
-        public virtual string TrafficUrban { get; set; }
+        public virtual decimal TrafficUrban { get; set; }
 
         //长途交通
-        public virtual string TrafficLong { get; set; }
+        public virtual decimal TrafficLong { get; set; }
 
         //住宿费
-        public virtual string HotelEx { get; set; }
+        public virtual decimal HotelEx { get; set; }
 
         //补助
-        public virtual string Supply { get; set; }
+        public virtual decimal Supply { get; set; }
         //其他费用
-        public virtual string OtherEx { get; set; }
+        public virtual decimal OtherEx { get; set; }
 
     }
 }

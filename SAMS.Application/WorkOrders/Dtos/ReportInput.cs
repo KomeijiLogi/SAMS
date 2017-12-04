@@ -1,70 +1,83 @@
 ﻿
 using Abp.AutoMapper;
 using System;
+using System.Collections.Generic;
 
 namespace SAMS.WorkOrders.Dtos
 {
     
-    public class Reportnput
+    public class ReportInput
     {
         /// <summary>
-        /// 工单ID
+        ///单据id 
         /// </summary>
-        public virtual int BillId { get; set; }
-     
-        /// <summary>
-        /// 客户联系人
-        /// </summary>
-        public virtual string CustomerLinkMan { get; set; }
-        /// <summary>
-        /// 客户联系人职务
-        /// </summary>
-        public virtual string CustomerLinkManPost { get; set; }
-        /// <summary>
-        /// 客户邮箱
-        /// </summary>
-        public virtual string CustomerEmail { get; set; }
-        /// <summary>
-        /// 客户电话
-        /// </summary>
-        public virtual string CustomerPhone { get; set; }
+        public  int BillId { get; set; }
+
         /// <summary>
         /// 设备序列号
         /// </summary>
-        public virtual string SerialNo { get; set; }
-
-        /// <summary>
-        /// 设备安装位置
-        /// </summary>
-        public virtual string EquLocation { get; set; }
-
-        /// <summary>
-        /// 服务类型
-        /// </summary>
-        public virtual ServiceType ServiceType { get; set; }
-
-        /// <summary>
-        /// 相关描述
-        /// </summary>
-        public virtual string Description { get; set; }
+        public  string SerialNo { get; set; }
 
         
         /// <summary>
-        /// 接单人Id
+        /// 照片
         /// </summary>
-        public virtual long? AssignedPersonId { get; set; }
+        public  List<string> Photos { get; set; }
 
         /// <summary>
-        /// 计划开始时间
+        /// 使用科室
         /// </summary>
-        public virtual DateTime PlanStartTime { get; set; }
-
+        public  string Office { get; set; }
         /// <summary>
-        /// 计划结束时间
+        /// 科室联系人
         /// </summary>
-        public virtual DateTime PlanEndTime { get; set; }
+        public  string OfficePerson { get; set; }
+        /// <summary>
+        /// 科室联系人职务
+        /// </summary>
+        public  string OfficePosition { get; set; }
+        /// <summary>
+        /// 科室联系人电话
+        /// </summary>
+        public  string OfficeTel { get; set; }
+        /// <summary>
+        /// 科室联系人手机
+        /// </summary>
+        public  string OfficeMobile { get; set; }
+        /// <summary>
+        /// 保修期至
+        /// </summary>
+        public  DateTime? Warrenty { get; set; }
+        /// <summary>
+        /// 是否在保
+        /// </summary>
+        public  bool GuaranteedState { get; set; }
+        /// <summary>
+        /// 服务日期
+        /// </summary>
+        public  DateTime? ServiceTime { get; set; }
 
 
+        //故障现象
+        public  string Faultap { get; set; }
+
+        //处理方案
+        public  string Dealfa { get; set; }
+
+
+        //市内交通
+        public decimal? TrafficUrban { get; set; }
+
+        //长途交通
+        public decimal? TrafficLong { get; set; }
+
+        //住宿费
+        public  decimal? HotelEx { get; set; }
+
+        //补助
+        public  decimal? Supply { get; set; }
+        //其他费用
+        public  decimal? OtherEx { get; set; }
 
 
 

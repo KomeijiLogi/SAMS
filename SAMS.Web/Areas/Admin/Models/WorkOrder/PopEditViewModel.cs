@@ -10,7 +10,7 @@ namespace SAMS.Web.Areas.Admin.Models.WorkOrder
 {
     public class PopEditViewModel
     {
-        public WorkOrderEditDto WorkOrder { get; set; }
+        public GetWorkOrderForEditOutput WorkOrder { get; set; }
         public ProductListDto[] Products { get; set; }
         public IEnumerable<SelectListItem> ProductItemList
         {
@@ -27,7 +27,7 @@ namespace SAMS.Web.Areas.Admin.Models.WorkOrder
                 {
                     Text = x.Name,
                     Value = x.Name,
-                    Selected = x.Name == WorkOrder.ProductName
+                    Selected = x.Id == WorkOrder.ProductId
                 });
                 return selectItems;
             }

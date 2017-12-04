@@ -45,7 +45,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
             return PartialView("_Get", viewModel);
         }
         //删除
-        public ContentResult Delete(int id)
+        public ContentResult Delete(string id)
         {
             
            _accessoryAppService.Delete(id);
@@ -64,7 +64,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
             return View("Create", viewModel);
         }
         //编辑
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
 
             var accessory = _accessoryAppService.GetDetail(id);

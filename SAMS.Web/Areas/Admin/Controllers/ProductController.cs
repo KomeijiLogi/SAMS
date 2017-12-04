@@ -53,33 +53,33 @@ namespace SAMS.Web.Areas.Admin.Controllers
 
             return PartialView("_Create", viewModel);
         }
-        [HttpPost]
-        public ContentResult Create(SAMS.Web.Areas.Admin.Models.Product.CreateViewModel input)
-        {
-            var createInput = new SAMS.Products.Dtos.CreateInput()
-            {
-                EASNumber=input.EASNumber,
-                K3Number=input.K3Number,
-                Name=input.Name,
-                Model=input.Model
-            };
-            _productAppService.Create(createInput);
-            return Content("ok");
-        }
-        [HttpPost]
-        public ContentResult Edit(SAMS.Web.Areas.Admin.Models.Product.EditViewModel product)
-        {
-            var editInput = new SAMS.Products.Dtos.EditInput()
-            {
-                Id = product.Id.Value,
-                Model = product.Model,
-                Name = product.Name,
-                K3Number = product.K3Number,
-                EASNumber = product.EASNumber
-            };
-            _productAppService.Edit(editInput);
-            return Content("ok");
-        }
+        //[HttpPost]
+        //public ContentResult Create(SAMS.Web.Areas.Admin.Models.Product.CreateViewModel input)
+        //{
+        //    var createInput = new SAMS.Products.Dtos.CreateInput()
+        //    {
+        //        EASNumber=input.EASNumber,
+        //        K3Number=input.K3Number,
+        //        Name=input.Name,
+        //        Model=input.Model
+        //    };
+        //    _productAppService.Create(createInput);
+        //    return Content("ok");
+        //}
+        //[HttpPost]
+        //public ContentResult Edit(SAMS.Web.Areas.Admin.Models.Product.EditViewModel product)
+        //{
+        //    var editInput = new SAMS.Products.Dtos.EditInput()
+        //    {
+        //        Id = product.Id.Value,
+        //        Model = product.Model,
+        //        Name = product.Name,
+        //        K3Number = product.K3Number,
+        //        EASNumber = product.EASNumber
+        //    };
+        //    _productAppService.Edit(editInput);
+        //    return Content("ok");
+        //}
         [HttpPost]
         public ContentResult SaveBom(SaveBomInput input)
         {
@@ -87,24 +87,24 @@ namespace SAMS.Web.Areas.Admin.Controllers
             _productAppService.UpdateBoms(input.ProductId, accessorys);
             return Content("ok");
         }
-        [HttpGet]
-        public PartialViewResult Edit(int id)
-        {
-            var input = new GetDetailInput() { Id = id };
-            var product = _productAppService.GetDetail(input);
-            var viewModel = new SAMS.Web.Areas.Admin.Models.Product.EditViewModel()
-            {
-               Id=product.Id,
-               EASNumber=product.EASNumber,
-               K3Number=product.K3Number,
-               Model=product.Model,
-               Name=product.Name
-            };
+        //[HttpGet]
+        //public PartialViewResult Edit(int id)
+        //{
+        //    var input = new GetDetailInput() { Id = id };
+        //    var product = _productAppService.GetDetail(input);
+        //    var viewModel = new SAMS.Web.Areas.Admin.Models.Product.EditViewModel()
+        //    {
+        //       Id=product.Id,
+        //       EASNumber=product.EASNumber,
+        //       K3Number=product.K3Number,
+        //       Model=product.Model,
+        //       Name=product.Name
+        //    };
 
-            return PartialView("_Edit", viewModel);
-        }
+        //    return PartialView("_Edit", viewModel);
+        //}
 
-        public PartialViewResult Bom(int id)
+        public PartialViewResult Bom(string id)
         {
             var boms = _productAppService.GetBom(id);
             var product = _productAppService.GetDetail(new GetDetailInput() { Id = id });
@@ -150,26 +150,23 @@ namespace SAMS.Web.Areas.Admin.Controllers
         //    return Content("ok");
         //}
 
-        [HttpPost]
-        public ContentResult Delete(int[] ids)
-        {
-            for (int i = 0; i < ids.Length; i++)
-            {
-                _productAppService.Delete(ids[i]);
-            }
-            return Content("ok");
-        }
+        //[HttpPost]
+        //public ContentResult Delete(int[] ids)
+        //{
+        //    for (int i = 0; i < ids.Length; i++)
+        //    {
+        //        _productAppService.Delete(ids[i]);
+        //    }
+        //    return Content("ok");
+        //}
         [DontWrapResult]
-        public JsonResult CheckProduct(string name,string model,int? id)
+        public JsonResult CheckProduct(string name,string model,string id)
         {
 
-            bool isSuccess = true;
+            bool isSuccess = false;
             var products=_productAppService.GetProductsByNameModel(name, model);
             if(products.Items.Count>0)
             {
-                if (!id.HasValue)
-                    isSuccess = false;
-                else
                     isSuccess = products.Items[0].Id == id;
                 
             }

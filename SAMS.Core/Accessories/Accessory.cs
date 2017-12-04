@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SAMS.Accessories
 {
     [Table("t_bd_accessory")]
-    public class Accessory:Entity
+    public class Accessory:Entity<string>
     {
         public virtual string Name { get; set; }
         public virtual string Model { get; set; }

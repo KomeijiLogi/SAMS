@@ -80,34 +80,34 @@
 
     <div class="mui-content mui-scroll-wrapper" id="wrapper" style="overflow:auto;display:block;z-index:998;">
         <div class="mui-scroll" id="scroller">
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-input-row">
+            <form class="mui-input-group">
+                <div class="mui-input-row">
                     <input type="hidden" value="" name="ProductId" id="ProductId" />
 
-                    <h4 class="mui-pull-left">产品名称</h4>
+                    <label class="mui-pull-left">产品名称</label>
                     <input class="mui-pull-right" placeholder="请选择产品名称" readonly="readonly" id="showProductPicker_name" name="ProductName" value="" />
-                </li>
-                <li class="mui-table-view-cell mui-input-row">
-                    <h4 class="mui-pull-left">产品型号</h4>
+                </div>
+                <div class="mui-input-row">
+                    <label class="mui-pull-left">产品型号</label>
                     <input class="mui-pull-right" placeholder="请选择产品型号" readonly="readonly" id="showProductPicker_type" name="ProductType" value="" />
-                </li>
+                </div>
 
 
-                <li class="mui-table-view-cell mui-input-row">
+                <div class="mui-input-row">
                     <div id="showServicePicker">
-                        <h4 class="mui-pull-left" style="display:inline-block;">工单类型</h4>
-                        <span class="mui-pull-right mui-icon mui-icon-arrowright mui-pull-right" style="display:inline-block;"></span>
+                        <label>工单类型</label>
+                        <span class="mui-pull-right mui-icon mui-icon-arrowright mui-pull-right" style="display:inline-block;display:none;"></span>
                         @*<input type="hidden" id="serviceValue" name="serviceValue"/>*@ 
-                        <div id='serviceResult' class="ui-alert" style="margin:0px;padding-top:0px; width:60%;"></div>
-                        
+                        <div id='serviceResult' class="ui-alert" style="margin:0px;padding-top:0px; width:60%;display:none;"></div>
+                        <input type="text" id="serviceResult" name="serviceResult" readonly="readonly"/>
                         
                     </div>
-                </li>
+                </div>
 
 
-            </ul>
-            <ul class="mui-table-view" style="margin-top:2vw;">
-                <li class="mui-table-view-cell mui-input-row">
+            </form>
+            <div class="mui-table-view" style="margin-top:2vw;">
+                <div class="mui-table-view-cell mui-input-row" style="display:none;">
                     <div id="showCityPicker">
                         <h4 class="mui-pull-left">所在地区</h4>
                         <span class="mui-pull-right mui-icon mui-icon-arrowright"></span>
@@ -115,45 +115,45 @@
                             
                         </div>
                     </div>
-                </li>
-                <li class="mui-table-view-cell mui-input-row" onclick="showHospital()">
+                </div>
+                <div class="mui-table-view-cell mui-input-row" onclick="showHospital()" style="display:none;">
                     <input type="hidden" value="" name="CustomerId" id="CustomerId" />
                     <h4 class="mui-pull-left">医院名称</h4>
                     <span class="mui-pull-right mui-icon mui-icon-arrowright mui-pull-right" style="display:inline-block;" onclick="showHospital()"></span>
-                    <input class="mui-pull-right" id="fuzzyhospital" name="fuzzyhospital" readonly="readonly" onclick="showHospital()" style="padding-left:0px;max-width:40%;" value="" />
+                    <input class="mui-pull-right" id="fuzzyhospital" name="fuzzyhospital" readonly="readonly" onclick="showHospital()"  value="" />
 
-                </li>
-                <li class="mui-table-view-cell mui-input-row">
-                    <h4 class="mui-pull-left">联系人</h4>
-                    <input class="mui-pull-right" placeholder="请输入联系人" id="OfficePerson" name="OfficePerson" value="" style="padding-left:0px;max-width:55%;"/>
-                </li>
-                <li class="mui-table-view-cell mui-input-row">
-                    <h4 class="mui-pull-left">科室</h4>
+                </div>
+                <div class="mui-input-row">
+                    <label class="mui-pull-left">联系人</label>
+                    <input class="mui-pull-right" placeholder="请输入联系人" id="OfficePerson" name="OfficePerson" value="" />
+                </div>
+                <div class="mui-input-row">
+                    <label class="mui-pull-left">科室</label>
                     <a class="mui-pull-right" id="officePop" href="#popwindows_offices" style="font-weight:300;font-size:14px;">提示</a>
-                    <input class="mui-pull-right" placeholder="请输入科室" list="Offices" id="Office" name="Office" autocomplete="on" value="" style="padding-left:10px;max-width:50%;"/>
+                    <input class="mui-pull-right" placeholder="请输入科室" list="Offices" id="Office" name="Office" autocomplete="on" value=""/>
 
-                </li>
-                <li class="mui-table-view-cell mui-input-row" style="display:none;">
-                    <h4 class="mui-pull-left">科室电话</h4>
+                </div>
+                <div class="mui-input-row" style="display:none;">
+                    <label class="mui-pull-left">科室电话</label>
                     <input class="mui-pull-right inputCS" placeholder="请输入科室电话" type="tel" id="OfficeTel" name="OfficeTel" value="" />
-                </li>
-                <li class="mui-table-view-cell mui-input-row">
-                    <h4 class="mui-pull-left">手机号码</h4>
+                </div>
+                <div class="mui-input-row">
+                    <label class="mui-pull-left">手机号码</label>
                     <input class="mui-pull-right inputCS" placeholder="请输入手机号码" type="tel" id="OfficeMobile" name="OfficeMobile" value="" />
-                </li>
+                </div>
 
+                <div class="mui-input-row">
+                    <label>服务描述</label>
 
-
-            </ul>
-            <ul class="mui-table-view" style="margin-top:2vw;">
-                <li class="mui-table-view-cell">
-                    <h4 class="mui-pull-left">服务描述</h4>
-
-                    <textarea rows="3" placeholder="问题描述" id="Description" name="Description">
+                    <textarea rows="3" placeholder="服务描述" id="Description" name="Description">
                        
                     </textarea>
-                </li>
-            </ul>
+                </div>
+
+            </div>
+           
+               
+            
 
             <button id="bt_commit" name="bt_commit" type="submit" class="mui-btn mui-btn-primary mui-btn-block" style="margin-top:2vw;" onclick="Save()">提交申请</button>
         </div>

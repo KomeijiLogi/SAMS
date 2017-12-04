@@ -60,7 +60,7 @@ var WorkOrder = function () {
 
     //初始化选择客户控件
     var initCustomer = function selectCustomer(id, url) {
-        var v=$(id).val();
+        var v = $(id).val();
         $(id).select2({
             minimumInputLength: 1,
             formatInputTooShort: "请输入客户名称",
@@ -84,7 +84,7 @@ var WorkOrder = function () {
                 }
             },
             formatResult: function (item) {
-               
+
                 return item.Name;
             }, // omitted for brevity, see the source of this page
             formatSelection: function (item) {
@@ -92,9 +92,9 @@ var WorkOrder = function () {
                 $("#Customer_Mobile").val(item.Mobile);//,#WorkOrder_ContactNumber
                 //$("#WorkOrder_Contact").val(item.Name);
                 if (item.Area) { initArea2("#sel_pro", "#sel_city", "#sel_distr", item.Area); }
-                else { $("#sel_pro").val(""); $("#sel_pro").change();  }
-               
-                
+                else { $("#sel_pro").val(""); $("#sel_pro").change(); }
+
+
                 $("#Customer_Area").val(item.Area);
                 $("#Customer_Address").val(item.Address);
                 return item.Name;
@@ -104,13 +104,13 @@ var WorkOrder = function () {
             },
             initSelection: function (element, callback) {
                 //初始化时设置默认值
-              
+
                 var data = {
                     Id: $("#WorkOrder_CustomerID").val(),
                     Mobile: $("#Customer_Mobile").val(),
                     Area: $("#Customer_Area").val(),
                     Address: $("#Customer_Address").val(),
-                    Name:$(element).val()
+                    Name: $(element).val()
                 };
                 callback(data);
                 //$.ajax(url, 
@@ -124,17 +124,17 @@ var WorkOrder = function () {
                 //.done(function(data){
                 //    callback(data[0]);
                 //});
-               
+
             }
         });
-       
+
 
     }
 
     //获取省市区域的值
     var getAreaVal = function getAreaVal() {
         //获取省市区的值
-        var area = $("#sel_pro").find("option:selected").text()+ "-" + $("#sel_city").find("option:selected").text() + "-" + $("#sel_distr").find("option:selected").text();
+        var area = $("#sel_pro").find("option:selected").text() + "-" + $("#sel_city").find("option:selected").text() + "-" + $("#sel_distr").find("option:selected").text();
         if ($("#sel_pro").val() && $("#sel_city").val() && $("#sel_distr").val()) {
             $("#Customer_Area").val(area).focus().blur();
         }
@@ -143,11 +143,11 @@ var WorkOrder = function () {
 
     return {
         //传入查询客户数据的url
-        init: function (url) {
+        init: function () {
             //选择客户控件初始化
             //if (!$("#CustomerName").val()) { initCustomer("#CustomerID", url); }
             //if (!$("#Customer_Name").val()) { initCustomer("#Customer_Name", url); }
-            initCustomer("#Customer_Name", url);
+            //initCustomer("#Customer_Name", url);
             initPage();
         }
     };
@@ -155,11 +155,13 @@ var WorkOrder = function () {
 
 //提交工单表单
 function submitWorkOrderForm() {
+
+    debugger;
     var isvalid = true;
     if (!$("#editWorkOrderForm").valid()) {
         isvalid = false;
     }
-    
+   
     var inputs = $("#editWorkOrderForm").find("input[data-bind='required'],select[data-bind='required'],textarea[data-bind='required']");
     if (inputs) {
         $.each(inputs, function () {
@@ -175,7 +177,60 @@ function submitWorkOrderForm() {
 
     if (isvalid) {
         $("#editWorkOrderForm").submit();
+        //window.location.reload();
     }
+}
+var xhr;
+function searchCus(o, url) {
+    var a = $(o).attr("data-bind");//控制区域
+    var b = $(o).attr("data-id");//文本id
+
+    var name = $("#" + b).val();
+
+    if (name.length < 3) return;
+
+    if (xhr) { xhr.abort(); }
+    xhr = $.ajax({
+        url: url,
+        type: "Get",
+        data: { "name": name },
+        success: function (data) {
+            $("#" + a).empty();
+            $("#" + a).append(data);
+            if ($("#" + a).find("li").length > 0) {
+                $("#" + a).find("li:eq(0)").addClass("active").siblings().removeClass("active");
+            }
+        },
+        error: function (data) {
+            if (data.readyState == 4)
+                showException(data)
+        }
+    });
+
+}
+
+function searchBtnCus(o, url, input) {
+    searchCus(o, url);
+    $("#" + input).focus();
+}
+
+function bindCusData(o) {
+    var cusVal = $(o).attr("data-val");
+    var cusId = $(o).attr("data-id");
+
+    var a = $(o).attr("data-bind");//获取当前客户id
+    var b = $(o).attr("data-content");//获取当前客户姓名
+    var c = $(o).attr("data-area");//省市
+    var d = $(o).attr("data-address");//详细地址
+    var e = $(o).attr("data-code");//客户编码
+    $("#" + cusVal).val(b).focus().blur();
+    $("#" + cusVal + "_hidden").val(b);
+    $("#" + cusId).val(a);
+
+    $("#Customer_Code").val(e);
+    $("#customer_area").val(c).focus().blur();
+    $("#Customer_Address").val(d).focus().blur();
+
 }
 
 //自定义字段值改变
@@ -249,11 +304,11 @@ function changeCustomFieldValue(id, type, field) {
          }
     jsonarrayNewCustomFields.push(arr);
     var jsonstr;
-    if ($("#CustomFields"))
-    {
+    var jsonarrayOldCustomFields;
+    if ($("#CustomFields")) {
         jsonstr = $("#CustomFields").val();
         if (jsonstr) {
-            var jsonarrayOldCustomFields = eval('(' + jsonstr + ')');
+            jsonarrayOldCustomFields = eval('(' + jsonstr + ')');
             for (i = 0; i < jsonarrayOldCustomFields.length; i++) {
                 if (jsonarrayOldCustomFields[i].id != id) {
                     jsonarrayNewCustomFields.push(jsonarrayOldCustomFields[i]);
@@ -263,11 +318,10 @@ function changeCustomFieldValue(id, type, field) {
         $("#CustomFields").val(JSON.stringify(jsonarrayNewCustomFields));
     }
 
-    if ($("#WorkOrder_CustomFields"))
-    {
-        var jsonstr = $("#WorkOrder_CustomFields").val();
+    if ($("#WorkOrder_CustomFields")) {
+        jsonstr = $("#WorkOrder_CustomFields").val();
         if (jsonstr) {
-            var jsonarrayOldCustomFields = eval('(' + jsonstr + ')');
+            jsonarrayOldCustomFields = eval('(' + jsonstr + ')');
             for (i = 0; i < jsonarrayOldCustomFields.length; i++) {
                 if (jsonarrayOldCustomFields[i].id != id) {
                     jsonarrayNewCustomFields.push(jsonarrayOldCustomFields[i]);
@@ -276,5 +330,5 @@ function changeCustomFieldValue(id, type, field) {
         }
         $("#WorkOrder_CustomFields").val(JSON.stringify(jsonarrayNewCustomFields));
     }
-    
+
 }

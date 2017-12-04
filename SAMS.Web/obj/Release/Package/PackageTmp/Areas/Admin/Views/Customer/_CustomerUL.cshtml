@@ -1,0 +1,31 @@
+﻿@using SAMS.Customers
+
+
+
+<ul class="dropdown-menu esh-pub-menu">
+    @{ int c = 0; }
+    @foreach (var item in ViewBag.Customers.Items)
+    {
+        c++;
+        if (c > 5) { break; }
+        
+    <li class="">
+        <a href="javascript:void(0)" onclick="bindCusData(this)" 
+           data-bind="@item.Id" 
+           data-content="@item.Name" 
+           data-code="@item.Code" 
+           data-area="@item.Area"
+           date-address="@item.Address"
+           data-val="popCustomer" 
+           data-id="CustomerID">@item.Name &nbsp;
+        <i>@item.Code</i>
+        </a>
+    </li>
+    }
+    @if (ViewBag.Customers.Items.Count > 0)
+    {
+    <div class="search-count clearfix">
+        共搜索到 @ViewBag.Customers.Items.Count 条记录
+    </div>
+    }
+</ul>

@@ -6,17 +6,18 @@
     SetAntiForgeryCookie();
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8">
+    <title>登录-威售后</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="~/favicon.ico">
+    <link rel="shortcut icon" href="~/favicon.png">
 
-    <title>SAMS</title>
+    
 
     @Styles.Render("~/Bundles/vendor/css")
     @Styles.Render("~/Bundles/css")
@@ -39,10 +40,20 @@
 
 </head>
 <body>
-    @Html.Partial("_TopBar")
+    <div class="esh-page">
+        @Html.Partial("_TopBar")
+       
+        <div class="clearfix"></div>
+        <!--页面主体START-->
+        <div class="esh-container">
+            @RenderBody()
+           
+        </div>
+    </div>
+   
 
     <div class="container">
-        @RenderBody()
+        
     </div>
 
     @Scripts.Render("~/Bundles/vendor/js/bottom")
@@ -58,8 +69,8 @@
     <script src="~/AbpScripts/GetScripts?v=@(Clock.Now.Ticks)" type="text/javascript"></script>
 
     <!-- SignalR scripts -->
-    <script src="~/signalr/hubs"></script>
-    @Html.IncludeScript("~/Abp/Framework/scripts/libs/abp.signalr.js")
+    @*<script src="~/signalr/hubs"></script>
+    @Html.IncludeScript("~/Abp/Framework/scripts/libs/abp.signalr.js")*@
 
 <!-- View specific scripts -->
     @RenderSection("scripts", required: false)

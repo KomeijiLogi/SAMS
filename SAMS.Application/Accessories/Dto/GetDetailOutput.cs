@@ -10,7 +10,7 @@ using Abp.AutoMapper;
 namespace SAMS.Accessories.Dtos
 {
     [AutoMapFrom(typeof(Accessory))]
-    public class GetDetailOutput:EntityDto
+    public class GetDetailOutput:EntityDto<string>
     {
         public virtual string Name { get; set; }
         public virtual string Model { get; set; }

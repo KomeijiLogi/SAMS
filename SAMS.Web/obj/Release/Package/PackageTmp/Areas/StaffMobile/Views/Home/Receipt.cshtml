@@ -13,19 +13,15 @@
     <link href="~/Content/mui.min.css" rel="stylesheet" />
     <link href="~/Content/mui.indexedlist.css" rel="stylesheet" />
     <link href="~/Content/upload.css" rel="stylesheet" />
+    <link href="~/Content/custom.css" rel="stylesheet" />
     <style>
-        
+      
         .mui-table-view-cell:after {
             left: 0%;
         }
-        input[type=text] ,input[type=tel]{
-        
-           width:60%;
-           border:none;
-              
-        }
+       
         .inputdef {
-           font-size:14px;
+           font-size:0.65rem;
            width:80%;
            transform:translate(0px,-10px);
            -webkit-transform:translate(0px,-10px);
@@ -38,59 +34,65 @@
 
 <body>
     <div class="mui-content">
-        <div class="mui-table-view">
+        @*<div class="mui-table-view">
+            <p class="mui-text-center" style="color:red;font-size:18px;">以下各项均为必填*</p>
+        </div>*@
+        <div class="mui-input-group">
             <input type="hidden" name="orderID"  id="orderID" value="@Model.WorkOrder.Id" />
-            <div class="mui-table-view-cell">
-                <label>设备名称<input type="text" id="SerialName" Name="SerialName" value="@Model.WorkOrder.ProductName" placeholder="请输入设备名称" /></label>
-
+            <div class="mui-input-row">
+                <label for="SerialName">设备名称<i style="color:red;">*</i></label>
+                <input type="text" id="SerialName" Name="SerialName" value="@Model.WorkOrder.ProductName" placeholder="请输入设备名称" readonly="readonly"/>
             </div>
-            <div class="mui-table-view-cell">
-                <label>设备序号<input type="text" id="SerialNo" Name="SerialNo" value="@Model.WorkOrder.SerialNo" placeholder="请输入设备序号"/></label>
-                
+            <div class="mui-input-row">
+                <label for="SerialNo">设备序号<i style="color:red;">*</i></label>
+                <input type="text" id="SerialNo" Name="SerialNo" value="@Model.WorkOrder.SerialNo" placeholder="请输入设备序号" />
             </div>
-            <div class="mui-table-view-cell">
-                <label>工程师<input type="text" id="Engineer" Name="Engineer" value="@Model.WorkOrder.AssignedPersonName" placeholder="请输入工程师"  /></label>
+            <div class="mui-input-row">
+                <label for="Engineer">工程师<i style="color:red;">*</i></label>
+                <input type="text" id="Engineer" Name="Engineer" value="@Model.WorkOrder.AssignedPersonName" placeholder="请输入工程师" readonly="readonly"/>
             </div>
 
 
        </div>
-       <div class="mui-table-view" style="margin-top:10px;">
-            <div class="mui-table-view-cell">
-                <label>客户名称<input type="text" id="CustomName" Name="CustomName" value="@Model.WorkOrder.CustomerName" placeholder="请输入客户名称" /></label>
-
+       <div class="mui-input-group" style="margin-top:10px;">
+            <div class="mui-input-row">
+                <label for="CustomName">客户名称<i style="color:red;">*</i></label>
+                <input type="text" id="CustomName" Name="CustomName" value="@Model.WorkOrder.CustomerName" placeholder="请输入客户名称" readonly="readonly"/>
             </div>
-            <div class="mui-table-view-cell">
-                <label>科室名称<input type="text" id="Office" Name="Office" value="@Model.WorkOrder.Office" placeholder="请输入科室名称" /></label>
-
+            <div class="mui-input-row">
+                <label for="Office">科室名称<i style="color:red;">*</i></label>
+                <input type="text" id="Office" Name="Office" value="@Model.WorkOrder.Office" placeholder="请输入科室名称" />
             </div>
-            <div class="mui-table-view-cell" style="display:none;">
-                <label>科室电话<input type="tel" id="OfficeTel" Name="OfficeTel" value="@Model.WorkOrder.OfficeTel" placeholder="请输入科室电话" /></label>
-
+            <div class="mui-input-row">
+                <label for="OfficeTel">科室电话</label>
+                <input type="tel" id="OfficeTel" Name="OfficeTel" value="@Model.WorkOrder.OfficeTel" placeholder="请输入科室电话" />
             </div>
-            <div class="mui-table-view-cell">
-                <label>科室联系人<input type="text" id="OfficePerson" Name="OfficePerson" value="@Model.WorkOrder.OfficePerson" placeholder="请输入科室联系人" /></label>
-
+            <div class="mui-input-row">
+                <label for="OfficePerson">科室联系人<i style="color:red;">*</i></label>
+                <input type="text" id="OfficePerson" Name="OfficePerson" value="@Model.WorkOrder.OfficePerson" placeholder="请输入科室联系人" />
             </div>
-            <div class="mui-table-view-cell">
-                <label>联系人手机<input type="tel" id="OfficeMobile" Name="OfficeMobile" value="@Model.WorkOrder.OfficeMobile" placeholder="请输入联系人手机" /></label>
-
+            <div class="mui-input-row">
+                <label for="OfficeMobile">联系人手机<i style="color:red;">*</i></label>
+                <input type="tel" id="OfficeMobile" Name="OfficeMobile" value="@Model.WorkOrder.OfficeMobile" placeholder="请输入联系人手机" />
             </div>
-            <div class="mui-table-view-cell">
-                <label>联系人职务<input type="tel" id="OfficePosition" Name="OfficePosition" value="@Model.WorkOrder.OfficePosition" placeholder="请输入联系人职务" /></label>
-
+            <div class="mui-input-row">
+                <label for="OfficePosition">联系人职务</label>
+                <input type="tel" id="OfficePosition" Name="OfficePosition" value="@Model.WorkOrder.OfficePosition" placeholder="请输入联系人职务" />
             </div>
            
 
             @if (Model.WorkOrder.ServiceType.Equals(ServiceType.Install))
             {
 
-                <div class="mui-table-view-cell">
-                    <label>装机时间<input type="text" id="ServiceTime" Name="ServiceTime" value="@Model.WorkOrder.ServiceTime" placeholder="请输入装机时间" /></label>
-
+                <div class="mui-input-row">
+                    <label for="ServiceTime">装机日期<i style="color:red;">*</i></label>
+                    <input type="hidden" id="tmp_time_service" value="@Model.WorkOrder.ServiceTime"/>
+                    <input type="date" id="ServiceTime" Name="ServiceTime" value="@Model.WorkOrder.ServiceTime" placeholder="请输入装机时间" />
                 </div>
-                <div class="mui-table-view-cell">
-                    <label>保修期至<input type="datetime" id="Warrenty" Name="Warrenty" value="@Model.WorkOrder.Warrenty" placeholder="请输入保修期(年-月-日)" /></label>
-
+                <div class="mui-input-row">
+                    <label for="Warrenty">保修截止日期<i style="color:red;">*</i></label>
+                    <input type="hidden" id="tmp_time_warrenty" value="@Model.WorkOrder.Warrenty"/>
+                    <input type="date" id="Warrenty" Name="Warrenty" value="@Model.WorkOrder.Warrenty" placeholder="请输入保修期(年-月-日)" />
                 </div>
                 <div class="mui-table-view-cell" style="background:transparent;background-color:#EEEEEE;display:none;">
                     <p>
@@ -103,7 +105,7 @@
                 </div>
                 if (Model.WorkOrder.AccessoryEntry.Count > 0)
                 {
-                    <ul class="mui-table-view" id="accessoryList">
+                    <ul class="mui-table-view" id="accessoryList" style="display:none;">
                         @foreach (var item in Model.WorkOrder.AccessoryEntry)
                     {
                             <li class="mui-table-view-cell" style="height:30vw;">
@@ -183,18 +185,22 @@
             }
             else if (Model.WorkOrder.ServiceType.Equals(ServiceType.Repair))
             {
-                <div class="mui-table-view-cell">
-                    <label>故障现象<textarea  id="faultap" Name="faultap"  value="" rows="5" placeholder="请输入故障现象" >@Model.WorkOrder.Faultap</textarea></label>
+                <script>
 
+                    window.parent.location.href = ('/StaffMobile/Home/index');
+                </script>
+                <div class="mui-input-row" style="height:auto;">
+                    <label>故障现象</label>
+                    <textarea id="faultap" Name="faultap" value="" rows="5" placeholder="请输入故障现象">@Model.WorkOrder.Faultap</textarea>
                 </div>
-                <div class="mui-table-view-cell">
-                    <label>处理方案<textarea id="dealfa" Name="dealfa" value=""  rows="5" placeholder="请输入处理方案">@Model.WorkOrder.Dealfa</textarea></label>
-
+                <div class="mui-input-row" style="height:auto;">
+                    <label>处理方案</label>
+                    <textarea id="dealfa" Name="dealfa" value="" rows="5" placeholder="请输入处理方案">@Model.WorkOrder.Dealfa</textarea>
                 </div>
 
-                <div class="mui-table-view-cell">
-                    <label>保修期至<input type="datetime" id="Warrenty" Name="Warrenty" value="@Model.WorkOrder.Warrenty" placeholder="请输入保修期(年-月-日)" /></label>
-
+                <div class="mui-input-row">
+                    <label>保修截止时间</label>
+                    <input type="date" id="Warrenty" Name="Warrenty" value="@Model.WorkOrder.Warrenty" placeholder="请输入保修期(年-月-日)" />
                 </div>
                 <div class="mui-table-view-cell" style="background:transparent;background-color:#EEEEEE;">
                     <p>
@@ -293,7 +299,7 @@
 
             }
            </div>
-           <div class="mui-table-view" style="margin-top:10px;">
+           @*<div class="mui-table-view" style="margin-top:10px;">
                <div class="mui-table-view-cell">
                    <label>市内交通￥<input type="text" id="trafficUrban" Name="trafficUrban" value="@Model.WorkOrder.TrafficUrban" placeholder="请输入市内交通费" /></label>
 
@@ -315,21 +321,20 @@
 
                </div>
 
+           </div>*@
 
 
-           </div>
-
-
-
+         
   <div class="mui-input-row mui-table-view" id="uploaddiv" style="min-height:35vw;overflow:scroll;">
     <div class="border border-t upload-img" style="top:0px;">
         <!--上传图片-->
         <div class="clearfix upload-btn" id="children-bg">
             <label class="label">上传记录单</label>
-            <span class="tips" id="imageCount">已添加0张</span>
+            <span class="tips" id="imageCount" style="display:none;">已添加0张</span>
             <!--上传图片按钮  -->
+
             <span class="upload-addbtn">
-                <input type="file" accept="image/jpeg,image/jpg,image/png,image/jp2,image/bmp" id="file">
+                <input type="file" accept="image/jpeg,image/jpg,image/png,image/jp2,image/bmp" id="file" style="opacity:0;">
             </span>
 
         </div>
@@ -341,13 +346,13 @@
 
                     <div class="pic-preview smallyulan success">
                          <div class="del none" style="opacity:1;z-index:999;" onclick="delPicture(this)">x</div>
-                         <div class="img-wrap smallimg"><img src='/upload/@item.FilePath?w=120&h=120' id="uploadPic"/></div>
+                         <div class="img-wrap smallimg"><img src='/upload/@item.FilePath?w=120&h=120' id="uploadPic" onclick="showPicture(this)"/></div>
                          <input type="hidden" id="filepath" name="filepath" value="@item.FilePath" />
                          <input type="hidden" id="filetype" name="filetype" value="@item.FileType" />
                     </div>
                }
           </div>
-
+           
       
         }
         else
@@ -359,11 +364,17 @@
         
     </div>
     <div class="upload-tishi">图片正在上传，请稍后...</div>
+      
  </div>
 
     @if (Model.WorkOrder.BillStatus.Equals(BillStatus.Complete) || Model.WorkOrder.BillStatus.Equals(BillStatus.Dispatch))
     {
-        <button class="mui-btn mui-btn-primary mui-btn-block" style="margin-top:2vw;" type="submit" onclick="Save()">确认完工</button>
+        <div class="mui-btn-row mui-text-center buttonContainter" style="width:100%;">
+           
+          
+            <button class="mui-btn mui-btn-primary mui-btn-block buttonAdjust" type="submit" onclick="Save()">确认完工</button>
+        </div>
+      
     }
 </div>
 
@@ -411,11 +422,10 @@
 
  }
     <script src="~/Areas/StaffMobile/Scripts/zepto.min.js"></script>
-    <script src="~/Areas/StaffMobile/Scripts/fx.js"></script>
-    <script src="~/Areas/StaffMobile/Scripts/fx_methods.js"></script>
+    
     <script src="~/Areas/StaffMobile/Scripts/mui.min.js"></script>
    
-    <script src="~/Areas/StaffMobile/Scripts/qingjs.js"></script>
+    <script type="text/javascript" src="http://wb.weigaoholding.com:8090/res/js/qingjs.js"></script>
     <script src="~/Areas/StaffMobile/Scripts/util.js"></script>
     <script src="~/Areas/StaffMobile/Scripts/upload.js"></script>
     <script src="~/Areas/StaffMobile/Scripts/preview.js"></script>
@@ -428,17 +438,14 @@
         mui('.mui-numbox').numbox();
         mui('.mui-scroll').scroll();
 
+        XuntongJSBridge.call('setWebViewTitle', { 'title': '回单详情' });
 
         //XuntongJSBridge.call('getPersonInfo', {}, function (result) {
-            
-            
-        //    //alert(JSON.stringify(result));
         //    if (result.success == true) {
         //        $('#Engineer').val(result.data.name + result.data.userName);
-
-
         //    }
         //});
+      
 
         function ClosePop() {
             mui('.mui-popover').popover('hide');
@@ -488,10 +495,16 @@
         }
         function delPicture(el) {
 
-            $(el).parent().remove();
-            watch();
+            var btnArray = ['是', '否'];
+            mui.confirm('是否删除', '删除确认提醒', btnArray, function (e) {
+                if (e.index == 0) {
+                    $(el).parent().remove();
+                    watch();
+                } else {
 
-           
+                }
+            });
+          
         }
         function SelectAccessory(val) {
             ClosePop();
@@ -507,10 +520,10 @@
             if (!hasExist) {
                 var li = '<li class="mui-table-view-cell" style="height:30vw;">';
 
-                li=li+'       <input type="hidden" name="aid" class="aid" value="'+accessory.AccessoryId+'" />';
-                li=li+'         <input type="hidden" name="eid" class="eid" value="" />';
-                li=li+'        <div>';
-                li=li+'            <p name="accName" style="position: absolute;top:25%;">'+accessory.AccessoryName +'|'+accessory.AccessoryModel+'</p>';
+                li = li+'       <input type="hidden" name="aid" class="aid" value="'+accessory.AccessoryId+'" />';
+                li = li+'         <input type="hidden" name="eid" class="eid" value="" />';
+                li = li+'        <div>';
+                li = li+'            <p name="accName" style="position: absolute;top:25%;">'+accessory.AccessoryName +'|'+accessory.AccessoryModel+'</p>';
                 li = li + '            <span class="mui-icon mui-icon-trash mui-pull-right" onclick="delAccessory(this)"></span>';
 
                 //li=li+'            <div class="mui-numbox mui-pull-right">';
@@ -519,16 +532,16 @@
                 //li=li+'                 <button class="mui-btn mui-numbox-btn-plus" type="button">+</button>';
                 //li=li+'            </div>';     
                
-                li=li+'            <div style="position: absolute;top:50%;">';
-                li=li+'               <h6 class="mui-pull-left">旧件版号</h6>';
+                li = li+'            <div style="position: absolute;top:50%;">';
+                li = li+'               <h6 class="mui-pull-left">旧件版号</h6>';
                 li = li + '               <input class="mui-pull-right inputdef " placeholder="请输入旧件版号" id="OldSerial" name="OldSerial" type="text" /> ';
-                li=li+'            </div>';
-                li=li+'            <div style="position: absolute;top:80%;">';
-                li=li+'               <h6 class="mui-pull-left">新件版号</h6>';
+                li = li+'            </div>';
+                li = li+'            <div style="position: absolute;top:80%;">';
+                li = li+'               <h6 class="mui-pull-left">新件版号</h6>';
                 li = li + '               <input class="mui-pull-right inputdef " placeholder="请输入新件版号" id="NewSerial" name="NewSerial" type="text" /> ';
                 li = li + '         </div>';
                 li = li + '    </div>';
-                li=li+'    </li>';
+                li = li+'    </li>';
 
 
                 $("#noAccessory").hide();
@@ -543,13 +556,43 @@
         function HidePopLoading() {
 
         }
+
+        function showExpense() {
+
+           
+
+        }
+        function showPicture(context) {
+
+            //console.log($(context).parent().parent());
+           
+            //XuntongJSBridge.call('showFile', {
+            //    'fileName': $(context).parent().parent().find("#filepath").val(),
+            //    'fileType': $(context).parent().parent().find("#filetype").val(),
+            //    'fileTime': '2015-06-02 15:40',
+            //    'fileSize': '0',
+            //    'fileDownloadUrl': 'http://192.168.39.176:61759/upload/'+ $(context).parent().parent().find("#filepath").val()
+            //}, function (result) {
+            //});
+
+        }
         function Save() {
+
             var isValid = true;
             var errormsg = "";
+            var serialName = $("#SerialName").val();    //设备名称
+            var serialNo = $("#SerialNo").val();        //设备序号
+            var engineer = $("#Engineer").val();         //工程师
+            var customName = $("#CustomName").val();    //客户名称
+            var office = $("#Office").val();            //科室名称        
+            var officePerson = $("#OfficePerson").val();  //科室联系人
+           
             var tel = $('#OfficeTel').val();            //科室电话
             var phone = $('#OfficeMobile').val();        //科室联系人手机
-            var office = $('#Office').val();
-            var serialNo = $('#SerialNo').val();
+            var serviceTime = $("#ServiceTime").val();   //装机时间
+            var warrenty = $("#Warrenty").val();
+
+
             if (!serialNo) {
                 mui.toast('请输入设备序号');
                 $('#SerialNo').focus();
@@ -558,12 +601,19 @@
             }
 
             if (!office) {
-                mui.toast('请输入科室');
-                $('#Office').val();
+                mui.toast('请输入科室名称');
+                $('#Office').focus();
                 isValid = false;
                 return;
             }
-            if ((!phone))
+            if (!officePerson) {
+                mui.toast('请填写科室联系人');
+                $("#OfficePerson").focus();
+                isValid = false;
+                return;
+            }
+
+            if ((!phone) && (!tel))
             {
                 mui.toast('请输入联系方式');
                   
@@ -571,8 +621,19 @@
                 return;
             }
 
-          
-          
+            if (!serviceTime) {
+
+                mui.toast('请填写装机时间');
+
+                isValid = false;
+                return;
+            }
+
+            if (!Warrenty) {
+                mui.toast('请填写保修截止时间');
+                isValid = false;
+                return;
+            }
 
             var accessories = new Array();
             $("#accessoryList li").each(function () {
@@ -678,51 +739,56 @@
           
 
             ShowPopLoading();
-            $.ajax({
-                url:"/staffMobile/Home/Receipt/",
-                type: "POST",
-                contentType: 'application/json',
-                data:// JSON.stringify({"SerialNo":"4","Accessories":[{'AccessoryId':'1','Count':'1'}],"Faults":[{'FaultId':'3'}],"CustomPhone":"4"}),
+            var btnArray = ['是', '否'];
+            mui.confirm('是否提交', '确认提醒', btnArray, function (e) {
+                if (e.index == 0) {
+                    $.ajax({
+                        url: "/staffMobile/Home/Receipt/",
+                        type: "POST",
+                        contentType: 'application/json',
+                        data:// JSON.stringify({"SerialNo":"4","Accessories":[{'AccessoryId':'1','Count':'1'}],"Faults":[{'FaultId':'3'}],"CustomPhone":"4"}),
 
-                    JSON.stringify({
-                    'SerialNo': $('#SerialNo').val(),
-                    'Accessories':  accessories,
-                    'Faults': faults,
-                    'CustomPhone': $('#CustomPhone').val(),
-                    'BillId': $('#orderID').val(),
-                    'ServiceTime': $('#ServiceTime').val(),
-                    'Warrenty': $('#Warrenty').val(),
-                    'Office': $('#Office').val(),
-                    'OfficeMobile': $('#OfficeMobile').val(),
-                    'OfficePerson': $('#OfficePerson').val(),
-                    'OfficeTel': $('#OfficeTel').val(),
-                    'OfficePosition': $('#OfficePosition').val(),
-                    'Accessories': accessories,
-                    'Photos': photos,
-                    'Faultap': $('#faultap').val(),
-                    'Dealfa': $('#dealfa').val(),
-                    'TrafficUrban': $('#trafficUrban').val(),
-                    'TrafficLong': $('#trafficLong').val(),
-                    'HotelEx': $('#hotelEx').val(),
-                    'Supply': $('#supply').val(),
-                    'OtherEx': $('#otherEx').val()
-                  
-                }),
-                success: function (data) {
-                    HidePopLoading();
-                    
-                    //data.success
-                    if (data=="ok") {
-                        window.parent.location.href = "/StaffMobile/home/index";
-                    } else {
-                        mui.alert('保存失败', "错误");
-                    }
-                },
-                error: function (data) {
-                    HidePopLoading();
-                    mui.alert('保存失败',"错误" );
+                        JSON.stringify({
+                            'SerialNo': $('#SerialNo').val(),
+                            'Accessories': accessories,
+                            'Faults': faults,
+                            'CustomPhone': $('#CustomPhone').val(),
+                            'BillId': $('#orderID').val(),
+                            'ServiceTime': $('#ServiceTime').val(),
+                            'Warrenty': $('#Warrenty').val(),
+                            'Office': $('#Office').val(),
+                            'OfficeMobile': $('#OfficeMobile').val(),
+                            'OfficePerson': $('#OfficePerson').val(),
+                            'OfficeTel': $('#OfficeTel').val(),
+                            'OfficePosition': $('#OfficePosition').val(),
+                            'Accessories': accessories,
+                            'Photos': photos,
+                            'Faultap': $('#faultap').val(),
+                            'Dealfa': $('#dealfa').val()
+
+
+                        }),
+                        success: function (data) {
+                            HidePopLoading();
+
+                            //data.success
+                            if (data == "ok") {
+                                mui.toast('保存成功');
+
+
+                                window.parent.location.href = "/StaffMobile/Home/index";
+                            } else {
+                                mui.alert('保存失败', "错误");
+                            }
+                        },
+                        error: function (data) {
+                            HidePopLoading();
+                            mui.alert('保存失败', "错误");
+                        }
+                    })
                 }
-            })
+            });
+
         }
 
 
@@ -742,14 +808,14 @@
             var count = $('.upload-img-list >div').size();
            
             if(count<=4){
-                $('#uploaddiv').css('height', '35vw');
+                $('#uploaddiv').css('height', '4rem');
 
             
             }else if(count<=8){
-                $('#uploaddiv').css('height', '60vw');
+                $('#uploaddiv').css('height', '7rem');
             
             } else if (count<=12) {
-                $('#uploaddiv').css('height', '90vw');
+                $('#uploaddiv').css('height', '10rem');
             }
 
         }
@@ -760,11 +826,47 @@
            
             watch();
 
+            console.log($("#tmp_time_service").val());
 
-            
-
-
+            $("#ServiceTime").val(formmartTime($("#tmp_time_service").val()));
+            $("#Warrenty").val(formmartTime($("#tmp_time_warrenty").val()));
         };
+
+        function formmartTime(time) {
+          
+          
+            // 8/30/2017 9:21:00 AM
+
+            var timeArr = String(time).split(" ");
+            var timeMDY = timeArr[0];
+            var timeHSM = timeArr[1];
+            var timeAP = timeArr[2];
+
+
+            var timeMDYArr = String(timeMDY).split("/");
+            var day = timeMDYArr[1];
+            var month = timeMDYArr[0];
+            var year = timeMDYArr[2];
+            if (month < 10) {
+                month = '0' + month;
+            }
+            if (day < 10) {
+                day = '0' + day;
+            }
+            var timeHSMArr = String(timeHSM).split(":");
+            var hour = timeHSMArr[0];
+            var minute = timeHSMArr[1];
+            var second = timeHSMArr[2];
+            if (String(timeAP).indexOf("PM") != -1) {
+                hour = parseInt(hour) + 12;
+            }
+
+            //var time = year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second;
+            var time = year + '-' + month + '-' + day;
+            return time;
+
+        }
+      
 
     </script>
 </body>

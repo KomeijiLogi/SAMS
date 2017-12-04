@@ -13,11 +13,11 @@ namespace SAMS.Products
     {
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; }
-        public virtual int ProductId { get; set; }
+        public virtual string ProductId { get; set; }
 
         [ForeignKey("AccessoryId")]
         public virtual Accessory Accessory { get; set; }
-        public virtual int AccessoryId { get; set; }
+        public virtual string AccessoryId { get; set; }
 
 
 

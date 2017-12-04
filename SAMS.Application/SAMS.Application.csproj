@@ -122,6 +122,13 @@
     <Compile Include="Customers\Dtos\GetCustomersWhere.cs" />
     <Compile Include="Customers\Dtos\GetDetailInput.cs" />
     <Compile Include="Customers\Dtos\GetDetailOutput.cs" />
+    <Compile Include="EquipmentArchives\Dto\EditEquipmentArchiveInput.cs" />
+    <Compile Include="EquipmentArchives\Dto\CreateEquipmentArchiveInput.cs" />
+    <Compile Include="EquipmentArchives\Dto\EquipmentArchiveDetailDto.cs" />
+    <Compile Include="EquipmentArchives\Dto\EquipmentArchiveListDto.cs" />
+    <Compile Include="EquipmentArchives\Dto\GetEquipmentArchivesInput.cs" />
+    <Compile Include="EquipmentArchives\EquipmentArchiveAppService.cs" />
+    <Compile Include="EquipmentArchives\IEquipmentArchiveAppService.cs" />
     <Compile Include="Faults\Dtos\CreateInput.cs" />
     <Compile Include="Faults\Dtos\EditInput .cs" />
     <Compile Include="Faults\Dtos\FaultListDto.cs" />
@@ -191,6 +198,8 @@
     <Compile Include="Users\UserAppService.cs" />
     <Compile Include="Users\Dto\UserListDto.cs" />
     <Compile Include="WorkOrders\Dtos\ActivityDto.cs" />
+    <Compile Include="WorkOrders\Dtos\GetExpenseOutput.cs" />
+    <Compile Include="WorkOrders\Dtos\ExpenseInput.cs" />
     <Compile Include="WorkOrders\Dtos\CreateOrUpdateWorkOrderInput.cs" />
     <Compile Include="WorkOrders\Dtos\CompleteOutput.cs" />
     <Compile Include="WorkOrders\Dtos\CompleteInput.cs" />

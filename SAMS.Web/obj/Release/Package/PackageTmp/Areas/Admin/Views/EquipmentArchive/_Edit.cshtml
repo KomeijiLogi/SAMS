@@ -1,0 +1,176 @@
+﻿
+
+@model SAMS.Web.Areas.Admin.Models.EquipmentArchive.DetailModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">编辑设备档案</h4>
+</div>
+@using (Ajax.BeginForm("edit", "equipmentarchive", new { area = "admin" },
+                        new AjaxOptions
+                        {
+                            OnBegin = "showPopLoading",
+                            OnComplete = "hidePopLoading",
+                            OnFailure = "showException",
+                            OnSuccess = "editSucess",
+                            HttpMethod = "POST",
+
+                        },
+                        new { id = "editForm", @class = "form-horizontal" })
+                )
+{
+
+    <div class="modal-body">
+        @Html.HiddenFor(x=>x.Id)
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                设备序列号<span class="required">*</span>
+            </label>
+            <div class="col-md-7">
+                <input class="form-control" data-val="true"
+                       data-val-length="设备序列号不能超过50个字符"
+                       data-val-length-max="50" data-val-regex="不能包含空字符"
+                       data-val-regex-pattern="^[^\s]+$"
+                       data-val-required="设备序列号不能为空"
+                       id="SerialNo" name="SerialNo" placeholder="请输入设备序列号"
+                       data-val-remote="设备序列号已存在"
+                       data-val-remote-additionalfields="*.SerialNo,*.Id"
+                       data-val-remote-url="/admin/equipmentarchive/checkserialno"
+                       type="text" value="@Model.SerialNo" />
+                <span class="field-validation-valid esh-error-lable"
+                      data-valmsg-for="SerialNo" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                产品<span class="required">*</span>
+            </label>
+            <div class="col-md-7">
+                @Html.DropDownListFor(x => x.ProductId, new SelectList(Model.ProductItemList, "Value", "Text"), "选择产品", new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.ProductId, "", new { @class = "field-validation-valid esh-error-lable" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                客户 <span class="required">*</span>
+            </label>
+            <div class="col-md-7">
+                <div class="input-group esh-select-form open">
+                    <input autocomplete="off" class="form-control" data-bind="loadBtn"
+                           data-val="true" data-val-required="名称不能为空"
+                           id="popCustomer" name="CustomerName" placeholder="请输入客户名称或编码搜索"
+                           type="text" value="@Model.CustomerName" />
+                    <input type="hidden" id="popCustomer_hidden" data-bind="@Model.CustomerId" value="@Model.CustomerName" />
+                    <input type="hidden" id="CustomerID" name="CustomerID" value="@Model.CustomerId" />
+                    <div id="dataCus" class=""></div>
+                    <span class="input-group-btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <button class="btn default" id="loadBtn" data-bind="dataCus" data-id="popCustomer" type="button"
+                                onclick="searchBtnCus(this, '/admin/customer/getcustomersul', 'popCustomer')">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+                <span class="field-validation-valid esh-error-lable"
+                      data-valmsg-for="CustomerName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                使用科室
+            </label>
+            <div class="col-md-7">
+                @Html.TextBoxFor(x => x.Office, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Office, "", new { @class = "field-validation-valid esh-error-lable" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                科室联系人
+            </label>
+            <div class="col-md-7">
+                @Html.TextBoxFor(x => x.OfficePerson, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.OfficePerson, "", new { @class = "field-validation-valid esh-error-lable" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                联系人职务
+            </label>
+            <div class="col-md-7">
+                @Html.TextBoxFor(x => x.OfficePosition, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.OfficePosition, "", new { @class = "field-validation-valid esh-error-lable" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                联系人电话
+            </label>
+            <div class="col-md-7">
+                @Html.TextBoxFor(x => x.OfficeTel, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.OfficeTel, "", new { @class = "field-validation-valid esh-error-lable" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                联系人手机
+            </label>
+            <div class="col-md-7">
+                @Html.TextBoxFor(x => x.OfficeMobile, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.OfficeMobile, "", new { @class = "field-validation-valid esh-error-lable" })
+            </div>
+        </div>
+        <div class="form-group ">
+            <label class="control-label col-md-3">
+                安装日期
+            </label>
+            <div class="col-md-7  ">
+                @Html.TextBoxFor(x => x.ServiceTime,
+               new { Value = (Model.ServiceTime.HasValue? Model.ServiceTime.Value.ToString("yyyy-MM-dd"):""),
+               @class = "form-control  date-picker", onblur = "clearDate(this) " })
+
+            </div>
+        </div>
+        <div class="form-group ">
+            <label class="control-label col-md-3">
+                保修期至
+            </label>
+            <div class="col-md-7 ">
+                @Html.TextBoxFor(x => x.Warrenty, new {
+               Value = (Model.Warrenty.HasValue ? Model.Warrenty.Value.ToString("yyyy-MM-dd") : ""),
+               @class = "form-control date-picker", onblur = "clearDate(this) " })
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                安装人
+            </label>
+            <div class="col-md-7">
+                @Html.DropDownListFor(x => x.AssignedPersonId, new SelectList(Model.PersonItemList, "Value", "Text"), "选择安装人", new { @class = "form-control" })
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                装机分类
+            </label>
+            <div class="radio-list col-md-7">
+                <label class="esh-check-line">
+                    <input type="radio" value="销售" name="installType" @(Model.InstallType==null?"":Model.InstallType.Equals("销售")?"checked":"") />销售
+                </label>
+                <label class="esh-check-line">
+                    <input type="radio" value="试用" name="installType"  @(Model.InstallType==null?"":Model.InstallType.Equals("试用") ?"checked":"") />试用
+                </label>
+            </div>
+        </div>
+
+    </div>
+            <div class="modal-footer">
+                <button type="button" id="cancelbtn" data-dismiss="modal" class="btn btn-default">取消</button>
+                <button type="submit" class="btn green">确定</button>
+            </div>
+}
+

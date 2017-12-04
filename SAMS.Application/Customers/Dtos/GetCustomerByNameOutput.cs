@@ -10,16 +10,24 @@ namespace SAMS.Customers.Dtos
     [AutoMapFrom(typeof(Customer))]
     public class GetCustomerByNameDto
     {
-        public string Name { get; set; }
         public string Id { get; set; }
-      
-        public virtual string Area { get; set; }//黑龙江省-大庆市-肇州镇
+        public string Code { get; set; }
 
-       
-        public virtual string Address { get; set; }
-        
-        public virtual string Mobile { get; set; }
 
-        public virtual string Email { get; set; }
+        public string Name { get; set; }
+
+        public string ProvinceName { get; set; }
+        public string ProvinceId { get; set; }
+        public string CityName { get; set; }
+        public string CityId { get; set; }
+
+        public string Address { get; set; }
+        public string Area
+        {
+            get
+            {
+                return ProvinceName + CityName;
+            }
+        }
     }
 }

@@ -6,9 +6,9 @@ namespace SAMS.Accessories
     public interface IAccessoryAppService
     {
         PagedResultDto<GetAccessoryDto> GetAccessory(GetAccessoryInput input);
-        void Delete(int id);
+        void Delete(string id);
         void Create(CreateInput input);
         void Edit(EditInput input);
-        GetDetailOutput GetDetail(int id);
+        GetDetailOutput GetDetail(string id);
     }
 }

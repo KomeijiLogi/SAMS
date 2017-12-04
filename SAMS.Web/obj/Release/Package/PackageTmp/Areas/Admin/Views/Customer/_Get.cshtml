@@ -105,8 +105,10 @@
 
                     @foreach (var i in Model.PageNumbers)
                     {
+                        System.Diagnostics.Debug.WriteLine(Model.PageCount); 
                         if (Model.PageIndex.Equals(i))
                         {
+
                             <li class="active"><a href="#" onclick="changePageIndex(@i)">@(i.ToString())</a></li>
                         }
                         else
@@ -147,4 +149,5 @@
     </div>
 
 </div>
+
 

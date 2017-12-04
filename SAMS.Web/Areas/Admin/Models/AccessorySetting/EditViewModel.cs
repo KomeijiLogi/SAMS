@@ -12,7 +12,7 @@ namespace SAMS.Web.Areas.Admin.Models.AccessorySetting
 {
     public class EditViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Model { get; set; }
         public string Unit { get; set; }

@@ -1,6 +1,7 @@
 ﻿(function () {
 
     $(function () {
+        $("input[type=radio],input[type=checkbox]").uniform();
         $('#LoginButton').click(function (e) {
             e.preventDefault();
             abp.ui.setBusy(
@@ -19,12 +20,7 @@
             );
         });
 
-        $('a.social-login-link').click(function () {
-            var $a = $(this);
-            var $form = $a.closest('form');
-            $form.find('input[name=provider]').val($a.attr('data-provider'));
-            $form.submit();
-        });
+        
 
         $('#ReturnUrlHash').val(location.hash);
 

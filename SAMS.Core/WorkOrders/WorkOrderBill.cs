@@ -33,26 +33,29 @@ namespace SAMS.WorkOrders
         /// </summary>
         [ForeignKey("CustomerId")]
         public virtual Customer Customer { get; set; }
-        public virtual int? CustomerId { get; set; }
+        public virtual string CustomerId { get; set; }
+        public virtual string CustomerName { get; set; }
+        public virtual string CustomerCode { get; set; }
+        public virtual string CustomerArea { get; set; }
         /// <summary>
         /// 客户地址
         /// </summary>
         [StringLength(MaxAddressLength)]
         public virtual String Address { get; set; }
 
-
         /// <summary>
         /// 客户电话
         /// </summary>
-        //[StringLength(MaxPhoneLength)]
-       // public virtual string CustomerPhone { get; set; }
-
-   
-        
+        [StringLength(MaxPhoneLength)]
+        public virtual string CustomerPhone { get; set; }
         /// <summary>
-        /// 客户联系人邮箱
+        /// 出库单号
         /// </summary>
-       // public virtual string Email { get; set; }
+        public virtual string IssueBill { get; set; }
+        /// <summary>
+        /// 销售公司
+        /// </summary>
+        public virtual string SaleOrg { get; set; }
 
         /// <summary>
         /// 销售员
@@ -64,12 +67,13 @@ namespace SAMS.WorkOrders
         /// </summary>
         [StringLength(MaxPhoneLength)]
         public virtual string SaleManPhone { get; set; }
+        public virtual string SaleManNumber { get; set; }
         /// <summary>
         /// 产品
         /// </summary>
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; }
-        public virtual int? ProductId { get; set; }
+        public virtual string ProductId { get; set; }
 
         /// <summary>
         /// 产品序列号
@@ -77,12 +81,11 @@ namespace SAMS.WorkOrders
         [StringLength(MaxSerialNoLength)]
         public virtual string SerialNo { get; set; }
 
-      
         /// <summary>
         /// 服务类型
         /// </summary>
         public virtual ServiceType ServiceType { get; set; }
-
+        
         /// <summary>
         /// 服务描述
         /// </summary>
@@ -122,7 +125,7 @@ namespace SAMS.WorkOrders
         public virtual string OfficeMobile { get; set; }
 
         /// <summary>
-        /// 服务日期
+        /// 服务时间
         /// </summary>
         public virtual DateTime? ServiceTime { get; set; }
         /// <summary>
@@ -168,23 +171,24 @@ namespace SAMS.WorkOrders
 
         //故障现象
         public virtual string Faultap { get; set; }
-
+        //装机分类
+        public string InstallType { get; set; }
         //处理方案
         public virtual string Dealfa { get; set; }
 
         //市内交通
-        public virtual string TrafficUrban { get; set; }
+        public virtual decimal? TrafficUrban { get; set; }
 
         //长途交通
-        public virtual string TrafficLong { get; set; }
+        public virtual decimal? TrafficLong { get; set; }
 
         //住宿费
-        public virtual string HotelEx { get; set; }
+        public virtual decimal? HotelEx { get; set; }
 
         //补助
-        public virtual string Supply { get; set; }
+        public virtual decimal? Supply { get; set; }
         //其他费用
-        public virtual string OtherEx { get; set; }
+        public virtual decimal? OtherEx { get; set; }
 
         
     }

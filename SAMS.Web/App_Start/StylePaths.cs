@@ -14,11 +14,14 @@ namespace SAMS.Web.Bundling
         public const string Morris = "~/libs/morris/morris.css";
         public const string JsTree = "~/libs/jstree/themes/default/style.css";
         //public const string Angular_Ui_Grid = "~/libs/angular-ui-grid/ui-grid.min.css";
-        public const string Bootstrap_DateRangePicker = "~/libs/bootstrap-daterangepicker/daterangepicker.css";
+        public const string Bootstrap_DatePicker = "~/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css";
         public const string Bootstrap_Select = "~/libs/bootstrap-select/bootstrap-select.min.css";
         public const string Bootstrap_Switch = "~/libs/bootstrap-switch/css/bootstrap-switch.min.css";
         public const string JQuery_jTable_Theme = "~/libs/jquery-jtable/themes/metro/blue/jtable.min.css";
         public const string JQuery_Jcrop = "~/libs/jcrop/css/jquery.Jcrop.min.css";
         public const string Select2 = "~/libs/select2/select2.css";
+        public const string Bootstrap_Tabdrop = "~/libs/bootstrap-tabdrop/css/tabdrop.css";
+        public const string Bootstrap_Fileinput = "~/libs/bootstrap-fileinput/css/bootstrap-fileinput.css";
+
     }
 }

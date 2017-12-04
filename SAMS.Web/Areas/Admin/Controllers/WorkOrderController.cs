@@ -20,6 +20,14 @@ using System.Web.Script.Serialization;
 using SAMS.Web.Areas.Admin.Models.Common;
 using Newtonsoft.Json;
 using SAMS.Customers;
+using Abp.AutoMapper;
+using System.IO;
+using Abp.Web.Models;
+using SAMS.Roles;
+using Microsoft.AspNet.Identity;
+using SAMS.Authorization.Roles;
+using Abp.Authorization.Roles;
+using Abp.Authorization.Users;
 
 namespace SAMS.Web.Areas.Admin.Controllers
 {
@@ -29,19 +37,24 @@ namespace SAMS.Web.Areas.Admin.Controllers
         private readonly IProductAppService _productAppService;
         private readonly IWorkOrderAppService _workOrderAppService;
         private readonly UserManager _userManager;
+        private readonly RoleManager _roleManager;
         private readonly IInventoryAppService _inventoryAppService;
         private readonly ICustomerAppService _customerAppService;
-
-     
+        private readonly IUserAppService _userAppService;
+        //private readonly IRoleAppService _roleAppService;
+       
 
         public WorkOrderController(IProductAppService productAppService, IInventoryAppService inventoryAppService, 
-            IWorkOrderAppService workOrderAppService, UserManager userManager,ICustomerAppService customerAppService)
+            IWorkOrderAppService workOrderAppService, UserManager userManager,ICustomerAppService customerAppService
+            , IUserAppService userAppService, RoleManager roleManager)
         {
             _productAppService = productAppService;
             _workOrderAppService = workOrderAppService;
             _userManager = userManager;
             _inventoryAppService = inventoryAppService;
             _customerAppService = customerAppService;
+            _userAppService = userAppService;
+            _roleManager = roleManager;
         }
         // GET: Admin/WorkOrders
         public ActionResult Index()
@@ -70,7 +83,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
             if (id.HasValue)
             {
                 var output = _workOrderAppService.GetWorkOrderForEdit(id.Value);
-                viewModel.WorkOrder = output.WorkOrder;
+                viewModel.WorkOrder = output;
             }
              
             return PartialView("_CreateOrEditModal", viewModel);
@@ -107,51 +120,39 @@ namespace SAMS.Web.Areas.Admin.Controllers
 
             return PartialView("_ListView");
         }
-        public PartialViewResult PopCreateWorkOrderCustomer()
+        public PartialViewResult PopCreateWorkOrder()
         {
             var popCreateViewModel = new PopCreateViewModel();
             var products = _productAppService.GetProducts();
             popCreateViewModel.Products = products.Items.ToArray<ProductListDto>();
-            return PartialView("_PopCreateWorkOrderCustomer", popCreateViewModel);
+            return PartialView("_PopCreateWorkOrder", popCreateViewModel);
         }
         public PartialViewResult PopEdit(int id)
         {
             var viewModel = new PopEditViewModel();
             var products = _productAppService.GetProducts();
             viewModel.Products = products.Items.ToArray<ProductListDto>();
-            viewModel.WorkOrder = _workOrderAppService.GetWorkOrderForEdit(id).WorkOrder;
+            viewModel.WorkOrder = _workOrderAppService.GetWorkOrderForEdit(id);
             return PartialView("_PopEdit", viewModel);
 
         }
         [HttpPost]
-        public ActionResult PopCreateWorkOrderCustomer(PopCreateWorkOrderCustomerInput viewInput)
+        public ActionResult PopCreateWorkOrder(PopCreateWorkOrderInput viewInput)
         {
-            
             var input = new CreateOrUpdateWorkOrderInput()
             {
-                WorkOrder = new WorkOrderEditDto()
-                {
-                    Address = viewInput.Customer.Address,
-                   
-                    CustomerName = viewInput.Customer.Name,
-                    CustomerId = viewInput.Customer.Id,
-                    
-                    CustomerArea = viewInput.Customer.Area,
-                    Description = viewInput.WorkOrder.Description,
-                    
-                    ProductId = viewInput.WorkOrder.ProductId,
-                    SaleMan = viewInput.WorkOrder.SaleMan,
-                    SaleManPhone = viewInput.WorkOrder.SaleManPhone,
-                    ServiceType = viewInput.WorkOrder.ServiceTypeID,
+                Address = viewInput.Address,
+                SaleOrg = viewInput.SaleOrg,
+                CustomerId = viewInput.CustomerId,
+                CustomerPhone = viewInput.CustomerPhone,
+                CustomerArea = viewInput.CustomerArea,
+                Description = viewInput.Description,
+                Priority = viewInput.Priority,
+                ProductId = viewInput.ProductId,
+                SaleMan = viewInput.SaleMan,
+                SaleManPhone = viewInput.SaleManPhone,
+                ServiceType = viewInput.ServiceType
 
-                    Office=viewInput.Customer.Office,
-                    OfficePerson=viewInput.Customer.OfficePerson,
-                    OfficePosition=viewInput.Customer.OfficePosition,
-                    OfficeMobile=viewInput.Customer.OfficeMobile,
-                    SerialNo=viewInput.WorkOrder.SerialNo
-                    
-
-                }
             };
             _workOrderAppService.CreateAndAcceptWorkOrder(input);
             return Content("ok");
@@ -160,23 +161,20 @@ namespace SAMS.Web.Areas.Admin.Controllers
         {
             CreateOrUpdateWorkOrderInput input = new CreateOrUpdateWorkOrderInput()
             {
-                WorkOrder = new WorkOrderEditDto()
-                {
-                    Address = model.Customer.Address,
-                    
-                    CustomerName = model.Customer.Name,
-                    CustomerId = model.Customer.Id,
-                    
-                    CustomerArea = model.Customer.Area,
-                    Description = model.WorkOrder.Description,
-                   
-                    ProductId = model.WorkOrder.ProductId,
-                    SaleMan = model.WorkOrder.SaleMan,
-                    SaleManPhone = model.WorkOrder.SaleManPhone,
-                    ServiceType = model.WorkOrder.ServiceTypeID,
-                    Id = model.WorkOrder.Id
 
-                }
+                Address = model.Address,
+                CustomerId = model.CustomerId,
+                CustomerPhone = model.CustomerPhone,
+                CustomerArea = model.CustomerArea,
+                Description = model.Description,
+                Priority = model.Priority,
+                ProductId = model.ProductId,
+                SaleMan = model.SaleMan,
+                SaleManPhone = model.SaleManPhone,
+                ServiceType = model.ServiceType,
+                Id = model.Id,
+                IssueBill = model.IssueBill,
+                SaleOrg = model.SaleOrg
             };
             _workOrderAppService.CreateOrUpdateWorkOrder(input);
             return Content("ok");
@@ -187,20 +185,17 @@ namespace SAMS.Web.Areas.Admin.Controllers
             var customerInput = new Customers.Dtos.GetDetailInput() { Id = model.CustomerID };
             var customer = _customerAppService.GetDetail(customerInput);
             var input = new CreateOrUpdateWorkOrderInput() {
-                WorkOrder = new WorkOrderEditDto() {
-                    Address = customer.Address ,
-                   
-                    CustomerName=customer.Name,
-                    CustomerId=customer.Id,
-                    
-                    CustomerArea=customer.Area,
-                    Description=model.Description,
-                    
-                    ProductId=model.ProductID,
-                    SaleMan=model.SaleMan,
-                    SaleManPhone=model.SaleManPhone,
-                    ServiceType=model.ServiceTypeID
-                }
+                Address = model.Address,
+                CustomerId = customer.Id,
+                CustomerPhone = model.CustomerPhone,
+                CustomerArea = model.CustomerArea,
+                Description = model.Description,
+                Priority = model.Priority,
+                ProductId = model.ProductID,
+                SaleMan = model.SaleMan,
+                SaleManPhone = model.SaleManPhone,
+                ServiceType = model.ServiceTypeID
+
             };
             _workOrderAppService.CreateAndAcceptWorkOrder(input);
             return Content("ok");
@@ -229,8 +224,9 @@ namespace SAMS.Web.Areas.Admin.Controllers
         {
             TempData["tempId"] = id;
             var input = new SAMS.WorkOrders.Dtos.GetDetailInput() { Id = id };
-            ViewBag.WorkOrder = _workOrderAppService.GetDetail(input);
-            return View();
+            var WorkOrder = _workOrderAppService.GetDetail(input);
+
+            return View(WorkOrder);
         }
         //受理
         public ContentResult Accept(int id)
@@ -246,19 +242,33 @@ namespace SAMS.Web.Areas.Admin.Controllers
             _workOrderAppService.Cancel(id);
             return Content("ok");
         }
+        //关闭工单
+        public ContentResult Close(int id)
+        {
+            _workOrderAppService.Close(id);
+            return Content("ok");
+        }
+        //归档
+        public ContentResult Archive(int id)
+        {
+            _workOrderAppService.Archive(id);
+            return Content("ok");
+        }
         //派工
         [HttpGet]
-        public PartialViewResult Dispatch(int id)
+        public async Task<PartialViewResult> Dispatch(int id)
         {
             var input = new SAMS.WorkOrders.Dtos.GetDetailInput() { Id = id };
             var workOrder = _workOrderAppService.GetDetail(input);
-
-            var users = _userManager.Users.ToList();
-            var userList=new SelectList(users, "ID", "Name", workOrder.AssignedPersonId.HasValue? workOrder.AssignedPersonId.Value: users.First().Id);
+            var role = await _roleManager.GetRoleByNameAsync("Staff");
+            var users=_userAppService.GetUsersByRole(role).Items;
+            var userList = new SelectList(users, "Id", "Name"
+                , workOrder.AssignedPersonId.HasValue ? workOrder.AssignedPersonId.Value 
+                : users.First().Id);
             ViewBag.Id = id;
             ViewBag.UserList = userList;
             ViewBag.NextHandlerName = workOrder.AssignedPersonId.HasValue ? workOrder.AssignedPersonName : users.First().Name;
-            ViewBag.NextHandlerID= workOrder.AssignedPersonId.HasValue ? workOrder.AssignedPersonId.Value : users.First().Id;
+            ViewBag.NextHandlerID = workOrder.AssignedPersonId.HasValue ? workOrder.AssignedPersonId.Value : users.First().Id;
             ViewBag.Area = workOrder.CustomerArea;
             ViewBag.CustomerName = workOrder.CustomerName;
 
@@ -277,42 +287,65 @@ namespace SAMS.Web.Areas.Admin.Controllers
         {
             var input = new SAMS.WorkOrders.Dtos.GetDetailInput() { Id = id };
             var workOrder = _workOrderAppService.GetDetail(input);
-            var model = new ReportModel() { WorkOrder = workOrder };
-           
+            var model = workOrder.MapTo<ReportModel>();
+            model.Photos = workOrder.Photos.Select(x => x.FilePath ).ToList();
             return PartialView("_Report",model);
         }
-        //选择配件
-        public PartialViewResult SelectAccessory( int id)
+        /// <summary>
+        /// 上传文件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [DontWrapResult]
+        public JsonResult Uploadimg()
         {
-            var input = new SAMS.WorkOrders.Dtos.GetDetailInput() { Id = id };
-            ViewBag.WorkOrder=_workOrderAppService.GetDetail(input);
-            return PartialView("_SelectAccessory");
+           var files = Request.Files;
+            var uploadfile = files[0];
+            string fileName = "";
+            if (uploadfile != null)
+            {
+                if (uploadfile.ContentLength > 0)
+                {
+                    fileName = Path.GetFileName(uploadfile.FileName);
+                    fileName = Guid.NewGuid() + "_" + fileName;
+                    string path = Path.Combine(Server.MapPath("~/upload/"), fileName);
+                    uploadfile.SaveAs(path);
+                }
+            }
+            //var result = new { filePath = fileName, fileType = uploadfile.ContentType };
+            return Json(fileName);
         }
-        //配件选择列表
-        public PartialViewResult GetAccessory(GetListParam param)
+        [HttpPost]
+        public ContentResult ReportProcessSave(ReportModel model)
         {
-            int skipCount = param.PageSize * (param.PageIndex - 1);
-            string sorting = null;
-            if (!string.IsNullOrEmpty(param.Sort))
-                sorting = param.Sort + " " + param.Direction;
-            var where=JsonConvert.DeserializeObject<dynamic>(param.Where);
-            //JavaScriptSerializer serializer = new JavaScriptSerializer();
-            //var where=serializer.Deserialize< dynamic>(param.Where);
-            
-            var viewModel = new GetAccessoryViewModel();
-            GetNewStaffStockInput input = new GetNewStaffStockInput() {
-                MaxResultCount = param.PageSize,
-                SkipCount = skipCount,
-                Sorting = sorting,
-                StaffID = where["UserId"]
+           
+            var input = new ReportInput()
+            {
+                BillId=model.Id,
+                Dealfa=model.Dealfa,
+                Faultap=model.Faultap,
+                Office=model.Office,
+                GuaranteedState=model.GuaranteedState,
+                OfficeMobile=model.OfficeMobile,
+                OfficePerson=model.OfficePerson,
+                OfficePosition=model.OfficePosition,
+                OfficeTel=model.OfficeTel,
+                SerialNo=model.SerialNo,
+                ServiceTime=model.ServiceTime,
+                Warrenty=model.Warrenty,
+                Photos = model.Photos,
+                HotelEx=model.HotelEx,
+                OtherEx=model.OtherEx,
+                Supply=model.Supply,
+                TrafficLong=model.TrafficLong,
+                TrafficUrban=model.TrafficUrban
             };
-            viewModel.Accessories = _inventoryAppService.GetStaffStock(input);
-            viewModel.PageIndex = param.PageIndex;
-            viewModel.PageSize = param.PageSize;
+            _workOrderAppService.Report(input);
 
-
-            return PartialView("_GetAccessory", viewModel);
+            return Content("ok");
         }
+       
         [HttpPost]
         public ContentResult Dispatch(FormCollection form)
         {

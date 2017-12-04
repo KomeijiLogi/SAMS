@@ -57,20 +57,20 @@ namespace SAMS.Web.Areas.StaffMobile.Models
 
         public virtual string Dealfa { get; set; }
 
-        public virtual string TrafficUrban { get; set; }
+        public virtual decimal TrafficUrban { get; set; }
 
-        public virtual string TrafficLong { get; set; }
+        public virtual decimal TrafficLong { get; set; }
 
-        public virtual string HotelEx { get; set; }
+        public virtual decimal HotelEx { get; set; }
         
-        public virtual string Supply { get; set; }
+        public virtual decimal Supply { get; set; }
 
-        public virtual string OtherEx { get; set; }
+        public virtual decimal OtherEx { get; set; }
 
     }
     public class Accessory
     {
-        public int AccessoryId { get; set; }
+        public string AccessoryId { get; set; }
         public int Count { get; set; }
         public string NewSerial { get; set; }
         public string OldSerial { get; set; }

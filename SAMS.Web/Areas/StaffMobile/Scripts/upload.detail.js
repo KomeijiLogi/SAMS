@@ -25,14 +25,14 @@
                 var count = $('.upload-img-list >div').size();
 
                 if (count <= 4) {
-                    $('#uploaddiv').css('height', '35vw');
+                    $('#uploaddiv').css('height', '4rem');
 
 
                 } else if (count <= 8) {
-                    $('#uploaddiv').css('height', '70vw');
+                    $('#uploaddiv').css('height', '7rem');
 
                 } else if (count <= 12) {
-                    $('#uploaddiv').css('height', '105vw');
+                    $('#uploaddiv').css('height', '10rem');
                 }
 
             }

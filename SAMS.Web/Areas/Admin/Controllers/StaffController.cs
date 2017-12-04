@@ -63,7 +63,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
             var roles = _roleAppService.GetRoles();
             var rolesItemList = new List<SelectListItem>();
 
-            rolesItemList.AddRange(new SelectList(roles.Items.ToArray(), "DisplayName", "DisplayName", ""));
+            rolesItemList.AddRange(new SelectList(roles.Items.Where(t=>t.Name=="Staff").ToArray(), "DisplayName", "DisplayName", ""));
 
             ViewData["roles"] = rolesItemList;
             return View("Create");
@@ -71,7 +71,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
         //编辑
         public async Task<ActionResult> Edit(long id)
         {
-
+            
             var user = await _userAppService.GetUserForEdit(new NullableIdDto<long> { Id = id });
             var viewModel = new EditViewModel(user);
          

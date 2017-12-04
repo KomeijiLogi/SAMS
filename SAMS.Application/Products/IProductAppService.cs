@@ -7,14 +7,14 @@ namespace SAMS.Products
     {
         ListResultDto<ProductListDto> GetProducts();
         GetDetailOutput GetDetail(GetDetailInput input);
-        void Create(CreateInput input);
-        void Edit(EditInput input);
-        void Delete(int id);
+        //void Create(CreateInput input);
+        //void Edit(EditInput input);
+        //void Delete(int id);
         ListResultDto<ProductListDto> GetProductsByNameModel(string name, string model);
-        ListResultDto<BomDto> GetBom(int productId);
-        void UpdateBoms(int productId, IEnumerable<int> AccessoryIds);
-        void AddBom(int productId, int accessoryId);
-        void DeleteBom(int productId, int accessoryId);
+        ListResultDto<BomDto> GetBom(string productId);
+        void UpdateBoms(string productId, IEnumerable<string> AccessoryIds);
+        void AddBom(string productId, string accessoryId);
+        void DeleteBom(string productId, string accessoryId);
 
     }
 }

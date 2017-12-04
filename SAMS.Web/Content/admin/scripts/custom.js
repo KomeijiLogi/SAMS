@@ -313,7 +313,7 @@ function initSideMenu() {
 
 //去除字符串最后一个符号
 function trimEnd(data) {
-    if (data.length > 0) {
+    if (data && data.length > 0) {
         return data.substr(0, data.length - 1);
     }
 
@@ -420,7 +420,10 @@ function showLoading() { Metronic.blockUI({ target: '.page-content', boxed: true
 function hideLoading() { Metronic.unblockUI('.page-content'); }
 
 //显示加载中
-function showPopLoading() { Metronic.blockUI({ target: '.modal-content', boxed: true }); }
+function showPopLoading() {
+    debugger;
+    Metronic.blockUI({ target: '.modal-content', boxed: true });
+}
 
 //隐藏加载中
 function hidePopLoading() { Metronic.unblockUI('.modal-content'); }

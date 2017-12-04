@@ -24,7 +24,7 @@ namespace SAMS.WorkOrders.Dtos
         /// <summary>
         /// 客户Id
         /// </summary>
-        public virtual int? CustomerId { get; set; }
+        public virtual string CustomerId { get; set; }
         /// <summary>
         /// 客户名称
         /// </summary>
@@ -49,8 +49,19 @@ namespace SAMS.WorkOrders.Dtos
         /// <summary>
         /// 销售员电话
         /// </summary>
+        /// 
         
         public virtual string SaleManPhone { get; set; }
+
+        /// <summary>
+        /// 出库单号
+        /// </summary>
+        public string IssueBill { get; set; }
+        /// <summary>
+        /// 销售公司
+        /// </summary>
+        public string SaleOrg { get; set; }
+
         /// <summary>
         /// 服务描述
         /// </summary>
@@ -92,5 +103,7 @@ namespace SAMS.WorkOrders.Dtos
         public virtual string OfficeMobile { get; set; }
 
         public virtual string SerialNo { get; set; }
+        //装机分类
+        public string InstallType { get; set; }
     }
 }

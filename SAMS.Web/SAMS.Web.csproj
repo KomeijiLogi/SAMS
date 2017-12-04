@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
     <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -360,6 +361,7 @@
     <Content Include="Content\admin\scripts\layout.js" />
     <Content Include="Content\admin\scripts\location.js" />
     <Content Include="Content\admin\scripts\selectAccessory.js" />
+    <Content Include="Content\custom.css" />
     <Content Include="Content\detail.css" />
     <Content Include="Content\home.css" />
     <Content Include="Content\icons-extra.css" />
@@ -382,6 +384,13 @@
     <Content Include="libs\album\js\carousel.js" />
     <Content Include="libs\album\js\jquery.js" />
     <Content Include="libs\bootbox\bootbox.min.js" />
+    <Content Include="libs\bootstrap-datepicker\css\bootstrap-datepicker3.min.css" />
+    <Content Include="libs\bootstrap-datepicker\js\bootstrap-datepicker.min.js" />
+    <Content Include="libs\bootstrap-datepicker\js\bootstrap-datepicker.zh-CN.min.js" />
+    <Content Include="libs\bootstrap-fileinput\bootstrap-fileinput.css" />
+    <Content Include="libs\bootstrap-fileinput\css\fileinput.css" />
+    <Content Include="libs\bootstrap-fileinput\js\fileinput.js" />
+    <Content Include="libs\bootstrap-fileinput\js\locales\zh.js" />
     <Content Include="libs\bootstrap-tabdrop\css\tabdrop.css" />
     <Content Include="libs\bootstrap-tabdrop\js\bootstrap-tabdrop.js" />
     <Content Include="libs\jquery-uniform\css\uniform.default.css" />
@@ -986,7 +995,7 @@
     <Content Include="Areas\Admin\Views\WorkOrder\_GetList.cshtml" />
     <Content Include="Areas\Admin\Views\WorkOrder\Details.cshtml" />
     <Content Include="Areas\Admin\Views\WorkOrder\_Dispatch.cshtml" />
-    <Content Include="Areas\Admin\Views\WorkOrder\_Report.cshtml" />
+    <Content Include="Areas\Admin\Views\WorkOrder\_Report11.cshtml" />
     <Content Include="Areas\Admin\Views\WorkOrder\_SelectAccessory.cshtml" />
     <Content Include="Areas\Admin\Views\WorkOrder\_GetAccessory.cshtml" />
     <Content Include="Areas\Admin\Views\Accessory\_GetNewOrgStock.cshtml" />
@@ -1016,7 +1025,7 @@
     <Content Include="Areas\Admin\Views\Product\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Customer\_Create.cshtml" />
     <Content Include="Areas\Admin\Views\WorkOrder\_PopCreate.cshtml" />
-    <Content Include="Areas\Admin\Views\WorkOrder\_PopCreateWorkOrderCustomer.cshtml" />
+    <Content Include="Areas\Admin\Views\WorkOrder\_PopCreateWorkOrder.cshtml" />
     <Content Include="Areas\Admin\Views\WorkOrder\_PopEdit.cshtml" />
     <Content Include="Areas\Admin\Views\Personal\EditPassword.cshtml" />
     <Content Include="Areas\Admin\Views\WorkOrder\_ListView.cshtml" />
@@ -1063,6 +1072,14 @@
     <Content Include="metronic\assets\global\plugins\uniform\README.md" />
     <Content Include="libs\jquery-uniform\css\uniform.default.scss" />
     <Content Include="libs\jquery-uniform\README.md" />
+    <Content Include="Areas\Admin\Views\Customer\_CustomerUL.cshtml" />
+    <Content Include="Areas\Admin\Views\WorkOrder\_Report.cshtml" />
+    <Content Include="Areas\Admin\Views\EquipmentArchive\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\EquipmentArchive\_Get.cshtml" />
+    <Content Include="Areas\Admin\Views\EquipmentArchive\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\EquipmentArchive\_Create.cshtml" />
+    <Content Include="Areas\Admin\Views\EquipmentArchive\_Edit.cshtml" />
+    <Content Include="Areas\StaffMobile\Views\Home\Expense.cshtml" />
     <None Include="Properties\PublishProfiles\Config.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="metronic\assets\admin\layout4\css\layout-rtl.css" />
@@ -1650,6 +1667,7 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AccessoryController.cs" />
     <Compile Include="Areas\Admin\Controllers\AccessorySettingController.cs" />
+    <Compile Include="Areas\Admin\Controllers\EquipmentArchiveController.cs" />
     <Compile Include="Areas\Admin\Controllers\FaultController.cs" />
     <Compile Include="Areas\Admin\Controllers\PersonalController.cs" />
     <Compile Include="Areas\Admin\Controllers\CustomerController.cs" />
@@ -1680,6 +1698,11 @@
     <Compile Include="Areas\Admin\Models\Customer\DetailsViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Customer\GetViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Customer\GetDetailViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\EquipmentArchive\ArchiveEditParm.cs" />
+    <Compile Include="Areas\Admin\Models\EquipmentArchive\ArchiveModel.cs" />
+    <Compile Include="Areas\Admin\Models\EquipmentArchive\DetailModel.cs" />
+    <Compile Include="Areas\Admin\Models\EquipmentArchive\GetModel.cs" />
+    <Compile Include="Areas\Admin\Models\EquipmentArchive\IndexViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Fault\Fault.cs" />
     <Compile Include="Areas\Admin\Models\Fault\GetViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Layout\FooterViewModel.cs" />
@@ -1707,7 +1730,7 @@
     <Compile Include="Areas\Admin\Models\WorkOrder\GetListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\WorkOrder\PopCreateParam.cs" />
     <Compile Include="Areas\Admin\Models\WorkOrder\PopEditWorkOrderViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\WorkOrder\PopCreateWorkOrderCustomerInput.cs" />
+    <Compile Include="Areas\Admin\Models\WorkOrder\PopCreateWorkOrderInput.cs" />
     <Compile Include="Areas\Admin\Models\WorkOrder\PopEditViewModel.cs" />
     <Compile Include="Areas\Admin\Models\WorkOrder\ReportModel.cs" />
     <Compile Include="Areas\Admin\Models\WorkOrder\WorkOrderParam.cs" />
@@ -1720,6 +1743,7 @@
     <Compile Include="Areas\StaffMobile\Models\CreateOrderViewModel.cs" />
     <Compile Include="Areas\StaffMobile\Models\CreateOrUpdateOrder.cs" />
     <Compile Include="Areas\StaffMobile\Models\DetailViewModel.cs" />
+    <Compile Include="Areas\StaffMobile\Models\ExpenseModel.cs" />
     <Compile Include="Areas\StaffMobile\Models\Receipt.cs" />
     <Compile Include="Areas\StaffMobile\Models\ReportModel.cs" />
     <Compile Include="Areas\StaffMobile\Models\DoneOrderViewModel.cs" />
@@ -1754,7 +1778,9 @@
     <Compile Include="Views\UrlChecker.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\web.config" />
+    <Content Include="Views\web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="packages.config" />
     <Content Include="Views\About\Index.cshtml" />
     <Content Include="Views\Shared\_TopBar.cshtml" />
@@ -1804,7 +1830,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Views\Shared\" />
-    <Folder Include="libs\bootstrap-daterangepicker\" />
     <Folder Include="libs\bootstrap-growl\" />
     <Folder Include="libs\bootstrap-hover-dropdown\" />
     <Folder Include="libs\bootstrap-select\" />

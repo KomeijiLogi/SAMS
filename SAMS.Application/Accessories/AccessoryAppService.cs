@@ -15,8 +15,8 @@ namespace SAMS.Accessories
 {
     public class AccessoryAppService : SAMSAppServiceBase, IAccessoryAppService
     {
-        private readonly IRepository<Accessory> _accessoryRepository;
-        public AccessoryAppService(IRepository<Accessory> accessoryRepository)
+        private readonly IRepository<Accessory,string> _accessoryRepository;
+        public AccessoryAppService(IRepository<Accessory,string> accessoryRepository)
         {
             _accessoryRepository = accessoryRepository;
         }
@@ -68,7 +68,7 @@ namespace SAMS.Accessories
 
         }
 
-        public void Delete(int id)
+        public void Delete(string id)
         {
             _accessoryRepository.Delete(id);
         }
@@ -93,7 +93,7 @@ namespace SAMS.Accessories
             accessory.Name = input.Name;
             accessory.Model = input.Model;
         }
-        public GetDetailOutput GetDetail(int id)
+        public GetDetailOutput GetDetail(string id)
         {
 
             var accessory = _accessoryRepository.Get(id);

@@ -11,6 +11,7 @@ using System.Data.Entity;
 using SAMS.Products;
 using SAMS.Accessories;
 using SAMS.Inventory;
+using SAMS.EquipmentArchives;
 
 namespace SAMS.EntityFramework
 {
@@ -40,6 +41,7 @@ namespace SAMS.EntityFramework
         public virtual IDbSet<Product> Products { get; set; }
         public virtual IDbSet<Bom> Bom { get; set; }
         public virtual IDbSet<Activity> Activities { get; set; }
+        public virtual IDbSet<EquipmentArchive> EquipmentArchives { get; set; }
         /* NOTE: 
          *   Setting "Default" to base class helps us when working migration commands on Package Manager Console.
          *   But it may cause problems when working Migrate.exe of EF. If you will apply migrations on command line, do not

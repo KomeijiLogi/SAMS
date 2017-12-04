@@ -98,7 +98,9 @@ namespace SAMS.WorkOrders.Dtos
         /// </summary>
         public virtual DateTime PlanEndTime { get; set; }
 
-
+        //装机分类
+        public string InstallType { get; set; }
+        
 
 
 

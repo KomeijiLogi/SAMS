@@ -15,6 +15,6 @@ namespace SAMS.Inventory
         PagedResultDto<StockBillDto> GetNewStaffPicking(GetNewStaffPickingInput input);
         PagedResultDto<StockBillDto> GetNewStaffRefund(GetNewStaffRefundInput input);
         ListResultDto<StaffStockDto> GetStaffStockList(long staffId);
-        ListResultDto<StaffStockDto> GetStaffStockListByProduct(long staffId, int productId);
+        ListResultDto<StaffStockDto> GetStaffStockListByProduct(long staffId, string productId);
     }
 }

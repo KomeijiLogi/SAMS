@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SAMS.Products.Dtos
 {
     [AutoMapFrom(typeof(Product))]
-    public class ProductListDto: EntityDto
+    public class ProductListDto: EntityDto<string>
     {
         public string Name { get; set; }
 

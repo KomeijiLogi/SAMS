@@ -11,6 +11,7 @@ namespace SAMS.WorkOrders.Dtos
         public string SearchKey { get; set; }
         public int? Filter { get; set; }
 
-        public int? CustomerId { get; set; }
+        public string CustomerId { get; set; }
+        public string SerialNo { get; set; }
     }
 }

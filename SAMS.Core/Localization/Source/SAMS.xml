@@ -6,6 +6,7 @@
     <text name="AccessoryStock" value="配件管理" />
     <text name="Customer" value="客户管理" />
     <text name="SystemSetting" value="系统设置" />
+    <text name="EquipmentArchive" value="设备档案" />
     <text name="HomePage" value="主页" />
     <text name="About" value="关于我们" />
     <text name="WellcomeMessage" value="欢迎使用 SAMS!" />

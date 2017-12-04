@@ -11,7 +11,7 @@ namespace SAMS.Inventory.Dto
     [AutoMapFrom(typeof(OrgStock))]
     public class OrgStockDto
     {
-        public int AccessoryId { get; set; }
+        public string AccessoryId { get; set; }
         public  string AccessoryName { get; set; }
         public  string AccessoryModel { get; set; }
         public  string AccessoryUnit { get; set; }

@@ -13,18 +13,19 @@
     <title></title>
     
     <link href="~/Content/mui.min.css" rel="stylesheet">
+    <link href="~/Content/custom.css" rel="stylesheet"/>
 </head>
 <body class="colorfulBody">
    
-    <header class="mui-bar mui-bar-nav" id="detailHeader">
+    @*<header class="mui-bar mui-bar-nav" id="detailHeader">
         
         <a class="mui-icon mui-icon-home mui-pull-left"  href="/staffMobile/Home/Index" target="_blank" ></a>
         <h1 class="mui-title">工单详情</h1>         
         <button class="mui-btn mui-btn-blue mui-btn-link mui-pull-right" onclick="btConfirmEvent()">回单</button>
 
-        @*<span class="mui-pull-right mui-center" id="menubars" onclick="btConfirmEvent()">回单</span>*@
+       
 
-    </header>
+    </header>*@
 
     <!--弹出窗体部分-->
     @*<div id="popover" class="mui-popover">
@@ -48,56 +49,59 @@
                     <input type="text" readonly value="No.@Model.WorkOrder.Id">
                 </div>
                 <div class="mui-input-row">
-                    <label>服务类型</label>
+                    <label>服务类型<i style="color:red;">*</i></label>
                     <input type="text" readonly value="@(Model.WorkOrder.ServiceType.Equals(ServiceType.Install)?"安装":"维修")">
                 </div>
           <div class="mui-input-row">
-              <label>派工时间</label>
+              <label>派工时间<i style="color:red;">*</i></label>
               <input type="text" readonly value="@Model.WorkOrder.DispatchTime.Value.ToString("yyyy-MM-dd HH:mm:ss")">
           </div>
           <div class="mui-input-row">
-              <label>产品</label>
+              <label>产品<i style="color:red;">*</i></label>
               <input type="text" readonly value="@Model.WorkOrder.ProductName">
           </div>
           <div class="mui-input-row">
-              <label>型号</label>
+              <label>型号<i style="color:red;">*</i></label>
               <input type="text" readonly value="@Model.WorkOrder.ProductModel">
           </div>
           <div class="mui-input-row">
-              <label>客户</label>
+              <label>客户<i style="color:red;">*</i></label>
               <input type="text" readonly value="@Model.WorkOrder.CustomerName">
           </div>
-        <div class="mui-input-row">
+        <div class="mui-input-row"  style="display:none;">
             <label>联系人</label>
             <input type="text" readonly value="@Model.WorkOrder.OfficePerson">
         </div>
-        <div class="mui-input-row">
+        <div class="mui-input-row"  style="display:none;">
             <label>联系电话</label>
             <input type="text" readonly value="@Model.WorkOrder.OfficeMobile">
         </div>
           <div class="mui-input-row">
-              <label>客户区域</label>
+              <label>客户区域<i style="color:red;">*</i></label>
               <input type="text" readonly value="@Model.WorkOrder.CustomerArea">
           </div>
-          <div class="mui-input-row" style="height:20vw">
+          <div class="mui-input-row" style="height:auto;">
               <label>详细地址</label>
               <textarea id="textarea" rows="3" readonly> @Model.WorkOrder.Address</textarea>
           </div>
           
           <div class="mui-input-row">
-              <label>申告人</label>
+              <label>销售员<i style="color:red;">*</i></label>
               <input type="text" readonly value="@Model.WorkOrder.SaleMan">
           </div>
           <div class="mui-input-row">
-              <label>申告电话</label>
+              <label>销售员电话</label>
               <label style="padding-left:0px"><a href="tel:@Model.WorkOrder.SaleManPhone">@Model.WorkOrder.SaleManPhone</a></label>   
           </div>
-                <div class="mui-input-row"  style="height:20vw">
+                <div class="mui-input-row"  style="height:auto;">
                     <label>备注</label>
                     <textarea id="textarea" rows="3" readonly>@Model.WorkOrder.Description</textarea>
                 </div>
             </div>
         </div>
+        <button id="bt_exp" name="bt_exp" type="button" class="mui-btn mui-btn-yellow  mui-btn-block" onclick="expConfirmEvent()">
+            填写差旅费
+        </button>
         @if (Model.WorkOrder.BillStatus.Equals(BillStatus.Complete))
         {
         <button id="bt_confirm" name="bt_confirm" type="submit" class="mui-btn mui-btn-primary mui-btn-block"
@@ -123,16 +127,60 @@
     </div>
     <script type="text/javascript">
         function btConfirmEvent() {
-            window.location.href = "/staffMobile/Home/Receipt/"+@Model.WorkOrder.Id;
+            window.location.href = "/staffMobile/Home/Receipt/" +@Model.WorkOrder.Id;
         }
 
         function aConfirmEvent(){
             window.location.href="/staffMobile/Home/Index";
         }
+        function expConfirmEvent() {
+
+            window.location.href= "/staffMobile/Home/Expense/"+@Model.WorkOrder.Id;
+        }
     </script>
    
     <script src="~/Areas/StaffMobile/Scripts/mui.min.js"></script>
+    <script type="text/javascript" src="http://wb.weigaoholding.com:8090/res/js/qingjs.js"></script>
     @*<script src="~/Areas/StaffMobile/Scripts/detail.js"></script>*@
+    <script>
+        mui.init();
+        XuntongJSBridge.call('setWebViewTitle', { 'title': '派单详情' });
+        
+        XuntongJSBridge.call('createPop', {
+            'popTitle': '',
+            'popTitleCallBackId': '1',
+            'items': [
+                { 'text': '刷新', 'callBackId': 'callback1' }
+                //{ 'text': '回单', 'callBackId': 'callback2' },
+                //{ 'text': '差旅费', 'callBackId': 'callback3' },
+                //{'text':'返回主页','callBackId':'callback4'}
+            ],
+            'menuList': [
+                'openWithBrowser'
+            ],
+
+        }, function (result) {
+            if (result.success == true || result.success == 'true') {
+                var callBackId = result.data ? result.data.callBackId : '';
+                if (callBackId == 'callback1') {
+                    window.location.reload();
+
+                }
+
+                //else if (callBackId == 'callback2') {
+                //    btConfirmEvent();
+                //} else if (callBackId == 'callback3') {
+                //    expConfirmEvent();
+                //} else if (callBackId == 'callback4'){
+                //    aConfirmEvent();
+
+                //}
+            }
+
+        });
+
+
+    </script>
 </body>
 
 

@@ -21,13 +21,13 @@ namespace SAMS.Inventory
         private readonly IRepository<StaffStock> _staffStockRepository;
         private readonly IRepository<OrgStock> _orgStockRepository;
         private readonly IRepository<StockBill> _stockBillRepository;
-        private readonly IRepository<Accessory> _accessoryRepository;
+        private readonly IRepository<Accessory,string> _accessoryRepository;
         private readonly IInventoryDomainService _inventroyDomainService;
         private readonly UserManager _userManager;
         private readonly IRepository<Bom> _bomRepository;
         public InventoryAppService(IRepository<StaffStock> staffStockRepository, IRepository<OrgStock> orgStockRepository,
             IRepository<StockBill> stockBillRepository, IRepository<Bom> bomRepository,
-            UserManager userManager,IInventoryDomainService inventroyDomainService, IRepository<Accessory> accessoryRepository)
+            UserManager userManager,IInventoryDomainService inventroyDomainService, IRepository<Accessory,string> accessoryRepository)
         {
             _staffStockRepository = staffStockRepository;
             _orgStockRepository = orgStockRepository;
@@ -70,7 +70,7 @@ namespace SAMS.Inventory
             var staffStockListDto = staffStockList.MapTo<List<StaffStockDto>>();
             return new ListResultDto<StaffStockDto>(staffStockListDto);
         }
-        public ListResultDto<StaffStockDto> GetStaffStockListByProduct(long staffId,int productId)
+        public ListResultDto<StaffStockDto> GetStaffStockListByProduct(long staffId,string productId)
         {
             var stock = _staffStockRepository.GetAll().Where(u => u.User.Id == staffId).Where(u=>u.Count>0);
             var bom = _bomRepository.GetAllIncluding().Where(e => e.ProductId == productId);

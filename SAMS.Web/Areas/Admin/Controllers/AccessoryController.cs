@@ -298,7 +298,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
             {
                 var entry = new StockBillEntryDto();
                 var item = (JObject)JsonConvert.DeserializeObject(entries[i].ToString());
-                entry.AccessoryId = (int)item["AccessoryID"];
+                entry.AccessoryId = (string)item["AccessoryID"];
                 entry.Count = (int)item["Count"];
                 input.StockBillEntry.Add(entry);
             }
@@ -341,7 +341,7 @@ namespace SAMS.Web.Areas.Admin.Controllers
             {
                 var entry = new StockBillEntryDto();
                 var item = (JObject)JsonConvert.DeserializeObject(entries[i].ToString());
-                entry.AccessoryId = (int)item["AccessoryID"];
+                entry.AccessoryId = (string)item["AccessoryID"];
                 entry.Count = (int)item["Count"];
                 input.StockBillEntry.Add(entry);
             }

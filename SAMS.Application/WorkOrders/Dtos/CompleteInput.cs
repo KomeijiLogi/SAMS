@@ -33,40 +33,6 @@ namespace SAMS.WorkOrders.Dtos
         public virtual IEnumerable<WorkOrderPhotoDto> Photos { get; set; }
 
         /// <summary>
-        /// 客户电话
-        /// </summary> 
-        //public virtual string CustomerPhone { get; set; }
-
-        /// <summary>
-        /// 客户联系人
-        /// </summary>
-        //public virtual string CustomerLinkMan { get; set; }
-        /// <summary>
-        /// 客户联系人职务
-        /// </summary>
-        //public virtual string ContactPersonPost { get; set; }
-
-        /// <summary>
-        /// 客户联系人邮箱
-        /// </summary>
-        //public virtual string Email { get; set; }
-
-
-        ///// <summary>
-        ///// 设备安装位置
-        ///// </summary>
-        //public virtual string EquLocation { get; set; }
-
-        ///// <summary>
-        ///// 计划开始时间
-        ///// </summary>
-        //public virtual DateTime StartTime { get; set; }
-
-        ///// <summary>
-        ///// 计划结束时间
-        ///// </summary>
-        //public virtual DateTime EndTime { get; set; }
-        /// <summary>
         /// 使用科室
         /// </summary>
         public virtual string Office { get; set; }
@@ -106,19 +72,6 @@ namespace SAMS.WorkOrders.Dtos
         //处理方案
         public virtual string Dealfa { get; set; }
 
-        //市内交通
-        public virtual string TrafficUrban { get; set; }
-
-        //长途交通
-        public virtual string TrafficLong { get; set; }
-
-        //住宿费
-        public virtual string HotelEx { get; set; }
-
-        //补助
-        public virtual string Supply { get; set; }
-        //其他费用
-        public virtual string OtherEx { get; set; }
-
+        
     }
 }

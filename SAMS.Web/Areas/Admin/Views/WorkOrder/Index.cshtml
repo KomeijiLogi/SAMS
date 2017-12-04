@@ -8,12 +8,10 @@
 
 @section Scripts
 {
-  
-   @* @Html.IncludeScript("~/Areas/Admin/Views/WorkOrder/_CreateOrEditModal.js")*@
-   @* @Html.IncludeScript("~/Areas/Admin/Views/WorkOrder/Index.js")*@
-     <!-- BEGIN PAGE SELF SCRIPTS -->
+    <!-- BEGIN PAGE SELF SCRIPTS -->
+    <script type="text/javascript" src="~/Content/admin/scripts/editworkorder.js"></script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
             initDataPicker();//设置时间控件
             initEvent();//事件绑定
@@ -209,6 +207,7 @@
             });
         }
 
+
         //启动新建工单对话框
         function startDialog(title) {
             modalLoadding("#createworkDailog", title, 460)
@@ -218,7 +217,74 @@
         //弹出新建工单对话框
         function showDialog(data) {
             $("#createworkDailog .modal-content").html(data);//填充对话框
-            WorkOrder.init("/admin/customer/getcustomersbyname");//初始化对话框
+            WorkOrder.init();//初始化对话框
+
+            var indexLi = 0;
+            var scrHeight = 34;
+            var timeout = 0;
+            $("#popCustomer").keyup( function (e) {
+                var self = this;
+                clearTimeout(timeout);
+                var keycode = e.keyCode;
+
+                var totalLi = $(this).parent().find(".dropdown-menu li").length - 1;
+                //排除键盘中不需要搜索数据的键值
+                var array = new Array();
+                array = [16, 17, 18, 19, 20, 27, 33, 35, 36, 37, 39, 34, 35, 36, 45, 91, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 145, 187, 189, 192, 219, 220, 221, 255];
+                for (i = 0; i < array.length; i++) {
+                    if (keycode == array[i]) { return false; break; }
+                }
+
+                //当触发回车键时
+                if (keycode == 13) {
+                    $(this).blur();
+                    var curr = $(this).parent().find(".dropdown-menu li.active a");
+                    curr.click();
+                }
+
+                //触发上键
+                if (keycode == 38) {
+                    indexLi--;
+                    if (indexLi <= 0) {
+                        indexLi = 0;
+                    }
+                }
+                else if (keycode == 40) {
+                    //触发下键
+                    indexLi++;
+                    if (indexLi >= totalLi) {
+                        indexLi = totalLi;
+                    }
+                }
+
+                var ulPar = $(this).parent().find(".dropdown-menu");
+                //根据ul的高度计算当键盘上下键时是否需要滚动
+                if (ulPar.length > 0) {
+                    ulPar.find("li:eq(" + indexLi + ")").addClass("active").siblings().removeClass("active");
+                }
+
+                timeout = setTimeout(function () {
+                    //当键盘为回车、上键和下键时不去请求数据
+                    if (keycode != 38 && keycode != 40 && keycode != 13) {
+                        var a = $(self).attr("data-bind")
+                        searchCus("#" + a, '/admin/customer/getcustomersul');
+                        $("#" + a).parent().attr("aria-expanded", "true").parent().addClass("open");
+                        indexLi = 0;
+                    }
+                }, 500);
+
+            }).change(function () {
+                $("#popCustomer_hidden").attr("data-bind", $(this).val());
+                var a = $("#popCustomer_hidden").val();
+                var b = $(this).val();
+                if (b != a) { $(this).val(a) }
+            }).keydown(function (e) {
+                if (e.keyCode == 38 || e.keyCode == 40) {
+                    e.preventDefault && e.preventDefault();
+                }
+            })
+
+
         }
 
         //导出excel
@@ -227,7 +293,7 @@
         //创建工单成功
         function editWorkOrderSucess(data) { if (data == "ok") { $("#createworkDailog").modal("hide"); changeQueryCondition();} else { growlAlert.danger("新建工单失败。"); } }
 
-</script>
+    </script>
 
 }
 <div class="row">
@@ -242,31 +308,31 @@
 
                 </div>
             </div>
-            @Html.Action("ListView", "WorkOrder", new { id=ViewBag.ID})
+            @Html.Action("ListView", "WorkOrder", new { id = ViewBag.ID })
             @*<div class="portlet-body side-menu-project-list-content" id="lst1" style="height: auto;">
-                <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
-                    <ul class="nav nav-pills nav-stacked esh-nav-pills">
+                    <div class="side-menu-project-list" data-always-visible="1" data-rail-visible1="1">
+                        <ul class="nav nav-pills nav-stacked esh-nav-pills">
 
-                        <li class="active">
-                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=1})"><span>所有工单</span><span class="badge badge-success">@ViewBag.Views1</span></a>
-                        </li>
+                            <li class="active">
+                                <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=1})"><span>所有工单</span><span class="badge badge-success">@ViewBag.Views1</span></a>
+                            </li>
 
-                        <li class="">
-                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=2})"><span>截止到昨日未解决工单</span> <span class="badge badge-success">@ViewBag.Views2</span></a>
-                        </li>
-                        <li class="">
-                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=3})"><span>今日新增工单</span> <span class="badge badge-success">@ViewBag.Views3</span></a>
-                        </li>
-                        <li class="">
-                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=4})"><span>今日已解决工单</span> <span class="badge badge-success">@ViewBag.Views4</span></a>
-                        </li>
-                        <li class="">
-                            <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=5})"><span>所有未解决工单</span> <span class="badge badge-success">@ViewBag.Views5</span></a>
-                        </li>
+                            <li class="">
+                                <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=2})"><span>截止到昨日未解决工单</span> <span class="badge badge-success">@ViewBag.Views2</span></a>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=3})"><span>今日新增工单</span> <span class="badge badge-success">@ViewBag.Views3</span></a>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=4})"><span>今日已解决工单</span> <span class="badge badge-success">@ViewBag.Views4</span></a>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("views", "WorkerOrders", new {area = "Admin",id=5})"><span>所有未解决工单</span> <span class="badge badge-success">@ViewBag.Views5</span></a>
+                            </li>
 
-                    </ul>
-                </div>
-            </div>*@
+                        </ul>
+                    </div>
+                </div>*@
         </div>
 
         <div class="side-menu-content">
@@ -285,10 +351,10 @@
                 <div class="portlet-body">
                     <div class="table-toolbar">
                         <div class="col-md-6 col-xs-6 clear-padding-left">
-                           
-                            <a class="btn green" data-ajax="true" data-ajax-begin="startDialog('新建工单')" 
-                               data-ajax-method="GET" data-ajax-success="showDialog" 
-                               href="/admin/workorder/popcreateworkordercustomer">新建</a>
+
+                            <a class="btn green" data-ajax="true" data-ajax-begin="startDialog('新建工单')"
+                               data-ajax-method="GET" data-ajax-success="showDialog"
+                               href="/admin/workorder/popcreateworkorder">新建</a>
 
                             @*<button class="btn green collapse" id="btnFilter">筛选</button>*@
 
@@ -318,37 +384,37 @@
                                             </label>
                                         </div>
                                     </div>*@
-                            </div>
-                        </div>
                     </div>
-
-                    <div id="WorkOrderTable" class="dataTables_wrapper no-footer">
-                        @Html.Action("GetList", "WorkOrder",new  {PageIndex=1,PageSize=10,Sort= "CreationTime", Direction ="desc",Where= "{filter: "+ ViewBag.ID+"}" })
-                    </div>
-                    @using (Ajax.BeginForm("GetList","WorkOrder",
-                        new AjaxOptions() {
-                        UpdateTargetId = "WorkOrderTable"  ,
-                        OnBegin = "showLoading",
-                        OnComplete= "hideLoading",
-                        OnFailure= "showException",
-                        OnSuccess = "initTable"
-                    }
-                    ,new { id="searchByRequest"})) {
-
-                        <input type="hidden" id="filter_hide" value="">
-
-                        <input id="PageIndex" name="PageIndex" type="hidden" value="1">
-                        <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。"
-                               data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10">
-                        <input id="Sort" name="Sort" type="hidden" value="">
-                        <input id="Direction" name="Direction" type="hidden" value="">
-                        <input id="Where" name="Where" type="hidden"
-                               value="{filter:@ViewBag.ID}">
-                    }
-
-
                 </div>
             </div>
+
+            <div id="WorkOrderTable" class="dataTables_wrapper no-footer">
+                @Html.Action("GetList", "WorkOrder", new { PageIndex = 1, PageSize = 10, Sort = "Id", Direction = "desc", Where = "{filter: " + ViewBag.ID + "}" })
+            </div>
+            @using (Ajax.BeginForm("GetList", "WorkOrder",
+                        new AjaxOptions()
+                        {
+                            UpdateTargetId = "WorkOrderTable",
+                            OnBegin = "showLoading",
+                            OnComplete = "hideLoading",
+                            OnFailure = "showException",
+                            OnSuccess = "initTable"
+                        }
+                    , new { id = "searchByRequest" }))
+            {
+
+                <input type="hidden" id="filter_hide" value="">
+
+                <input id="PageIndex" name="PageIndex" type="hidden" value="1">
+                <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。"
+                       data-val-required="The PageSize field is required." id="PageSize" name="PageSize" type="hidden" value="10">
+                <input id="Sort" name="Sort" type="hidden" value="Id">
+                <input id="Direction" name="Direction" type="hidden" value="desc">
+                <input id="Where" name="Where" type="hidden"
+                       value="{filter:@ViewBag.ID}">
+            }
+
+
         </div>
     </div>
 </div>

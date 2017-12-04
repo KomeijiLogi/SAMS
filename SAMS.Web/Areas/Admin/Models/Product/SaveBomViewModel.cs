@@ -8,11 +8,11 @@ namespace SAMS.Web.Areas.Admin.Models.Product
     public class SaveBomInput
     {
 
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
         public List<AccessoryItem> Accessorys { get; set; }
     }
     public class AccessoryItem
     {
-        public int AccessoryId { get; set; }
+        public string AccessoryId { get; set; }
     }
 }

@@ -9,21 +9,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
+   
     @Styles.Render("~/Content/css")
     <link href="~/Content/icons-extra.css" rel="stylesheet">
-
+    <link href="~/Content/custom.css" rel="stylesheet" />
 </head>
 <body>
-    <iframe id="index_content" src="/StaffMobile/Home/AskOrder" name="index_content" 
+    <iframe id="index_content" src="/StaffMobile/Home/UndoOrder" name="index_content" 
             style="margin-top:0px;padding-top:0px; width:100%; border:0px;
             min-height:500px;overflow:hidden;margin-bottom:80px;">
     </iframe>
     <nav class="mui-bar mui-bar-tab" id="tabcard">
-        <a id="tab_commit" class="mui-tab-item mui-active">
+        <a id="tab_commit" class="mui-tab-item mui-active" style="display:none;">
             <span class="mui-icon mui-icon-extra mui-icon-extra-topic"></span>
             <span class="mui-tab-label">申请工单</span>
         </a>
-        <a id="tab_undo" class="mui-tab-item ">
+
+        <a id="tab_undo" class="mui-tab-item mui-active">
             <span class="mui-icon mui-icon-extra mui-icon-extra-order"></span>
             <span class="mui-tab-label">待办工单</span>
         </a>
@@ -31,7 +33,7 @@
             <span class="mui-icon mui-icon-extra mui-icon-extra-dictionary"></span>
             <span class="mui-tab-label">历史工单</span>
         </a>
-        <a id="tab_accessory" class="mui-tab-item">
+        <a id="tab_accessory" class="mui-tab-item" style="display:none;">
             <span class="mui-icon mui-icon-extra  mui-icon-extra-calc"></span>
             <span class="mui-tab-label">我的备件</span>
         </a>
@@ -41,6 +43,44 @@
     <script src="~/Areas/StaffMobile/Scripts/mui.min.js"></script>
     <script src="~/Areas/StaffMobile/Scripts/zepto.min.js"></script>
     <script src="~/Areas/StaffMobile/Scripts/index.js"></script>
-   
+    <script type="text/javascript" src="http://wb.weigaoholding.com:8090/res/js/qingjs.js"></script>
+    <script>
+        mui.init();
+
+        XuntongJSBridge.call('setWebViewTitle', { 'title': '售后管理系统' });
+
+        XuntongJSBridge.call('createPop', {
+            'popTitle': '',
+            'popTitleCallBackId': '1',
+            'items': [{ 'text': '刷新', 'callBackId': 'callback1' }],
+            'menuList': [
+                'openWithBrowser'
+            ],
+
+        }, function (result) {
+            if (result.success == true || result.success == 'true') {
+                var callBackId = result.data ? result.data.callBackId : '';
+                if (callBackId == 'callback1') {
+                    window.location.reload();
+                   
+                } else if (callBackId == 'callback2') {
+
+                } else {
+
+                }
+            }
+
+        });
+
+        $("#tabcard").find("a").each(function () {
+
+            $(this).off('tap');
+            $(this).on('tap', function () {
+
+                $("a").removeClass('mui-active');
+                $(this).addClass('mui-active');
+            });
+        });
+    </script>
 </body>
 </html>

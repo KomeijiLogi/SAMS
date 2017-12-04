@@ -15,21 +15,21 @@ namespace SAMS.Products
 {
     public class ProductAppService : ApplicationService, IProductAppService
     {
-        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<Product,string> _productRepository;
         private readonly IRepository<Bom> _bomRepository;
-        public ProductAppService(IRepository<Product> productRepository,
+        public ProductAppService(IRepository<Product,string> productRepository,
             IRepository<Bom> bomRepository)
         {
             _productRepository = productRepository;
             _bomRepository = bomRepository;
         }
-        public ListResultDto<BomDto>GetBom(int productId)
+        public ListResultDto<BomDto>GetBom(string productId)
         {
             var bom = _bomRepository.GetAllIncluding().Where(e => e.ProductId == productId).ToList<Bom>();
             return new ListResultDto<BomDto>(bom.MapTo<List<BomDto>>());
 
         }
-        public void DeleteBom(int productId,int accessoryId)
+        public void DeleteBom(string productId,string accessoryId)
         {
             var bom=_bomRepository.GetAll()
                 .Where(e => e.AccessoryId == accessoryId)
@@ -37,7 +37,7 @@ namespace SAMS.Products
                 .SingleOrDefault();
             _bomRepository.Delete(bom);
         }
-        public void AddBom(int productId,int accessoryId)
+        public void AddBom(string productId,string accessoryId)
         {
             var bom = _bomRepository.GetAll()
                .Where(e => e.AccessoryId == accessoryId)
@@ -49,7 +49,7 @@ namespace SAMS.Products
                 _bomRepository.Insert(bom);
             }
         }
-        public void UpdateBoms(int productId, IEnumerable<int> AccessoryIds)
+        public void UpdateBoms(string productId, IEnumerable<string> AccessoryIds)
         {
             var oldBoms = _bomRepository.GetAll().Where(e => e.ProductId == productId).ToList();
             //删除
@@ -59,7 +59,7 @@ namespace SAMS.Products
                 _bomRepository.Delete(delBom);
             }
             //新增
-            foreach( int id in AccessoryIds)
+            foreach( string id in AccessoryIds)
             {
                 var bom=oldBoms.Where(o => o.AccessoryId == id).SingleOrDefault();
                 if(bom==null)
@@ -72,15 +72,16 @@ namespace SAMS.Products
 
         public ListResultDto<ProductListDto> GetProducts()
         {
-            var products = _productRepository.GetAll().OrderByDescending(e => e.CreationTime) ;
+            var products = _productRepository.GetAll().OrderByDescending(e => e.Code);
             return new ListResultDto<ProductListDto>(products.MapTo<List<ProductListDto>>());
 
         }
-        public  ListResultDto<ProductListDto> GetProductsByNameModel(string name,string model)
+        public ListResultDto<ProductListDto> GetProductsByNameModel(string name, string model)
         {
             var products = _productRepository.GetAll().Where(e => e.Name == name).Where(e => e.Model == model).ToList();
             return new ListResultDto<ProductListDto>(products.MapTo<List<ProductListDto>>());
         }
+
         public GetDetailOutput GetDetail(GetDetailInput input)
         {
 
@@ -95,30 +96,30 @@ namespace SAMS.Products
             }
             return product.MapTo<GetDetailOutput>();
         }
-        public void Create(CreateInput input)
-        {
-            var product = new Product()
-            {
-                EASNumber=input.EASNumber,
-                K3Number=input.K3Number,
-                Model=input.Model,
-                Name=input.Name
+        //public void Create(CreateInput input)
+        //{
+        //    var product = new Product()
+        //    {
+        //        EASNumber=input.EASNumber,
+        //        K3Number=input.K3Number,
+        //        Model=input.Model,
+        //        Name=input.Name
 
-            };
-            _productRepository.Insert(product);
+        //    };
+        //    _productRepository.Insert(product);
 
-        }
-        public void Edit(EditInput input)
-        {
-            var product = _productRepository.Get(input.Id);
-            product.K3Number = input.K3Number;
-            product.EASNumber = input.EASNumber;
-            product.Name = input.Name;
-            product.Model = input.Model;
-        }
-        public void Delete(int id)
-        {
-             _productRepository.Delete(id);
-        }
+        //}
+        //public void Edit(EditInput input)
+        //{
+        //    var product = _productRepository.Get(input.Id);
+        //    product.K3Number = input.K3Number;
+        //    product.EASNumber = input.EASNumber;
+        //    product.Name = input.Name;
+        //    product.Model = input.Model;
+        //}
+        //public void Delete(int id)
+        //{
+        //     _productRepository.Delete(id);
+        //}
     }
 }

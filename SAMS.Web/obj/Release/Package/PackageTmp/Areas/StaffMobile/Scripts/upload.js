@@ -318,6 +318,7 @@
             this.find('img').attr('src', imgUrl);
 
             this.find('.img-mask').hide();
+          
         },
 
         //显示附件模板

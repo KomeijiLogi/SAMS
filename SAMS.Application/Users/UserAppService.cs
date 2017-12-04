@@ -32,15 +32,17 @@ namespace SAMS.Users
         private readonly IRepository<User, long> _userRepository;
         private readonly IPermissionManager _permissionManager;
         private readonly RoleManager _roleManager;
-
+        IRepository<UserRole, long> _userRoleReposityory;
         public UserAppService(
             IRepository<User, long> userRepository, 
             IPermissionManager permissionManager,
+             IRepository<UserRole, long> userRoleReposityory,
             RoleManager roleManager)
         {
             _userRepository = userRepository;
             _permissionManager = permissionManager;
             _roleManager = roleManager;
+            _userRoleReposityory = userRoleReposityory;
         }
 
         public async Task ProhibitPermission(ProhibitPermissionInput input)
@@ -65,6 +67,18 @@ namespace SAMS.Users
                 users.MapTo<List<UserListDto>>()
                 );
         }
+        public  ListResultDto<UserListDto> GetUsersByRole(Role role)
+        {
+            var userIdList= _userRoleReposityory
+                .GetAll()
+                .Where(ur => ur.RoleId.Equals(role.Id))
+                .Select(e=>e.UserId).ToArray();
+            var users = _userRepository.GetAll().Where(e => userIdList.Contains(e.Id)).ToList();
+            return new ListResultDto<UserListDto>(
+               users.MapTo<List<UserListDto>>()
+               );
+        }
+
         public async Task<PagedResultDto<UserListDto>>GetUsers(GetUsersInput input)
         {
             var query = UserManager.Users
@@ -92,6 +106,7 @@ namespace SAMS.Users
         {
             var userRoleDtos = (await _roleManager.Roles.
                 OrderBy(r => r.DisplayName)
+                .Where(r=>r.Name.Equals("Staff"))
                 .Select(r => new UserRoleDto
                 {
                     RoleId = r.Id,

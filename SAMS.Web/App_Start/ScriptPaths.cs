@@ -28,12 +28,15 @@ namespace SAMS.Web.Bundling
         public const string JQuery_Unobtrusive = "~/scripts/jquery.unobtrusive-ajax.min.js";
         public const string Bootstrap = "~/libs/bootstrap/js/bootstrap.min.js";
         public const string Bootstrap_Hover_Dropdown = "~/libs/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js";
-        public const string Bootstrap_DateRangePicker = "~/libs/bootstrap-daterangepicker/daterangepicker.js";
+        public const string Bootstrap_DatePicker = "~/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js";
+        public const string Bootstrap_DatePicker_zh = "~/libs/bootstrap-datepicker/js/bootstrap-datepicker.zh-CN.min.js";
         public const string Bootstrap_Select = "~/libs/bootstrap-select/bootstrap-select.min.js";
         public const string Bootstrap_Switch = "~/libs/bootstrap-switch/js/bootstrap-switch.min.js";
         public const string Bootstrap_Growl= "~/libs/bootstrap-growl/jquery.bootstrap-growl.min.js";
         public const string Bootstrap_Box = "~/libs/bootbox/bootbox.min.js";
-
+        public const string Bootstrap_Tabdrop = "~/libs/bootstrap-tabdrop/js/bootstrap-tabdrop.js";
+        public const string Bootstrap_Fileinput = "~/libs/bootstrap-fileinput/js/fileinput.js";
+        public const string Bootstrap_Fileinput_zh = "~/libs/bootstrap-fileinput/js/locales/zh.js";
         // public const string SignalR = "~/Scripts/jquery.signalR-2.2.0.min.js";
 
         public const string Morris = "~/libs/morris/morris.min.js";
@@ -75,6 +78,8 @@ namespace SAMS.Web.Bundling
 
         public const string Select2= "~/libs/select2/select2.min.js";
         public const string Select2_zh_CN="~/libs/select2/select2_locale_zh-CN.js";
+        
+
         //public static string Angular_Localization
         //{
         //    get

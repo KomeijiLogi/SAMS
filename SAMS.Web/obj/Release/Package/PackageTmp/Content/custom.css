@@ -1,0 +1,35 @@
+﻿html,body {
+    font-size:20px;
+    background-color:white;
+}
+label {
+   font-size:0.65rem;
+}
+p {
+  font-size:0.65rem;
+}
+li {
+  font-size:0.65rem;
+}
+input {
+   font-size:0.65rem;
+}
+div {
+  font-size:0.65rem;
+}
+textarea {
+  font-size:0.65rem;
+}
+span {
+  font-size:0.65rem;
+}
+
+.buttonContainter {
+   text-align:center;
+   margin-top:0.2rem;
+}
+.buttonAdjust {
+  
+    height:2.5rem;
+
+}

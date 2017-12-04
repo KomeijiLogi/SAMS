@@ -12,7 +12,7 @@ namespace SAMS.Inventory.Dto
     {
        
    
-        public  int AccessoryId { get; set; }
+        public  string AccessoryId { get; set; }
         public  int Count { get; set; }
         public  string AccessoryName { get; set; }
         public string AccessoryNumber { get; set; }

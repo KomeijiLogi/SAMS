@@ -104,6 +104,7 @@
     <Compile Include="Customers\Customer.cs" />
     <Compile Include="Customers\CustomerDomainService.cs" />
     <Compile Include="Customers\ICustomerDomainService.cs" />
+    <Compile Include="EquipmentArchives\EquipmentArchives.cs" />
     <Compile Include="Faults\FaultGroup.cs" />
     <Compile Include="Faults\FaultMeasure.cs" />
     <Compile Include="Faults\FaultMeasureRel.cs" />

@@ -29,17 +29,24 @@ namespace SAMS.Web.Areas.Admin.Startup
 
                     )
                    )
-                .AddItem(new MenuItemDefinition("AccessoryStock",
-                    L("AccessoryStock"),
-                    url: "Admin/Accessory/NewOrgStock",
-                    icon: "icon-puzzle bold"
+               .AddItem(new MenuItemDefinition("EquipmentArchive",
+                    L("EquipmentArchive"),
+                    url: "Admin/EquipmentArchive",
+                    icon: "glyphicon glyphicon-briefcase"
+
                     )
-                )
-                .AddItem(new MenuItemDefinition("Customer",
-                    L("Customer"),
-                    url: "Admin/Customer",
-                    icon: "glyphicon glyphicon-user"
-                    ))
+                   )
+                //.AddItem(new MenuItemDefinition("AccessoryStock",
+                //    L("AccessoryStock"),
+                //    url: "Admin/Accessory/NewOrgStock",
+                //    icon: "icon-puzzle bold"
+                //    )
+                //)
+                //.AddItem(new MenuItemDefinition("Customer",
+                //    L("Customer"),
+                //    url: "Admin/Customer",
+                //    icon: "glyphicon glyphicon-user"
+                //    ))
                 .AddItem(new MenuItemDefinition("SystenSetting",
                     L("SystemSetting"),
                     url: "Admin/SystemSetting",

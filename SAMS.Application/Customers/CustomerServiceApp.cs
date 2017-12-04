@@ -16,34 +16,34 @@ namespace SAMS.Customers
 {
     public class CustomerAppService : ICustomerAppService
     {
-        private readonly IRepository<Customer> _customnerRepository;
+        private readonly IRepository<Customer,string> _customnerRepository;
         private readonly IRepository<WorkOrderBill> _workOrderBillRepository;
         private readonly ICustomerDomainService _customerDomainService;
 
-        public CustomerAppService(IRepository<Customer> customnerRepository, IRepository<WorkOrderBill> workOrderBillRepository
+        public CustomerAppService(IRepository<Customer,string> customnerRepository, IRepository<WorkOrderBill> workOrderBillRepository
             , ICustomerDomainService customerDomainService )
         {
             _customnerRepository = customnerRepository;
             _workOrderBillRepository = workOrderBillRepository;
             _customerDomainService = customerDomainService;
         }
-        public ListResultDto<GetCustomerForSelectDto> GetCustomerByName(string name)
+        public ListResultDto<GetCustomerByNameDto> GetCustomerByName(string name)
         {
 
             var list = _customnerRepository.GetAll()
                 .Where(x => x.Name.Contains(name))
                 .ToList();
 
-            return new ListResultDto<GetCustomerForSelectDto>(list.MapTo<List<GetCustomerForSelectDto>>());
+            return new ListResultDto<GetCustomerByNameDto>(list.MapTo<List<GetCustomerByNameDto>>());
         }
-        public ListResultDto<GetCustomerForSelectDto> GetCustomerByLocation(string location)
-        {
-            var list = _customnerRepository.GetAll()
-                .Where(x => x.Area.Contains(location))
-                .ToList();
+        //public ListResultDto<GetCustomerForSelectDto> GetCustomerByLocation(string location)
+        //{
+        //    var list = _customnerRepository.GetAll()
+        //        .Where(x => x.Area.Contains(location))
+        //        .ToList();
 
-            return new ListResultDto<GetCustomerForSelectDto>(list.MapTo<List<GetCustomerForSelectDto>>());
-        }
+        //    return new ListResultDto<GetCustomerForSelectDto>(list.MapTo<List<GetCustomerForSelectDto>>());
+        //}
 
         public PagedResultDto<CustomerDto> GetCustomers(GetCustomersInput input)
         {
@@ -51,7 +51,6 @@ namespace SAMS.Customers
 
             var workOrderQuery = _workOrderBillRepository
                 .GetAll()
-                .Where(e=>e.CustomerId.HasValue)
                 .GroupBy(e => e.Customer)
                 .Select(e => e.OrderByDescending(o => o.CreationTime).FirstOrDefault())
                 ;
@@ -61,22 +60,14 @@ namespace SAMS.Customers
                         from tt in temp.DefaultIfEmpty()
                         select new CustomerDto()
                         {
-                            LastServiceTime = tt == null ? dt : tt.CreationTime,
-                            Id = customer.Id,//CustomerId.Value,
-                            Address=customer.Address,
-                            Area=customer.Area,
-                            CreationTime=customer.CreationTime,
-                            Description=customer.Description,
-                            Email=customer.Email,
-                            Mobile=customer.Mobile,
-                            Name=customer.Name,
-                            Number1=customer.Number1,
-                            Number2=customer.Number2
+                            LastServiceTime = tt == null ? dt : tt.ServiceTime,
+                            Id = customer.Id,
+                            Name=customer.Name
 
                         };
 
 
-            var list = query.OrderBy(input.Sorting)
+            var list = query.OrderBy("Name")
                 .PageBy(input)
                 .ToList();
             var recordCount = list.Count;
@@ -100,38 +91,9 @@ namespace SAMS.Customers
             return customer.MapTo<GetDetailOutput>();
         }
 
-        public void Create(CreateInput input)
-        {
-            var customer = new Customer()
-            {
-                Address = input.Address,
-                Area = input.Area,
-                Email = input.Email,
-                Mobile = input.Mobile,
-                Name = input.Name,
-                Number1 = input.Number1,
-                Number2 = input.Number2
-
-            };
-            _customerDomainService.Create(customer);
-
-        }
-        public  void Edit(EditInput input)
-        {
-            var customer = _customerDomainService.Get(input.Id);
-            customer.Address = input.Address;
-            customer.Area = input.Area;
-            customer.Email = input.Email;
-            customer.Mobile = input.Mobile;
-            customer.Name = input.Name;
-            customer.Number1 = input.Number1;
-            customer.Number2 = input.Number2;
-        }
-        public void Delete(int id)
-        {
-            _customnerRepository.Delete(id);
-        }
-        public DateTime? GetLastServiceTime(int customerId)
+       
+        
+        public DateTime? GetLastServiceTime(string customerId)
         {
            var workOrder= _workOrderBillRepository.GetAll()
                 .Where(bill => bill.CustomerId == customerId)

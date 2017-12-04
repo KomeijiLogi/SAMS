@@ -14,7 +14,7 @@ namespace SAMS.Inventory
     {
         [ForeignKey("AccessoryId")]
         public virtual Accessory Accessory { get; set; }
-        public virtual int AccessoryId { get; set; }
+        public virtual string AccessoryId { get; set; }
         public virtual int Count { get; set; }
         [ForeignKey("BillId")]
         public virtual StockBill Bill { get; set; }

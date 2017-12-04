@@ -1,0 +1,479 @@
+﻿
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "EquipmentArchive";
+}
+@model  SAMS.Web.Areas.Admin.Models.EquipmentArchive.DetailModel
+<div class="row">
+
+
+    <div class="col-md-12">
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption title">
+                    设备档案详情
+                </div>
+                <div class="input-group pull-right">
+                    <a href="javascript:history.back(-1)" class="btn btn-default">返回</a>
+                    <button class="btn btn-default pull-right" onclick="deleteRecord('@Model.Id')">删除档案</button>
+                    @*<div class="hidden">
+                        <a class="btn btn-default" data-ajax="true" data-ajax-begin="startDialog(&#39;新建工单&#39;)" 
+                           data-ajax-method="GET" 
+                           data-ajax-success="showDialog" 
+                           href="/servicespace/workorder/create/123?Name=%E7%BB%B4%E4%BF%AE&amp;WorkOrderTemplateID=123&amp;customerId=296edbe4-4d63-4fcb-a569-4425a64b3294">新建工单</a>
+                    </div>*@
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="esh-side-edit-wrap">
+                    <div class="" id="div-archive">
+                        <div class="esh-work-order-side">
+                            <label class="font-md esh-txtellipsis code">序列号:@Model.SerialNo</label>
+                            <a class="pull-right" href="javascript:showeditor();">
+                                <i class="fa fa-pencil font-13"></i>&nbsp;编辑
+                            </a>
+                        </div>
+                        <div class="esh-work-order-side">
+                            <ul class="esh-pub-ul">
+                                <li><span>产品：</span>@Model.ProductName</li>
+                                <li><span>型号：</span>@Model.ProductModel</li>
+                                <li><span>保修期至：</span>@(Model.Warrenty.HasValue ? Model.Warrenty.Value.ToString("yyyy-MM-dd") : "")</li>
+                                <li><span>装机分类：</span>@Model.InstallType</li>
+                                <li><span>安装人：</span>@Model.AssignedPersonName</li>
+                            </ul>
+                        </div>
+                        <div class="esh-work-order-side">
+                            <ul class="esh-pub-ul">
+                                <li><span>客户：</span>@Model.CustomerName</li>
+                                <li><span>使用科室：</span>@Model.Office</li>
+                                <li><span>科室联系人：</span>@Model.OfficePerson</li>
+                                <li><span>联系人职务：</span>@Model.OfficePosition</li>
+                                <li><span>联系人电话：</span>@Model.OfficeTel</li>
+                                <li><span>联系人手机：</span>@Model.OfficeMobile</li>
+                            </ul>
+                        </div>
+                        <div class="esh-work-order-side">
+                            <ul class="esh-pub-ul">
+                                
+                                <li><span>安装日期：</span>@(Model.ServiceTime.HasValue ? Model.ServiceTime.Value.ToString("yyyy-MM-dd") : "")</li>
+                                <li><span>最近服务：</span>@(Model.LastServiceTime.HasValue ? Model.LastServiceTime.Value.ToString("yyyy-MM-dd") : "")</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <form action="/admin/equipmentarchive/edit" class="hidden"
+                           data-ajax="true" data-ajax-begin="showLoading" 
+                          data-ajax-complete="hideLoading" 
+                          data-ajax-failure="showException" 
+                          data-ajax-success="editSucess" id="editForm" method="post">
+                        <input id="ID" name="ID" type="hidden" value="@Model.Id" />   
+                        <input id="CustomerID" name="CustomerID" type="hidden" value="@Model.CustomerId" />                     
+                        <div class="form-group">
+                            <label>设备序列号</label>
+                            <input class="form-control" data-val="true" 
+                                   data-val-length="设备序列号不能超过50个字符" 
+                                   data-val-length-max="50" data-val-regex="不能包含空字符"
+                                   data-val-regex-pattern="^[^\s]+$" 
+                                   data-val-required="设备序列号不能为空" 
+                                   id="SerialNo" name="SerialNo" placeholder="请输入设备序列号" 
+                                   data-val-remote="设备序列号已存在" 
+                                   data-val-remote-additionalfields="*.SerialNo,*.ID" 
+                                   data-val-remote-url="/admin/equipmentarchive/checkserialno" 
+                                   type="text" value="@Model.SerialNo" />
+                            <span class="field-validation-valid esh-error-lable" 
+                                  data-valmsg-for="SerialNo" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>产品</label>
+                            @Html.DropDownList("select-product", (SelectList)Model.ProductItemList, "选择产品",
+                        new { @class = "form-control" })
+                            <input class="form-control" data-val="true" data-val-regex="产品不能为空" 
+                                   data-val-required="产品不能为空" id="ProductID" 
+                                   name="ProductID" 
+                                    type="hidden" value="@Model.ProductId" />
+                            <span class="field-validation-valid esh-error-lable"
+                                   data-valmsg-for="ProductID" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>客户</label>
+
+                            <div class="input-group esh-select-form open">
+                                <input autocomplete="off" class="form-control" data-bind="loadBtn"
+                                       data-val="true" data-val-required="名称不能为空"
+                                       id="popCustomer" name="CustomerName" placeholder="请输入客户名称或编码搜索"
+                                       type="text" value="@Model.CustomerName" />
+                                <input type="hidden" id="CustomerID" data-bind="" />
+                                <div id="dataCus" class=""></div>
+                                <span class="input-group-btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn default" id="loadBtn" data-bind="dataCus" data-id="popCustomer" type="button"
+                                            onclick="searchBtnCus(this, '/admin/customer/getcustomersul', 'popCustomer')">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                               
+                                <span class="field-validation-valid esh-error-lable" 
+                                      data-valmsg-for="CustomerName" data-valmsg-replace="true"></span>
+                            </div>
+                        
+                        
+                        <div class="form-group">
+                            <label>使用科室</label>
+                            <input type="tel" class="form-control" data-val="true" data-val-length="使用科室不能超过50个字符" 
+                                      data-val-length-max="50" data-val-regex="不能包含空字符" 
+                                      data-val-regex-pattern="^[^\s]+$" 
+                                       id="Office" name="Office" placeholder="使用科室..." value="@Model.Office" />
+                                
+                            <span class="help-block">50个字以内</span>
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="Office" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>科室联系人</label>
+                            <input type="text" class="form-control" data-val="true" data-val-length="科室联系人不能超过50个字符"
+                                   data-val-length-max="50" data-val-regex="不能包含空字符"
+                                   data-val-regex-pattern="^[^\s]+$"
+                                   id="OfficePerson" name="OfficePerson" placeholder="科室联系人..." value="@Model.OfficePerson" />
+
+                            <span class="help-block">50个字以内</span>
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="OfficePerson" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>联系人职务</label>
+                            <input type="text" class="form-control" data-val="true" data-val-length="联系人职务不能超过50个字符"
+                                   data-val-length-max="50" data-val-regex="不能包含空字符"
+                                   data-val-regex-pattern="^[^\s]+$"
+                                   id="OfficePosition" name="OfficePosition" placeholder="联系人职务..." value="@Model.OfficePosition" />
+
+                            <span class="help-block">50个字以内</span>
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="OfficePosition" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>联系人电话</label>
+                            <input type="tel" class="form-control" data-val="true" data-val-length="联系人电话不能超过20个字符"
+                                   data-val-length-max="20" data-val-regex="不能包含空字符"
+                                   data-val-regex-pattern="^[^\s]+$"
+                                   id="OfficeTel" name="OfficeTel" placeholder="联系人电话..." value="@Model.OfficeTel" />
+
+                            <span class="help-block">20个字以内</span>
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="OfficeTel" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>联系人手机</label>
+                            <input class="form-control" data-val="true" data-val-regex="手机号格式不正确"
+                                    data-val-regex-pattern="^[1][3-8]\d{9}$" 
+                                   id="OfficeMobile" name="OfficeMobile" placeholder="请输入联系人手机号"
+                                    type="text" value="@Model.OfficeMobile" />
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="OfficeMobile"
+                                   data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group input-daterange date-picker">
+                            <label>安装日期</label>
+                            <input class="form-control" id="ServiceTime" name="ServiceTime" 
+                                   onblur="clearDate(this)" placeholder="安装日期" type="text" value="@(Model.ServiceTime.HasValue ? Model.ServiceTime.Value.ToString("yyyy-MM-dd") : "")" />
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="ServiceTime"
+                                  data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group input-daterange date-picker">
+                            <label>保修期至</label>
+                            <input class="form-control" id="Warrenty" name="Warrenty"
+                                   onblur="clearDate(this)" placeholder="保修期至" type="text" value="@(Model.Warrenty.HasValue ? Model.Warrenty.Value.ToString("yyyy-MM-dd") : "")" />
+                            <span class="field-validation-valid esh-error-lable" data-valmsg-for="Warrenty"
+                                  data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>安装人</label>
+                            @Html.DropDownList("AssignedPersonId", (SelectList)Model.PersonItemList, "选择安装人",
+                        new { @class = "form-control",Name= "AssignedPersonId" })
+                            @*<input class="form-control" data-val="true" 
+                                    id="AssignedPersonId"
+                                   name="AssignedPersonId"
+                                   type="hidden" value="@Model.AssignedPersonId" />*@
+                            <span class="field-validation-valid esh-error-lable"
+                                  data-valmsg-for="AssignedPersonId" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>安装类型</label>
+                            <div class="radio-list">
+                                <label class="radio">
+                                    <span><input type="radio" value="销售" name="installType" @(Model.InstallType.Equals("销售")? "checked":"")></span>销售
+                                </label>
+                                <label class="radio">
+                                   <span><input type="radio" value="试用" name="installType" @(Model.InstallType.Equals("试用") ? "checked":"")></span>试用
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group margin-top-25">
+                            <a class="btn btn-default" href="javascript:hiddeneditor();">取消</a>
+                            <button type="submit" class="btn green">保存</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="esh-detail-content">
+                    <div class="esh-tabbable-individual tabbable-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="" onclick="changeUrl('/admin/workorder/getlist')" data-toggle="tab" aria-expanded="false">
+                                    历史工单
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="dataTable" class="dataTables_wrapper no-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input id="PageIndex" name="PageIndex" type="hidden" value="1" />
+    <input id="PageSize" name="PageSize" type="hidden" value="10" />
+    <input id="Sort" name="Sort" type="hidden" value="" />
+    <input id="Direction" name="Direction" type="hidden" value="" />
+    <input id="Where" name="Where" type="hidden" value="{ autocomplete = off }" />
+    <input autocomplete="off" id="serialNo" name="serialNo" type="hidden" value="@Model.SerialNo" />
+    <input id="Url" name="Url" type="hidden" value="{ autocomplete = off }" />
+    <input type="hidden" id="serviceNetwork" value="" />
+    <div class="modal fade" id="editDailog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END PAGE CONTEN -->
+<!-- BEGIN PAGE SELF SCRIPTS -->
+@section Scripts
+{
+@*<script type="text/javascript" src="/js/libs/bootstrap-tabdrop/js/bootstrap-tabdrop.js"></script>*@
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#Url").val("/admin/workorder/getlist");//初始Url
+            $("#Where").val("{'serialNo':'" + $("#serialNo").val()  + "'}");//初始检索条件
+           
+            getData();//获取列表数据
+            initEditSide();//初始化侧栏
+            initDialog();//初始化页面控件
+        });
+
+        //获取列表数据
+        function getData() {
+            if ($("#Url").val()) {
+                showLoading();
+                $.ajax({
+                    url: $("#Url").val(),
+                    type: "Post",
+                    data: { "Where": $("#Where").val(), "Sort": $("#Sort").val(), "Direction": $("#Direction").val(), "PageIndex": $("#PageIndex").val(), "PageSize": $("#PageSize").val() },
+                    success: function (data) {
+                        hideLoading();
+                        $("#dataTable").html(data);
+                        initTable();
+                    },
+                    error: function (data) { hideLoading(); showException(data); }
+                });
+            }
+        }
+
+        ///初始化列表
+        function initTable() {
+            OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+
+            //单击行跳转到明细页
+            $('td:not(:first,:last)', $('#tableList tr')).click(function () {
+                var id = $(this).parent().find("input[type=checkbox]").val();//id值
+                window.location = "/admin/workorder/Details/" + id;
+            });
+        }
+
+        //改变url
+        function changeUrl(url) {
+            $("#Url").val(url);
+            getData();
+        }
+
+        //改变索引页
+        function changePageIndex(index) {
+            $("#PageIndex").val(index);
+            getData();
+        }
+
+        //改变排序条件
+        function changeSortCondition(sort, direction) {
+            $("#Sort").val(sort);
+            $("#Direction").val(direction);
+            $("#PageIndex").val(1);//页索引置为1
+            getData();
+        }
+
+        
+
+        //显示编辑器
+        function showeditor() {
+            $("#div-archive").addClass("hidden");
+            $("#editForm").removeClass("hidden");
+        }
+
+        //隐藏编辑器
+        function hiddeneditor() {
+            $("#div-archive").removeClass("hidden");
+            $("#editForm").addClass("hidden");
+        }
+
+        //初始化弹出的对话框
+        function initDialog() {
+           // initArea("#sel_pro", "#sel_city", "#sel_distr", $("#Area").val());//初始化省市区域
+            //initSelect();//初始化select2控件
+            //Metronic.initSlimScroll('.scroller');//滚动条
+            $("#editForm").removeData("validator");//删除验证器
+            $.validator.unobtrusive.parse("#editForm");//添加验证器
+            //$("#s2id_sel_distr input").blur(function () { getAreaVal(); });
+            initDataPicker();//设置时间控件
+            initCustomer();//设置客户控件
+            initUniform();
+        }
+        //初始化客户控件
+        var timeout = 0;
+        function initCustomer() {
+            $("#popCustomer").keyup(function (e) {
+                var self = this;
+                clearTimeout(timeout);
+                var keycode = e.keyCode;
+
+
+                var totalLi = $(this).parent().find(".dropdown-menu li").length - 1;
+                //排除键盘中不需要搜索数据的键值
+                var array = new Array();
+                array = [16, 17, 18, 19, 20, 27, 33, 35, 36, 37, 39, 34, 35, 36, 45, 91, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 145, 187, 189, 192, 219, 220, 221, 255];
+                for (i = 0; i < array.length; i++) {
+                    if (keycode == array[i]) { return false; break; }
+                }
+
+                //当触发回车键时
+                if (keycode == 13) {
+                    $(this).blur();
+                    var curr = $(this).parent().find(".dropdown-menu li.active a");
+                    curr.click();
+                }
+
+                //触发上键
+                if (keycode == 38) {
+                    indexLi--;
+                    if (indexLi <= 0) {
+                        indexLi = 0;
+                    }
+                }
+                else if (keycode == 40) {
+                    //触发下键
+                    indexLi++;
+                    if (indexLi >= totalLi) {
+                        indexLi = totalLi;
+                    }
+                }
+
+                var ulPar = $(this).parent().find(".dropdown-menu");
+                //根据ul的高度计算当键盘上下键时是否需要滚动
+                if (ulPar.length > 0) {
+                    ulPar.find("li:eq(" + indexLi + ")").addClass("active").siblings().removeClass("active");
+                }
+
+                timeout = setTimeout(function () {
+                    //当键盘为回车、上键和下键时不去请求数据
+                    if (keycode != 38 && keycode != 40 && keycode != 13) {
+                        var a = $(self).attr("data-bind")
+                        searchCus("#" + a, '/admin/customer/getcustomersul');
+                        $("#" + a).parent().attr("aria-expanded", "true").parent().addClass("open");
+                        indexLi = 0;
+                    }
+                }, 500);
+
+            }).change(function () {
+                $("#CustomerID").attr("data-bind", $(this).val());
+                var a = $("#CustomerID").val();
+                var b = $(this).val();
+                if (b != a) { $(this).val(a) }
+            }).keydown(function (e) {
+                if (e.keyCode == 38 || e.keyCode == 40) {
+                    e.preventDefault && e.preventDefault();
+                }
+            });
+        }
+        //清空日期
+        var blnfirst = true;//首次执行标识
+        function clearDate(input) {
+            if (blnfirst) {
+                //为避免与onchangeDate事件的冲突
+                return;
+            }
+
+            if (!$(input).val()) {
+                //日期清空时，重新查询
+                changeQueryCondition();
+            }
+        }
+
+        //删除单条记录
+        function deleteRecord(id) {
+            botbox.confirm("提示", "您确认删除吗?", function (result) {
+                if (result) {
+                    showLoading();
+                    $.ajax({
+                        url: "/admin/Equipmentarchive/delete",
+                        type: "POST",
+                        data: { "id": id },
+                        success: function (data) {
+                            hideLoading();
+                            if (data == "ok") { window.location = "/admin/Equipmentarchive"; }
+                            else if (data == "error") { growlAlert.danger("删除失败"); }
+                            else { growlAlert.info("该档案已被删除，请返回上一页面再操作")}
+                        },
+                        error: function (data) { hideLoading(); growlAlert.danger("删除失败") }
+                    });
+                }
+            });
+        }
+
+        //编辑记录成功后的处理
+        function editSucess(data) {
+            if (data == "failed") {
+                growlAlert.info("该档案已被删除，请返回上一页面再操作");
+            } else if (data == "error") { growlAlert.danger("操作失败"); }
+            else { window.location.reload(); }
+        }
+
+        //初始化编辑区侧栏
+        function initEditSide() {
+            EditSideView();
+            Metronic.addResizeHandler(function () {
+                EditSideView();
+            });
+
+            function EditSideView() {
+                if (Metronic.getViewPort().width <= 992) {
+                    $(".esh-side-edit-wrap").css("height", "auto");
+                } else {
+                    $(".esh-side-edit-wrap").css("height", ($(document).height() - parseInt($(".esh-side-edit-wrap").offset().top)) + "px");
+                }
+            }
+        }
+
+        //启动对话框
+        function startDialog(title) {
+            modalLoadding("#createworkDailog", title, 460)
+            $("#createworkDailog").modal();
+        }
+
+        //弹出对话框
+        function showDialog(data) {
+            $("#createworkDailog .modal-content").html(data);//填充对话框
+            WorkOrder.init();//初始化对话框
+        }
+
+        //创建工单成功
+        function editWorkOrderSucess(data) { if (data == "ok") { $("#createworkDailog").modal("hide"); growlAlert.success("新建工单成功！"); getData(); } else if (data == "faile") { growlAlert.info("已超过单日可创工单工数，建议您升级后再进行创建") } else { growlAlert.danger("新建工单失败。"); } }
+</script>
+
+<!-- END PAGE SELF SCRIPTS -->
+    }

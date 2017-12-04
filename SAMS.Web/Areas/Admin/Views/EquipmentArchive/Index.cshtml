@@ -1,0 +1,493 @@
+﻿
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Layout/_Layout.cshtml";
+    ViewBag.CurrentPageName = "EquipmentArchive";
+}
+@model SAMS.Web.Areas.Admin.Models.EquipmentArchive.IndexViewModel
+<div class="row">
+    <div class="col-md-12">
+        <div class="side-menu-sidebar ">
+            <div class="scroller">
+                <div class="portlet portlet-nav">
+                    <div class="portlet-title">
+                        <div class="caption" data-toggle="collapse" data-target=".side-menu-project-list-content">
+                            <span class="uppercase">设备档案</span>
+                            <a href="javascript:;" class="caption-helper visible-sm-inline-block visible-xs-inline-block">单击展示列表</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="esh-filter-sidebar">
+            <div class="header">
+            <b class="title">档案筛选</b> 
+            <a class="close" href="javascript:void(0)"></a>
+            </div>
+            <div class="sidebar-wrap">
+                <section class="content">
+                    <div class="tip clearfix">
+                    <i class="fa fa-filter" style="color:#999"></i> 筛选条件<a class="pull-right hidden clear-filter" href="javascript:void(0)" onclick="clearFilter()">清空筛选</a></div>
+                    <div class="form-group">
+                        <label>客户名称</label>
+                        <input class="form-control" id="customerName" name="customerName"
+                                 placeholder="客户名称" type="text" value="" />
+             
+                    </div>
+                    <div class="form-group">
+                        <label>产品</label>
+                        @Html.DropDownList("select-product", Model.ProductItemList, "选择产品", 
+                        new { @class = "form-control" })
+                    </div>
+                   
+                    <div class="form-group">
+                        <label>安装日期</label>
+                        <div class="input-group  date-picker input-daterange">
+                            <input class="form-control" id="startInstallDate" 
+                                   name="startInstallDate" onblur="clearDate(this)" placeholder="开始日期" type="text" value="" />
+                            <span class="input-group-addon">
+                                至
+                            </span>
+                            <input class="form-control" id="endInstallDate" 
+                                   name="endInstallDate" onblur="clearDate(this)" placeholder="结束日期" type="text" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>最近服务</label>
+                        <div class="input-group  date-picker input-daterange">
+                            <input class="form-control" id="startserviceDate" name="startserviceDate" onblur="clearDate(this)" placeholder="开始日期" type="text" value="" />
+                            <span class="input-group-addon">
+                                至
+                            </span>
+                            <input class="form-control" id="endserviceDate" name="endserviceDate" onblur="clearDate(this)" placeholder="结束日期" type="text" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>保修期至</label>
+                        <div class="input-group  date-picker input-daterange">
+                            <input class="form-control" id="startWarrenty" name="startWarrenty" onblur="clearDate(this)" placeholder="开始日期" type="text" value="" />
+                            <span class="input-group-addon">
+                                至
+                            </span>
+                            <input class="form-control" id="endWarrenty" name="endWarrenty" onblur="clearDate(this)" placeholder="结束日期" type="text" value="" />
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+        <div class="side-menu-content">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption title">
+                        设备列表
+                    </div>
+                    <div class="input-group pull-right">
+                        <div class="input-group input-medium ">
+                            <input class="form-control" 
+                                   id="serialNo" maxlength="50" name="serialNo" 
+                                   placeholder="输入设备序号" type="text" value="" />
+                            <span class="input-group-btn">
+                                <button class="btn green" id="btnSearch" type="button">
+                                <i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="table-toolbar">
+                        <div class="col-md-6 col-xs-6 clear-padding-left">
+                            <a class="btn green" data-ajax="true" data-ajax-begin="startDialog(&#39;新建档案&#39;)" data-ajax-method="GET" data-ajax-success="showDialog" href="/admin/EquipmentArchive/create">新建</a>                            <button class="btn green collapse" id="btnFilter">筛选</button>
+                            <a class="filter-a clear-filter hidden" href="javascript:void(0)" onclick="clearFilter()"><i class="icon fa fa-trash"></i>清空筛选</a>
+                        </div>
+                        <div class="col-md-6 col-xs-6 clear-padding-right">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                        更多操作&nbsp;<i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        @*<li>
+                                            <a data-toggle="modal" href="javascript:void(0)" id="btnDelete">批量删除</a>
+                                        </li>*@
+
+                                        <li>
+                                            <a data-toggle="modal" href="javascript:void(0)" onclick="exportExcel()">Excel导出 </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dataTable" class="dataTables_wrapper no-footer">
+                        @*@Html.Action("Get", "Eq", new { PageIndex = 1, PageSize = 10, Sort = "CreationTime", Direction = "desc", Where = "{}" })*@
+
+
+
+                    </div>
+                    <form action="/admin/EquipmentArchive/get" 
+                          data-ajax="true" data-ajax-begin="showLoading" 
+                          data-ajax-complete="hideLoading" 
+                          data-ajax-failure="showException" 
+                          data-ajax-mode="replace" 
+                          data-ajax-success="initTable" 
+                          data-ajax-update="#dataTable" 
+                          id="searchByRequest" 
+                          method="post" 
+                          novalidate="novalidate">
+                    <input id="PageIndex" name="PageIndex" type="hidden" value="1">
+                    <input data-val="true" data-val-number="字段 PageSize 必须是一个数字。" 
+                           data-val-required="The PageSize field is required." 
+                           id="PageSize" name="PageSize" type="hidden" value="10">
+                    <input id="Sort" name="Sort" type="hidden" value="">
+                    <input id="Direction" name="Direction" type="hidden" value="">
+                    <input id="Where" name="Where" 
+                           type="hidden" 
+                           value="{'area':'','label':'','name':'','servicenetworkid':'','startdate':'','enddate':'','startservicedate':'','endservicedate':'','recentService':''}">
+                    </form>
+                  
+                </div>
+                </div>
+            </div>
+        <div class="modal fade" id="editDailog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts
+{
+<!-- BEGIN PAGE SELF SCRIPTS -->
+<script type="text/javascript">
+$(document).ready(function () {
+    initDataPicker();//设置时间控件
+    initEvent();//事件绑定
+    changeQueryReLoad();
+});
+    //事件绑定
+    function initEvent() {
+    //显示或隐藏筛选功能
+    $('body').on('click', '#btnFilter.collapse, #btnFilter.expand', function (e) {
+        if ($(this).hasClass("collapse")) {
+            $(this).removeClass("collapse").addClass("expand").text('隐藏筛选');
+            $('.esh-filter-sidebar').addClass("open");
+        } else {
+            $(this).removeClass("expand").addClass("collapse").text('筛选');
+            $('.esh-filter-sidebar').removeClass("open");
+        }
+    });
+    //安装开始日期改变触发表单提交
+    $('.input-daterange input[name=startInstallDate]').on("changeDate", function () {
+        blnfirst = false; changeQueryCondition();
+    });
+
+    //安装结束日期改变触发表单提交
+    $('.input-daterange input[name=endInstallDate]').on("changeDate", function () {
+        var date1 = $('.input-daterange input[name=startInstallDate]').val();
+        var date2 = $(this).val();
+        if (date2 >= date1) {
+            changeQueryCondition();
+        }
+    });
+
+    //最近服务开始日期改变触发表单提交
+    $('.input-daterange input[name=startserviceDate]').on("changeDate", function () {
+        blnfirst = false; changeQueryCondition();
+    });
+
+    //最近服务结束日期改变触发表单提交
+    $('.input-daterange input[name=endserviceDate]').on("changeDate", function () {
+        var date1 = $('.input-daterange input[name=startserviceDate]').val();
+        var date2 = $(this).val();
+        if (date2 >= date1) {
+            changeQueryCondition();
+        }
+    });
+
+    //保修期至 开始日期改变触发表单提交
+    $('.input-daterange input[name=startWarrenty]').on("changeDate", function () {
+        blnfirst = false; changeQueryCondition();
+    });
+
+    //保修期至  结束日期改变触发表单提交
+    $('.input-daterange input[name=endWarrenty]').on("changeDate", function () {
+        var date1 = $('.input-daterange input[name=startWarrenty]').val();
+        var date2 = $(this).val();
+        if (date2 >= date1) {
+            changeQueryCondition();
+        }
+    });
+
+    //输入序列号回车查询serialNo
+    $("#serialNo").keypress(function (e) {
+        if (e.which == 13) {
+            changeQueryCondition();
+            $("#btnSearch").focus();
+        }
+    });
+    //输入客户名称回车查询
+    $("#customerName").keypress(function (e) {
+        if (e.which == 13) {
+            changeQueryCondition();
+            $("#btnSearch").focus();
+        }
+    });
+    //选择产品
+    $("#select-product").change(function () { changeQueryCondition(); });
+    //搜索按钮按下
+    $("#btnSearch").click(function () { changeQueryCondition(); })
+}
+    //清空筛选
+    function clearFilter() {
+        $("#customerName,#select-product,#endInstallDate,#startInstallDate,#startserviceDate,#endserviceDate,#startWarrenty,#endWarrenty ").val("");
+        changeQueryCondition();
+
+    }
+    //初始化列表
+    function initTable() {
+        OperationTable.init("#tableList", "#Sort", "#Direction", changeSortCondition);
+        //单击行跳转到明细页
+        $('td:not(:first,:last)', $('#tableList tr')).click(function () {
+            var id = $(this).parent().find("input[type=checkbox]").val();//id值
+            window.location = "/admin/EquipmentArchive/details/" + id;
+        });
+    }
+    //清空日期
+    var blnfirst = true;//首次执行标识
+    function clearDate(input) {
+        if (blnfirst) {
+            //为避免与onchangeDate事件的冲突
+            return;
+        }
+
+        if (!$(input).val()) {
+            //日期清空时，重新查询
+            changeQueryCondition();
+        }
+    }
+
+    //改变索引页
+    function changePageIndex(index) {
+        $("#PageIndex").val(index);
+        $("#searchByRequest").submit();
+    }
+    //重新加载筛选条件
+    function changeQueryReLoad() {
+        if ($("customerName").val() == "" && $("#endWarrenty").val() == "" && $("#startWarrenty").val() == "" && $("#startInstallDate").val() == "" && $("#endInstallDate").val() == "" && $("#startserviceDate").val() == "" && $("#endserviceDate").val() == "" && $("#select-product").val() == "") {
+            $(".clear-filter").addClass("hidden")
+        }
+        else {
+            $(".clear-filter").removeClass("hidden")
+        }
+
+        //组装查询条件
+        var serialNo = $("#serialNo").val();
+        var customerName = $("#customerName").val();
+        var startInstallDate = $("#startInstallDate").val();
+        var endInstallDate = $("#endInstallDate").val();
+        var startserviceDate = $("#startserviceDate").val();
+        var endserviceDate = $("#endserviceDate").val();
+        var productId = $("#select-product").val();
+        var startWarrenty = $("#startWarrenty").val();
+        var endWarrenty = $("#endWarrenty").val();
+        
+        var whereData = "{'SerialNo':'" + serialNo + "','CustomerName':'" + customerName + "','StartInstallDate':'"
+        + startInstallDate + "','EndInstallDate':'" + endInstallDate + "','StartServiceDate':'" + startserviceDate
+         + "','EndServiceDate':'" + endserviceDate + "','ProductId':'" + productId + "','StartWarrenty':'" + startWarrenty
+         + "','EndWarrenty':'" + endWarrenty
+        + "'}";
+        $("#Where").val(whereData);
+        $("#searchByRequest").submit();
+    }
+
+    //改变查询条件
+    function changeQueryCondition() {
+        if ($("#customerName").val() == "" && $("#endWarrenty").val() == "" && $("#startWarrenty").val() == "" && $("#startInstallDate").val() == "" && $("#endInstallDate").val() == "" && $("#startserviceDate").val() == "" && $("#endserviceDate").val() == "" && $("#select-product").val() == "") {
+            $(".clear-filter").addClass("hidden")
+        }
+        else {
+            $(".clear-filter").removeClass("hidden")
+        }
+
+        //组装查询条件
+        var serialNo = $("#serialNo").val();
+        var customerName = $("#customerName").val();
+        var startInstallDate = $("#startInstallDate").val();
+        var endInstallDate = $("#endInstallDate").val();
+        var startserviceDate = $("#startserviceDate").val();
+        var endserviceDate = $("#endserviceDate").val();
+        var productId = $("#select-product").val();
+
+        var whereData = "{'SerialNo':'" + serialNo + "','CustomerName':'" + customerName + "','StartInstallDate':'"
+        + startInstallDate + "','EndInstallDate':'" + endInstallDate + "','StartServiceDate':'" + startserviceDate
+         + "','EndServiceDate':'" + endserviceDate + "','ProductId':'" + productId
+        + "'}";
+        if ($("#Where").val() == whereData) {
+            return;
+        }
+
+        $("#Where").val(whereData);
+        $("#PageIndex").val(1);//页索引置为1
+        $("#searchByRequest").submit();
+    }
+    //改变排序条件
+    function changeSortCondition(sort, direction) {
+        $("#Sort").val(sort);
+        $("#Direction").val(direction);
+        $("#PageIndex").val(1);//页索引置为1
+        $("#searchByRequest").submit();
+    }
+    //启动对话框
+    function startDialog(title) {
+        modalLoadding("#editDailog", title, 400)
+        $("#editDailog").modal();
+       
+    }
+    //初始化客户控件
+    var timeout = 0;
+    function initCustomer() {
+        $("#popCustomer").keyup(function (e) {
+            var self = this;
+            clearTimeout(timeout);
+            var keycode = e.keyCode;
+
+
+            var totalLi = $(this).parent().find(".dropdown-menu li").length - 1;
+            //排除键盘中不需要搜索数据的键值
+            var array = new Array();
+            array = [16, 17, 18, 19, 20, 27, 33, 35, 36, 37, 39, 34, 35, 36, 45, 91, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 145, 187, 189, 192, 219, 220, 221, 255];
+            for (i = 0; i < array.length; i++) {
+                if (keycode == array[i]) { return false; break; }
+            }
+
+            //当触发回车键时
+            if (keycode == 13) {
+                $(this).blur();
+                var curr = $(this).parent().find(".dropdown-menu li.active a");
+                curr.click();
+            }
+
+            //触发上键
+            if (keycode == 38) {
+                indexLi--;
+                if (indexLi <= 0) {
+                    indexLi = 0;
+                }
+            }
+            else if (keycode == 40) {
+                //触发下键
+                indexLi++;
+                if (indexLi >= totalLi) {
+                    indexLi = totalLi;
+                }
+            }
+
+            var ulPar = $(this).parent().find(".dropdown-menu");
+            //根据ul的高度计算当键盘上下键时是否需要滚动
+            if (ulPar.length > 0) {
+                ulPar.find("li:eq(" + indexLi + ")").addClass("active").siblings().removeClass("active");
+            }
+
+            timeout = setTimeout(function () {
+                //当键盘为回车、上键和下键时不去请求数据
+                if (keycode != 38 && keycode != 40 && keycode != 13) {
+                    var a = $(self).attr("data-bind")
+                    searchCus("#" + a, '/admin/customer/getcustomersul');
+                    $("#" + a).parent().attr("aria-expanded", "true").parent().addClass("open");
+                    indexLi = 0;
+                }
+            }, 500);
+
+        }).change(function () {
+            $("#popCustomer_hidden").attr("data-bind", $(this).val());
+            var a = $("#popCustomer_hidden").val();
+            var b = $(this).val();
+            if (b != a) { $(this).val(a) }
+        }).keydown(function (e) {
+            if (e.keyCode == 38 || e.keyCode == 40) {
+                e.preventDefault && e.preventDefault();
+            }
+        });
+    }
+
+    //显示编辑对话框
+    function showDialog(data) {
+        $("#editDailog .modal-content").html(data);//填充对话框
+        initDataPicker();//设置时间控件
+        initCustomer();//设置客户控件
+        $("#editForm").removeData("validator");//删除验证器
+        $.validator.unobtrusive.parse("#editForm");//添加验证器
+        initUniform();
+        
+    }
+    //编辑单条记录
+    function editRecord(id) {
+        startDialog('编辑档案');
+        $.ajax({
+            url: "/admin/EquipmentArchive/edit",
+            type: "Get",
+            data: { "id": id },
+            success: function (data) {
+                showDialog(data);
+            },
+            error: function (data) { hideLoading(); showException(data); }
+        });
+
+    }
+    function editSucess(data) {
+        if (data == "ok") {
+                $("#editDailog").modal('hide');
+                changeQueryReLoad();
+                growlAlert.success("操作成功");
+        } else {
+            growlAlert.danger("操作失败");
+        }
+
+        //if (data != null && data.Name) {
+        //    $("#editDailog").modal('hide');
+        //    changeQueryReLoad();
+        //    growlAlert.success("操作成功");
+        //} else if (data == "error") { growlAlert.danger("操作失败"); }
+        //else if (data == "failed") { growlAlert.info("该客户已被删除，请刷新页面后再操作"); }
+        //else { growlAlert.info(data) }
+    }
+    //删除单条记录
+    function deleteRecord(id)
+    {
+        botbox.confirm("提示", "您确认删除吗？", function (result) {
+            if (result) {
+                showLoading();
+                $.ajax({
+                    url: "/admin/EquipmentArchive/delete",
+                    type: "POST",
+                    data: { "id": id },
+                    success: function (data) {
+                        hideLoading();
+                        if (data == "ok") {
+                            changeQueryReLoad();
+                            growlAlert.success("操作成功");
+                        } else {
+                            growlAlert.success("操作失败");
+                        }
+                    },
+                    error: function (data) {
+                        hideLoading();
+                        showException(data);
+                    }
+                });
+            }
+        });
+    }
+
+
+</script>
+}
+
+
+

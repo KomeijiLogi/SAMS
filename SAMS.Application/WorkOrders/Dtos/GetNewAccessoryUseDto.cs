@@ -18,7 +18,7 @@ namespace SAMS.WorkOrders.Dtos
 
         // public virtual int ParentId { get; set; }
         public  long StaffID { get; set; }
-        public  int AccessoryId { get; set; }
+        public  string AccessoryId { get; set; }
         public  string AccessoryName { get; set; }
         public  string AccessoryNumber { get; set; }
         public  string AccessoryModel { get; set; }

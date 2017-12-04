@@ -196,12 +196,13 @@ namespace SAMS.WorkOrders
 
         public void ReturnVisit(WorkOrderBill bill)
         {
-            bill.BillStatus = BillStatus.Close;
+            bill.BillStatus = BillStatus.ReturnVisit;
         }
 
         public void Close(WorkOrderBill bill)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            bill.BillStatus = BillStatus.Close;
         }
 
         public void Cancel(WorkOrderBill bill)

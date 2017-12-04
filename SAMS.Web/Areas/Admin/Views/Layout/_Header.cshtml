@@ -5,27 +5,27 @@
 }
 <div class="page-header-inner" >
     <div class="page-logo">
-        <a href="@Url.Action("Index", "Dashboard")" target="_blank">
-            @*<img src="~/Content/admin/img/logo.png" alt="logo" class="logo-default"  />*@
+        <a href="@Url.Action("Index", "Dashboard")" target="_self">
+            <img src="~/Content/admin/img/logo.png" alt="logo" class="logo-default"  />
             @*<img src="~/Content/admin/img/wegologo.png" alt="logo" class="logo-default" style="height:2vw;filter:invert(100%);"/>*@
-            <h4 style="color:#FFFFE0;font-family:'Microsoft YaHei';">售后管理系统</h4>
+            @*<h4 style="color:#FFFFE0;font-family:'Microsoft YaHei';">售后管理系统</h4>*@
         </a>
         
     </div>
     <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
     </a>
     <div class="pull-right">
-        <form action="/admin/workorder/search"  class="search-form search-form-expanded" method="get">
+        @*<form action="/admin/workorder/search"  class="search-form search-form-expanded" method="get">
             <div class="input-group">
                 <span class="input-group-btn">
                     <a href="javascript:;" class="btn submit"><i class="icon-magnifier"></i></a>
                 </span>
                 <input type="text" class="form-control" maxlength="50" placeholder="输入工单编号/客户名称..." name="number">
             </div>
-        </form>
+        </form>*@
         <div class="top-menu">
             <ul class="nav navbar-nav pull-right">
-                <li class="dropdown">
+                @*<li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true" title="新建" >
                         <i class="fa fa-plus"></i>
                     </a>
@@ -43,7 +43,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li>*@
                 <li class="dropdown dropdown-user" >
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
                         <img  class="img-circle"  src="/Content/admin/img/def_user_icon.jpg" />

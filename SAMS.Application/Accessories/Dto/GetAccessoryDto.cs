@@ -11,7 +11,7 @@ namespace SAMS.Accessories.Dtos
     [AutoMapFrom(typeof(Accessory))]
     public class GetAccessoryDto
     {
-        public int AccessoryId { get; set; }
+        public string AccessoryId { get; set; }
         public  string AccessoryName { get; set; }
         public  string AccessoryModel { get; set; }
         public  string AccessoryUnit { get; set; }

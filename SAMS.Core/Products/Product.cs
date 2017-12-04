@@ -10,12 +10,11 @@ using System.Threading.Tasks;
 namespace SAMS.Products
 {
     [Table("t_bd_product")]
-    public class Product : FullAuditedEntity
+    public class Product : Entity<string>
     {
         public virtual string Name { get; set; }
-
         public virtual string Model { get; set; }
-        public virtual string EASNumber{get;set;}
-        public virtual string K3Number { get; set; }
+        public virtual string Code { get; set; }
+
     }
 }

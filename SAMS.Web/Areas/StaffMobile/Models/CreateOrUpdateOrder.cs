@@ -8,10 +8,10 @@ namespace SAMS.Web.Areas.StaffMobile.Models
     public class CreateOrUpdateOrder
     {
         public int? Id { get; set;}
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         public  string CustomerName { get; set; }
        
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
         public ServiceType ServiceType{ get; set; }
         public string Description { get; set; }
         /// <summary>

@@ -26,6 +26,9 @@ using System.Data.Entity.Core.Objects;
 using YUN;
 using System.Configuration;
 using Newtonsoft.Json;
+using SAMS.Products;
+using SAMS.EquipmentArchives;
+using SAMS.EquipmentArchives.Dto;
 
 namespace SAMS.WorkOrders
 {
@@ -33,14 +36,16 @@ namespace SAMS.WorkOrders
     {
         private readonly IWorkOrderManager _workOrderManager;
         private readonly IRepository<WorkOrderBill> _workOrderRepository;
-        private readonly IRepository<Accessory> _accessoryRepository;
+        private readonly IRepository<Accessory,string> _accessoryRepository;
         private readonly IRepository<WorkOrderFaultEntry> _workOrderFaultEntryRepository;
-        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<Customer,string> _customerRepository;
         private readonly IRepository<ServiceEvalution> _serviceEvalutionRepository;
         private readonly IRepository<WorkOrderAccessoryEntry> _workOrderAccessoryEntryRepository;
         private readonly IRepository<WorkOrderPhoto> _workOrderPhotoRepository;
         private readonly ICustomerDomainService _customerDomainService;
-      //  private readonly AccessoryDomainService _accessoryDomainService;
+        private readonly IRepository<Product, string> _productRepository;
+        private readonly IEquipmentArchiveAppService _equipmentArchiveAppService;
+        //  private readonly AccessoryDomainService _accessoryDomainService;
 
         private readonly IInventoryDomainService _inventoryDomainService;
         public WorkOrderAppService(IWorkOrderManager workOrderManager,
@@ -48,11 +53,13 @@ namespace SAMS.WorkOrders
             IRepository<WorkOrderFaultEntry> workOrderFaultEntryRepository,
             IRepository<WorkOrderAccessoryEntry> workOrderAccessoryEntryRepository,
             ICustomerDomainService customerDomainService,
-            IRepository<Customer> customerRepository,
+            IRepository<Customer,string> customerRepository,
             IInventoryDomainService inventroyDomainService,
            IRepository<ServiceEvalution> serviceEvalutionRepository,
-           IRepository<Accessory> accessoryRepository,
-           IRepository<WorkOrderPhoto> workOrderPhotoRepository
+           IRepository<Accessory,string> accessoryRepository,
+           IRepository<WorkOrderPhoto> workOrderPhotoRepository,
+             IRepository<Product, string> productRepository,
+             IEquipmentArchiveAppService equipmentArchiveAppService
 
 
             )
@@ -67,6 +74,8 @@ namespace SAMS.WorkOrders
             _serviceEvalutionRepository = serviceEvalutionRepository;
             _accessoryRepository = accessoryRepository;
             _workOrderPhotoRepository = workOrderPhotoRepository;
+            _productRepository = productRepository;
+            _equipmentArchiveAppService = equipmentArchiveAppService;
         }
 
         /// <summary>
@@ -166,7 +175,7 @@ namespace SAMS.WorkOrders
                     url = string.Format("{0}/staffMobile/home/detail/{1}",bootURL,workOrder.Id),
                     appid = appID,
                     todo = YUNAPI.TODO_YES,
-                    text = "售后管理 || "+ serverstr + " || "+workOrder.Customer.Name +" || " + workOrder.CreationTime,
+                    text = serverstr + " || "+workOrder.Customer.Name ,
                     todoPriStatus = YUNAPI.TODOSTAUS_UNDO,//只能是undo  待办
                     extendFields = new { pushTipTitle = "您有一条新工单" }
                 }
@@ -199,7 +208,23 @@ namespace SAMS.WorkOrders
             _workOrderManager.AddActivity(cancelActivity);
         }
         /// <summary>
-        /// 完工回单, 更新配件持有数量
+        /// 更新差旅费用
+        /// </summary>
+        /// <param name="input"></param>
+        public void UpdateExpense(ExpenseInput input)
+        {
+
+            var bill = _workOrderManager.Get(input.BillId);
+
+            bill.TrafficUrban = input.TrafficUrban;
+            bill.TrafficLong = input.TrafficLong;
+            bill.Supply = input.Supply;
+            bill.OtherEx = input.OtherEx;
+            bill.HotelEx = input.HotelEx;
+        }
+
+        /// <summary>
+        /// 完工回单
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -208,6 +233,17 @@ namespace SAMS.WorkOrders
             CompleteOutput output = new CompleteOutput() { Successed = true };
 
             var bill = _workOrderManager.Get(input.BillId);
+            var archive=_equipmentArchiveAppService.GetArchiveBySerialNo(bill.SerialNo);
+            if (bill.ServiceType.Equals(ServiceType.Install))
+            {
+                if (archive != null)
+                    throw new UserFriendlyException("序列号已存在");
+            }
+            else
+            {
+                if (archive == null)
+                    throw new UserFriendlyException("序列号不存在");
+            }
 
             //记录回单活动
             if (bill.BillStatus == BillStatus.Dispatch)
@@ -225,24 +261,9 @@ namespace SAMS.WorkOrders
             bill.OfficeTel = input.OfficeTel;
             bill.Warrenty = input.Warrenty;
             bill.ServiceTime = input.ServiceTime;
-
-
-            //添加字段
             bill.Dealfa = input.Dealfa;
             bill.Faultap = input.Faultap;
-            bill.TrafficUrban = input.TrafficUrban;
-            bill.TrafficLong = input.TrafficLong;
-            bill.Supply = input.Supply;
-            bill.OtherEx = input.OtherEx;
-            bill.HotelEx = input.HotelEx;
-
-            //bill.CustomerPhone = input.CustomerPhone;
-            //bill.Email = input.Email;
-            //处理故障分录
-            FaultEntryProcess(input, bill, output);
-            //处理配件分录
-            AccessoryEntryProcess(input, bill, output);
-
+           
             //处理图片
             PhotoProcess(input, bill, output);
             
@@ -286,6 +307,50 @@ namespace SAMS.WorkOrders
             }
         }
 
+        public void Report(ReportInput input)
+        {
+            var bill = _workOrderManager.Get(input.BillId);
+            var archive = _equipmentArchiveAppService.GetArchiveBySerialNo(bill.SerialNo);
+            if (bill.ServiceType.Equals(ServiceType.Install))
+            {
+                if (archive != null)
+                    throw new UserFriendlyException("序列号已存在");
+            }
+            else
+            {
+                if (archive == null)
+                    throw new UserFriendlyException("序列号不存在");
+            }
+
+            //记录修改回单活动
+            if (bill.BillStatus == BillStatus.Dispatch)
+            {
+                var user = AsyncHelper.RunSync(() => UserManager.GetUserByIdAsync(UserManager.AbpSession.UserId.Value));
+                var reportActivity = new Activity() { Bill = bill, Operater = user, Name = "修改回单", Log = string.Format("【{0}】修改了回单信息。", user.Name) };
+                _workOrderManager.AddActivity(reportActivity);
+            }
+            //回单基本信息
+            bill.SerialNo = input.SerialNo;
+            bill.Office = input.Office;
+            bill.OfficeMobile = input.OfficeMobile;
+            bill.OfficePerson = input.OfficePerson;
+            bill.OfficePosition = input.OfficePosition;
+            bill.OfficeTel = input.OfficeTel;
+            bill.Warrenty = input.Warrenty;
+            bill.ServiceTime = input.ServiceTime;
+            bill.Dealfa = input.Dealfa;
+            
+            bill.GuaranteedState = input.GuaranteedState;
+            bill.TrafficLong = input.TrafficLong;
+            bill.TrafficUrban = input.TrafficUrban;
+            bill.Supply = input.Supply;
+            bill.OtherEx = input.OtherEx;
+            bill.HotelEx = input.HotelEx;
+
+            //处理图片
+            PhotoProcess(input, bill);
+
+        }
         /// <summary>
         /// 回访
         /// </summary>
@@ -318,6 +383,7 @@ namespace SAMS.WorkOrders
         }
         private void ReturnVisit(WorkOrderBill workOrder)
         {
+            
             //记录回访活动
             var user = AsyncHelper.RunSync(() => UserManager.GetUserByIdAsync(UserManager.AbpSession.UserId.Value));
             var returnVisitActivity = new Activity() { Bill = workOrder, Operater = user,Log=string.Format("回访") };
@@ -338,6 +404,11 @@ namespace SAMS.WorkOrders
             Close(workOrder);
           
         }
+        public void Close(int id)
+        {
+            var bill = _workOrderRepository.Get(id);
+            Close(bill);
+        }
         private void Close(WorkOrderBill bill)
         {
             _workOrderManager.Close(bill);
@@ -347,7 +418,59 @@ namespace SAMS.WorkOrders
             _workOrderManager.AddActivity(closeActivity);
 
         }
+        public void Archive(int id)
+        {
+            var bill = _workOrderRepository.Get(id);
+            if(string.IsNullOrEmpty( bill.SerialNo))
+            {
+                throw new UserFriendlyException("设备序列号不能为空");
+            }
+            var archive =_equipmentArchiveAppService.GetArchiveBySerialNo(bill.SerialNo);
+            if(archive!=null)
+            {
+                var editInput = new EditEquipmentArchiveInput() {
+                    AssignedPersonId = bill.ServiceType.Equals(ServiceType.Install) ? bill.AssignedPersonId : archive.AssignedPersonId,
+                    CustomerId = bill.CustomerId,
+                    InstallType = bill.ServiceType.Equals(ServiceType.Install) ? bill.InstallType : archive.InstallType,
+                    Id=archive.Id,
+                    Office=bill.Office,
+                    OfficeMobile=bill.OfficeMobile,
+                    OfficePerson=bill.OfficePerson,
+                    OfficePosition=bill.OfficePosition,
+                    OfficeTel=bill.OfficeTel,
+                    ProductId=bill.ProductId,
+                    SerialNo=bill.SerialNo,
+                    ServiceTime= bill.ServiceType.Equals(ServiceType.Install) ? bill.ServiceTime : archive.ServiceTime,
+                    Warrenty= bill.ServiceType.Equals(ServiceType.Install) ? bill.Warrenty : archive.Warrenty
+                };
+                _equipmentArchiveAppService.Edit(editInput);
+            }
+            else
+            {
+                var createInput = new CreateEquipmentArchiveInput()
+                {
+                    AssignedPersonId = bill.ServiceType.Equals(ServiceType.Install) ? bill.AssignedPersonId : new Nullable<long>(),
+                    CustomerId = bill.CustomerId,
+                    InstallType = bill.ServiceType.Equals(ServiceType.Install) ? bill.InstallType : "",
+                    Office = bill.Office,
+                    OfficeMobile = bill.OfficeMobile,
+                    OfficePerson = bill.OfficePerson,
+                    OfficePosition = bill.OfficePosition,
+                    OfficeTel = bill.OfficeTel,
+                    ProductId = bill.ProductId,
+                    SerialNo = bill.SerialNo,
+                    ServiceTime = bill.ServiceType.Equals(ServiceType.Install) ? bill.ServiceTime : new Nullable<DateTime>(),
+                    Warrenty = bill.ServiceType.Equals(ServiceType.Install) ? bill.Warrenty : new Nullable<DateTime>()
+                };
+                _equipmentArchiveAppService.Create(createInput);
+            }
 
+            //记录归档活动
+            var user = AsyncHelper.RunSync(() => UserManager.GetUserByIdAsync(UserManager.AbpSession.UserId.Value));
+            var archiveActivity = new Activity() { Bill = bill, Operater = user, Log = string.Format("归档") };
+            _workOrderManager.AddActivity(archiveActivity);
+
+        }
         private void FaultEntryProcess(CompleteInput input,WorkOrderBill bill, CompleteOutput output)
         {
             if (input.Faults != null) {
@@ -408,6 +531,28 @@ namespace SAMS.WorkOrders
             }
 
            
+        }
+        private void PhotoProcess(ReportInput input, WorkOrderBill bill)
+        {
+           
+            for (int i = bill.Photos.Count - 1; i >= 0; i--)
+            {
+                WorkOrderPhoto photo = bill.Photos.ElementAt(i);
+                //删除分录
+                _workOrderPhotoRepository.Delete(photo);
+               // i--;
+            }
+            if (input.Photos == null) return;
+            foreach (var photo in input.Photos)
+            {
+                var newPhoto=new WorkOrderPhoto()
+                {
+                    FilePath = photo,
+                    Bill=bill
+                };
+                _workOrderPhotoRepository.Insert(newPhoto);
+            }
+                
         }
         private void PhotoProcess(CompleteInput input, WorkOrderBill bill, CompleteOutput output)
         {
@@ -639,7 +784,7 @@ namespace SAMS.WorkOrders
         public void CreateOrUpdateWorkOrder(CreateOrUpdateWorkOrderInput input)
         {
 
-            if (input.WorkOrder.Id.HasValue)
+            if (input.Id.HasValue)
             {
                 Update(input);
                 
@@ -655,36 +800,12 @@ namespace SAMS.WorkOrders
         
         public GetWorkOrderForEditOutput GetWorkOrderForEdit(int id)
         {
-            var workorder=_workOrderRepository.Get(id);
-            var workOrderEditDto= workorder.MapTo<WorkOrderEditDto>();
-            return new GetWorkOrderForEditOutput() { WorkOrder = workOrderEditDto };
+            var workorder = _workOrderRepository.Get(id);
+           
+            return workorder.MapTo<GetWorkOrderForEditOutput>();
         }
         
-        /// <summary>
-        /// 新建客户或修改客户电话
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private Customer CreateOrUpdateCustomer(CreateOrUpdateWorkOrderInput input)
-        {
-            Customer customer = null;
-            if (input.WorkOrder.CustomerId.HasValue)
-            {
-                customer = _customerDomainService.Get(input.WorkOrder.CustomerId.Value);
-              
-
-            }
-            else
-            {
-                customer = new Customer();
-                customer.Address = input.WorkOrder.Address;
-                customer.Area = input.WorkOrder.CustomerArea;
-                customer.Name = input.WorkOrder.CustomerName;
-                _customerDomainService.Create(customer);
-
-            }
-            return customer;
-        }
+        
 
         /// <summary>
         /// 新建工单
@@ -692,33 +813,44 @@ namespace SAMS.WorkOrders
         /// <param name="input"></param>
         public WorkOrderBill Create(CreateOrUpdateWorkOrderInput input)
         {
+            //产品
+            var product = _productRepository.Get(input.ProductId);
             //新建或编辑客户
-            Customer customer = CreateOrUpdateCustomer(input);
-            //新建工单
-            var workOrder = input.WorkOrder.MapTo<WorkOrderBill>();
-            workOrder.Customer = customer;
-           // workOrder.Email = input.WorkOrder.CustomerEmail;
+            //Customer customer = CreateOrUpdateCustomer(input);
+            var customer = _customerDomainService.Get(input.CustomerId);
 
-            if (input.WorkOrder.Description == null)
+            //新建工单
+            var workOrder = input.MapTo<WorkOrderBill>();
+            workOrder.Customer = customer;
+            workOrder.CustomerName = customer.Name;
+            workOrder.CustomerCode = customer.Code;
+            workOrder.CustomerArea = input.CustomerArea;
+
+            workOrder.Product = product;
+            //workOrder.ProductName = product.Name;
+            //workOrder.ProductMode = product.Model;
+
+            if (input.Description == null)
             {
                 workOrder.Description = "";
             }
             else {
 
-                workOrder.Description = input.WorkOrder.Description.Trim();
+                workOrder.Description = input.Description.Trim();
             }
 
-            
+
             _workOrderManager.Create(workOrder);
 
             //记录新建活动
             var user = AsyncHelper.RunSync(() => UserManager.GetUserByIdAsync(UserManager.AbpSession.UserId.Value));
-            var createActivity = new Activity() {
+            var createActivity = new Activity()
+            {
                 Bill = workOrder,
-                Operater = user ,
-                Name="新建",
-                Log =string.Format("【{0}】 为客户【{1}】创建了【{2}】工单。",
-                    user.Name,workOrder.Customer.Name,workOrder.ServiceType.Equals(ServiceType.Install)?"安装":"维修")
+                Operater = user,
+                Name = "新建",
+                Log = string.Format("【{0}】 为客户【{1}】创建了【{2}】工单。",
+                    user.Name, workOrder.Customer.Name, workOrder.ServiceType.Equals(ServiceType.Install) ? "安装" : "维修")
             };
             _workOrderManager.AddActivity(createActivity);
             return workOrder;
@@ -729,48 +861,66 @@ namespace SAMS.WorkOrders
         /// </summary>
         /// <param name="input"></param>
         private WorkOrderBill Update(CreateOrUpdateWorkOrderInput input)
-        {
-            //新建或编辑客户
-            Customer customer = CreateOrUpdateCustomer(input);
+        { //客户
+            var customer = _customerDomainService.Get(input.CustomerId);
+            //产品
+            var product = _productRepository.Get(input.ProductId);
             //编辑工单
-            var workOrder=_workOrderManager.Get(input.WorkOrder.Id.Value);
+            var workOrder = _workOrderManager.Get(input.Id.Value);
             string msg = "";
-            if (workOrder.CustomerId != input.WorkOrder.CustomerId)
+            if (workOrder.CustomerId != input.CustomerId)
                 msg += "客户";
-            if(workOrder.CustomerId==input.WorkOrder.CustomerId)
+            if (workOrder.CustomerId == input.CustomerId)
             {
-                //if (workOrder.CustomerPhone != input.WorkOrder.CustomerPhone)
-                //    msg += " 客户电话";
-                if (workOrder.Customer.Area != input.WorkOrder.CustomerArea)
+                if (workOrder.CustomerPhone != input.CustomerPhone)
+                    msg += " 客户电话";
+                if (workOrder.CustomerArea != input.CustomerArea)
                     msg += " 客户区域";
-                //if (workOrder.Email != input.WorkOrder.CustomerEmail)
-                //    msg += " 邮箱";
-                if (workOrder.Address != input.WorkOrder.Address)
+                if (workOrder.Address != input.Address)
                     msg += " 详细地址";
-                if (workOrder.ProductId != input.WorkOrder.ProductId)
+                if (workOrder.ProductId != input.ProductId)
                     msg += " 产品";
-                if (workOrder.SaleMan != input.WorkOrder.SaleMan)
+                if (workOrder.SaleMan != input.SaleMan)
                     msg += " 业务员";
-                if (workOrder.SaleManPhone != input.WorkOrder.SaleManPhone)
+                if (workOrder.SaleManPhone != input.SaleManPhone)
                     msg += " 业务员电话";
-                if (workOrder.ServiceType != input.WorkOrder.ServiceType)
+                if (workOrder.ServiceType != input.ServiceType)
                     msg += " 工单类型";
-              
-                if (workOrder.Description != input.WorkOrder.Description)
+                if (workOrder.Priority != input.Priority)
+                    msg += " 优先级";
+                if (workOrder.Description != input.Description)
                     msg += " 服务描述";
+                if (workOrder.SaleOrg != input.SaleOrg)
+                    msg += " 销售组织";
+                if (workOrder.IssueBill != input.IssueBill)
+                    msg += " 出库单号";
+            }
+
+            input.MapTo(workOrder);
+
+            workOrder.Customer = customer;
+            workOrder.CustomerName = customer.Name;
+            workOrder.CustomerCode = customer.Code;
+            workOrder.Product = product;
+            //workOrder.ProductName = product.Name;
+            //workOrder.ProductMode = product.Model;
+
+            if (workOrder.Description == null)
+            {
+                workOrder.Description = "";
+            }
+            else {
+                workOrder.Description = input.Description.Trim();
             }
             
-            input.WorkOrder.MapTo(workOrder);
-            workOrder.Customer = customer;
-            //workOrder.Email = input.WorkOrder.CustomerEmail;
-            workOrder.Description = input.WorkOrder.Description.Trim();
             //记录编辑活动
             var user = AsyncHelper.RunSync(() => UserManager.GetUserByIdAsync(UserManager.AbpSession.UserId.Value));
-            var createActivity = new Activity() {
+            var createActivity = new Activity()
+            {
                 Bill = workOrder,
                 Operater = user,
-                Name="编辑",
-                Log=string.Format("修改了工单的{0}信息",msg)
+                Name = "编辑",
+                Log = string.Format("修改了工单的{0}信息", msg)
             };
             _workOrderManager.AddActivity(createActivity);
 
@@ -789,30 +939,27 @@ namespace SAMS.WorkOrders
             var query = _workOrderRepository.GetAll()
             .WhereIf(!string.IsNullOrEmpty(input.Where.SearchKey),
                 e => e.Customer.Name.Contains(input.Where.SearchKey)
-                || e.Id.ToString().Equals(input.Where.SearchKey));
-            if (input.Where.CustomerId.HasValue) {
-                query = query.Where(e => e.CustomerId == input.Where.CustomerId);
-                
-            }
+                || e.Id.ToString().Equals(input.Where.SearchKey))
+            .WhereIf(!string.IsNullOrEmpty(input.Where.SerialNo), e => e.SerialNo.Equals(input.Where.SerialNo));
 
             // query.Where(e => e.BillStatus == BillStatus.Complete);
             if (input.Where.Filter.HasValue)
             {
-               if (input.Where.Filter == 2)
-               {
-                    query=query.Where(e => e.BillStatus != BillStatus.Close)
+                if (input.Where.Filter == 2)
+                {
+                    query = query.Where(e => e.BillStatus != BillStatus.Close)
                       .Where(e => e.BillStatus != BillStatus.Cancel);
-               }
-               else if(input.Where.Filter==3)
+                }
+                else if (input.Where.Filter == 3)
                 {
                     query = query.Where(e => DbFunctions.DiffDays(e.CreationTime, DateTime.Now) == 0);
                 }
-               else if(input.Where.Filter==4)
+                else if (input.Where.Filter == 4)
                 {
                     query = query.Where(e => e.BillStatus == BillStatus.Complete);
 
                 }
-               else if(input.Where.Filter==5)
+                else if (input.Where.Filter == 5)
                 {
                     query = query.Where(e => (e.BillStatus == BillStatus.Save || e.BillStatus == BillStatus.Accept));
                 }
@@ -823,7 +970,7 @@ namespace SAMS.WorkOrders
                 .OrderBy(input.Sorting)
                 .PageBy(input)
                 .ToList();
-            
+
             var workOrderListDto = workOrders.MapTo<List<WorkOrderListDto>>();
             return new PagedResultDto<WorkOrderListDto>(
                 orderCount,
@@ -979,7 +1126,7 @@ namespace SAMS.WorkOrders
         /// </summary> 
         /// <param name="customerId"></param> 
         /// <returns></returns> 
-        public ListResultDto<string> GetCustomerOffices(int customerId)
+        public ListResultDto<string> GetCustomerOffices(string customerId)
         {
             var offices = _workOrderRepository.GetAll()
             .Where(x => x.CustomerId == customerId)
@@ -988,6 +1135,20 @@ namespace SAMS.WorkOrders
             .Distinct();
             return new ListResultDto<string>(offices.ToList());
 
+        }
+        /// <summary>
+        /// 获取差旅费用
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GetExpenseOutput GetExpense(int id)
+        {
+            var workOrder = _workOrderRepository.Get(id);
+            if (workOrder == null)
+            {
+                throw new UserFriendlyException("工单不存在");
+            }
+            return workOrder.MapTo<GetExpenseOutput>();
         }
     }
 }

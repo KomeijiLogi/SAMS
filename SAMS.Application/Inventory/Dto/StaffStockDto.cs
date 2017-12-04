@@ -17,6 +17,6 @@ namespace SAMS.Inventory.Dto
         public string AccessoryNumber { get; set; }
         public int Count { get; set; }
         public long UserId { get;set;}
-        public int AccessoryId { get; set; }
+        public string AccessoryId { get; set; }
     }
 }

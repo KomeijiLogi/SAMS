@@ -104,7 +104,7 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
 
             return View(viewModel);
         }
-       
+        
        
         //回单
         public ActionResult Receipt(int id)
@@ -119,6 +119,17 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
 
 
             return View(model);
+        }
+
+        public ActionResult Expense(int id) {
+
+            var input = new GetDetailInput() { Id = id };
+
+            var workOrder = _workOrderAppService.GetDetail(input);
+            var model = new ExpenseModel() { WorkOrder = workOrder };
+
+            return View(model);
+             
         }
         /// <summary>
         /// 上传文件
@@ -164,8 +175,9 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
                 //CustomerPhone = receipt.CustomPhone,
                 Accessories = receipt.Accessories == null ? null : receipt.Accessories.Select(u => new WorkOrderAccessoryInputDto
                 {
-                    AccessoryId = u.AccessoryId,
-                    Count = u.Count,
+                    //产生二义性
+                    //AccessoryId = u.AccessoryId,
+                    //Count = u.Count,
                     NewSerials = u.NewSerial,
                     OldSerials = u.OldSerial
 
@@ -183,12 +195,12 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
                 }),
                 //todo:添加字段
                 Faultap =receipt.Faultap,
-                Dealfa=receipt.Dealfa,
-                TrafficUrban=receipt.TrafficUrban,
-                TrafficLong=receipt.TrafficLong,
-                HotelEx=receipt.HotelEx,
-                Supply=receipt.Supply,
-                OtherEx=receipt.OtherEx
+                Dealfa=receipt.Dealfa
+                //TrafficUrban = receipt.TrafficUrban,
+                //TrafficLong = receipt.TrafficLong,
+                //HotelEx = receipt.HotelEx,
+                //Supply = receipt.Supply,
+                //OtherEx = receipt.OtherEx
 
             };
              _workOrderAppService.Complete(input); 
@@ -197,17 +209,37 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
             return Content("ok");
 
         }
+        [HttpPost]
+        public ContentResult Expense(Receipt receipt) {
+
+            var input = new ExpenseInput()
+            {
+                BillId=receipt.BillId,
+                TrafficUrban=receipt.TrafficUrban,
+                TrafficLong=receipt.TrafficLong,
+                HotelEx=receipt.HotelEx,
+                Supply=receipt.Supply,
+                OtherEx=receipt.OtherEx
+
+
+            };
+            _workOrderAppService.UpdateExpense(input);
+            return Content("ok");
+
+        }
+
+
         /// <summary> 
         /// 根据区域选择客户 
         /// </summary> 
         /// <param name="location"></param> 
         /// <returns></returns> 
-        [HttpPost]
-        public JsonResult GetCustomer(string location)
-        {
-            var customers = _customerAppService.GetCustomerByLocation(location);
-            return Json(customers);
-        }
+        //[HttpPost]
+        //public JsonResult GetCustomer(string location)
+        //{
+        //    var customers = _customerAppService.GetCustomerByLocation(location);
+        //    return Json(customers);
+        //}
         /// <summary> 
         /// 工单申请 
         /// </summary> 
@@ -218,8 +250,7 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
         {
             var input = new CreateOrUpdateWorkOrderInput()
             {
-                WorkOrder = new WorkOrderEditDto
-                {
+              
                     CustomerId = workOrder.CustomerId,
                     Description = workOrder.Description,
                     Id = workOrder.Id,
@@ -229,10 +260,10 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
                     //OfficePosition = workOrder.OfficePosition,
                     OfficeTel = workOrder.OfficeTel,
                     ServiceType = workOrder.ServiceType,
-                    ProductId = workOrder.ProductId,
-                    CustomerName=workOrder.CustomerName==null? workOrder.OfficePerson:workOrder.CustomerName
+                    ProductId = workOrder.ProductId
+                    
                    
-                }
+                
             };
 
             _workOrderAppService.CreateOrUpdateWorkOrder(input);
@@ -246,7 +277,7 @@ namespace SAMS.Web.Areas.StaffMobile.Controllers
         /// <param name="customerId"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetCustomerOffices(int customerId) {
+        public JsonResult GetCustomerOffices(string customerId) {
             var customerOffices = _workOrderAppService.GetCustomerOffices(customerId);
             return Json(customerOffices);
 

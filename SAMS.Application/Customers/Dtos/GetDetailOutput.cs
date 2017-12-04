@@ -10,35 +10,26 @@ using Abp.AutoMapper;
 namespace SAMS.Customers.Dtos
 {
     [AutoMapFrom(typeof(Customer))]
-    public class GetDetailOutput:EntityDto
+    public class GetDetailOutput:EntityDto<string>
     {
-        
-        public string Name { get; set; }
+
+        public virtual string Code { get; set; }
+
+      
+        public virtual string Name { get; set; }
+
+        public virtual string ProvinceName { get; set; }
+        public virtual string ProvinceId { get; set; }
+        public virtual string CityName { get; set; }
+        public virtual string CityId { get; set; }
 
 
-        public string Number1 { get; set; }
+        public virtual string Address { get; set; }
 
 
-        public string Number2 { get; set; }
-
-        public string Area { get; set; }//黑龙江省-大庆市-肇州镇
 
 
-        public string Address { get; set; }
 
 
-        public string Description { get; set; }
-
-
-        /// <summary>
-        /// 手机
-        /// </summary>
-        public string Mobile { get; set; }
-
-        /// <summary>
-        /// EMail
-        /// </summary>
-        public string Email { get; set; }
-        public DateTime CreationTime { get; set; }
     }
 }

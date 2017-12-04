@@ -11,7 +11,7 @@ namespace SAMS.Web.Areas.Admin.Models.WorkOrder
     public class CreateOrEditWorkOrderModalViewModel
     {
        
-        public WorkOrderEditDto WorkOrder { get; set; }
+        public GetWorkOrderForEditOutput WorkOrder { get; set; }
         public ProductListDto[] Products { get; set; }
         public List<SelectListItem>  ProductItemList
         {
