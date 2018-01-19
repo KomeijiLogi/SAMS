@@ -31,3 +31,12 @@ E:\SAMS\SAMS\YUN\obj\Release\YUN.csprojResolveAssemblyReference.cache
 E:\SAMS\SAMS\YUN\obj\Release\YUN.csproj.CoreCompileInputs.cache
 E:\SAMS\SAMS\YUN\obj\Release\YUN.dll
 E:\SAMS\SAMS\YUN\obj\Release\YUN.pdb
+D:\Documents\SAMS\SAMS\YUN\bin\Release\YUN.dll.config
+D:\Documents\SAMS\SAMS\YUN\bin\Release\YUN.dll
+D:\Documents\SAMS\SAMS\YUN\bin\Release\YUN.pdb
+D:\Documents\SAMS\SAMS\YUN\bin\Release\Newtonsoft.Json.dll
+D:\Documents\SAMS\SAMS\YUN\bin\Release\Newtonsoft.Json.xml
+D:\Documents\SAMS\SAMS\YUN\obj\Release\YUN.csprojResolveAssemblyReference.cache
+D:\Documents\SAMS\SAMS\YUN\obj\Release\YUN.csproj.CoreCompileInputs.cache
+D:\Documents\SAMS\SAMS\YUN\obj\Release\YUN.dll
+D:\Documents\SAMS\SAMS\YUN\obj\Release\YUN.pdb

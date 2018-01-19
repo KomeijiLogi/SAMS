@@ -25,6 +25,9 @@ namespace SAMS.WorkOrders
         void CreateOrUpdateWorkOrder(CreateOrUpdateWorkOrderInput input);
         GetWorkOrderForEditOutput GetWorkOrderForEdit(int id);
         PagedResultDto<WorkOrderListDto> GetWorkOrders(GetWorkOrderInput input);
+
+        //返回全部工单结果的重写
+        PagedResultDto<WorkOrderListDto> GetAllWorkOrders(GetWorkOrderAll input);
         PagedResultDto<GetNewStaffUseDto> GetNewStaffUse(GetNewStaffUseInput input);
         PagedResultDto<GetNewAccessoryUseDto> GetNewAccessoryUse(GetNewAccessoryUseInput input);
         void Accept(int id);

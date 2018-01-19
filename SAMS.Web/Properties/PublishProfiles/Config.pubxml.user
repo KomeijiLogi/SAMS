@@ -6,7 +6,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>D:\Publish\售后管理系统\发布版本\version1.41</_PublishTargetUrl>
+    <_PublishTargetUrl>D:\Publish\售后管理系统\发布版本\version 1.5</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="Abp/Framework/scripts/abp.js">
@@ -280,7 +280,7 @@
       <publishTime>05/10/2017 07:56:54</publishTime>
     </File>
     <File Include="Areas/Admin/Views/WorkOrder/Index.cshtml">
-      <publishTime>09/02/2017 11:27:17</publishTime>
+      <publishTime>01/19/2018 09:12:18</publishTime>
     </File>
     <File Include="Areas/Admin/Views/WorkOrder/index.js">
       <publishTime>05/10/2017 07:56:54</publishTime>
@@ -310,7 +310,7 @@
       <publishTime>05/10/2017 07:56:54</publishTime>
     </File>
     <File Include="Areas/Admin/Views/WorkOrder/_GetList.cshtml">
-      <publishTime>05/10/2017 07:56:54</publishTime>
+      <publishTime>01/15/2018 16:12:16</publishTime>
     </File>
     <File Include="Areas/Admin/Views/WorkOrder/_ListView.cshtml">
       <publishTime>05/10/2017 07:56:54</publishTime>
@@ -570,6 +570,9 @@
     <File Include="bin/Hangfire.SqlServer.dll">
       <publishTime>05/10/2017 07:57:03</publishTime>
     </File>
+    <File Include="bin/ICSharpCode.SharpZipLib.dll">
+      <publishTime>07/03/2014 10:56:49</publishTime>
+    </File>
     <File Include="bin/log4net.dll">
       <publishTime>05/10/2017 07:57:01</publishTime>
     </File>
@@ -624,50 +627,62 @@
     <File Include="bin/Nito.AsyncEx.Enlightenment.dll">
       <publishTime>05/10/2017 07:57:00</publishTime>
     </File>
+    <File Include="bin/NPOI.dll">
+      <publishTime>05/22/2016 04:35:20</publishTime>
+    </File>
+    <File Include="bin/NPOI.OOXML.dll">
+      <publishTime>05/22/2016 04:35:29</publishTime>
+    </File>
+    <File Include="bin/NPOI.OpenXml4Net.dll">
+      <publishTime>05/22/2016 04:35:21</publishTime>
+    </File>
+    <File Include="bin/NPOI.OpenXmlFormats.dll">
+      <publishTime>05/22/2016 04:35:26</publishTime>
+    </File>
     <File Include="bin/Owin.dll">
       <publishTime>05/10/2017 07:56:59</publishTime>
     </File>
     <File Include="bin/SAMS.Application.dll">
-      <publishTime>09/11/2017 16:01:37</publishTime>
+      <publishTime>01/17/2018 14:13:26</publishTime>
     </File>
     <File Include="bin/SAMS.Application.dll.config">
       <publishTime>05/10/2017 07:58:32</publishTime>
     </File>
     <File Include="bin/SAMS.Application.pdb">
-      <publishTime>09/11/2017 16:01:37</publishTime>
+      <publishTime>01/17/2018 14:13:26</publishTime>
     </File>
     <File Include="bin/SAMS.Core.dll">
-      <publishTime>09/02/2017 15:05:51</publishTime>
+      <publishTime>01/17/2018 14:13:16</publishTime>
     </File>
     <File Include="bin/SAMS.Core.dll.config">
       <publishTime>05/10/2017 07:58:32</publishTime>
     </File>
     <File Include="bin/SAMS.Core.pdb">
-      <publishTime>09/02/2017 15:05:51</publishTime>
+      <publishTime>01/17/2018 14:13:16</publishTime>
     </File>
     <File Include="bin/SAMS.EntityFramework.dll">
-      <publishTime>09/11/2017 13:45:41</publishTime>
+      <publishTime>01/17/2018 14:13:23</publishTime>
     </File>
     <File Include="bin/SAMS.EntityFramework.dll.config">
       <publishTime>05/10/2017 07:58:32</publishTime>
     </File>
     <File Include="bin/SAMS.EntityFramework.pdb">
-      <publishTime>09/11/2017 13:45:41</publishTime>
+      <publishTime>01/17/2018 14:13:23</publishTime>
     </File>
     <File Include="bin/SAMS.Web.dll">
-      <publishTime>09/11/2017 16:06:12</publishTime>
+      <publishTime>01/19/2018 09:16:42</publishTime>
     </File>
     <File Include="bin/SAMS.Web.pdb">
-      <publishTime>09/11/2017 16:06:12</publishTime>
+      <publishTime>01/19/2018 09:16:42</publishTime>
     </File>
     <File Include="bin/SAMS.WebApi.dll">
-      <publishTime>09/11/2017 16:01:39</publishTime>
+      <publishTime>01/17/2018 14:13:29</publishTime>
     </File>
     <File Include="bin/SAMS.WebApi.dll.config">
       <publishTime>05/10/2017 07:58:31</publishTime>
     </File>
     <File Include="bin/SAMS.WebApi.pdb">
-      <publishTime>09/11/2017 16:01:39</publishTime>
+      <publishTime>01/17/2018 14:13:29</publishTime>
     </File>
     <File Include="bin/Swashbuckle.Core.dll">
       <publishTime>05/10/2017 07:56:59</publishTime>
@@ -715,13 +730,13 @@
       <publishTime>05/10/2017 07:57:39</publishTime>
     </File>
     <File Include="bin/YUN.dll">
-      <publishTime>09/02/2017 15:05:48</publishTime>
+      <publishTime>01/17/2018 14:12:45</publishTime>
     </File>
     <File Include="bin/YUN.dll.config">
       <publishTime>05/10/2017 07:58:31</publishTime>
     </File>
     <File Include="bin/YUN.pdb">
-      <publishTime>09/02/2017 15:05:48</publishTime>
+      <publishTime>01/17/2018 14:12:45</publishTime>
     </File>
     <File Include="bin/zh-Hans/System.Web.Helpers.resources.dll">
       <publishTime>05/10/2017 07:56:57</publishTime>
@@ -4414,7 +4429,7 @@
       <publishTime>05/10/2017 07:58:25</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>09/02/2017 15:06:02</publishTime>
+      <publishTime>01/19/2018 09:16:48</publishTime>
     </File>
   </ItemGroup>
 </Project>

@@ -122,6 +122,8 @@
     <Compile Include="Customers\Dtos\GetCustomersWhere.cs" />
     <Compile Include="Customers\Dtos\GetDetailInput.cs" />
     <Compile Include="Customers\Dtos\GetDetailOutput.cs" />
+    <Compile Include="Dto\PagedAllInputDto.cs" />
+    <Compile Include="Dto\PagedAndAllInputDto.cs" />
     <Compile Include="EquipmentArchives\Dto\EditEquipmentArchiveInput.cs" />
     <Compile Include="EquipmentArchives\Dto\CreateEquipmentArchiveInput.cs" />
     <Compile Include="EquipmentArchives\Dto\EquipmentArchiveDetailDto.cs" />
@@ -208,6 +210,7 @@
     <Compile Include="WorkOrders\Dtos\GetNewAccessoryUseInput.cs" />
     <Compile Include="WorkOrders\Dtos\GetNewStaffUseInput.cs" />
     <Compile Include="WorkOrders\Dtos\GetStaffCreateInput.cs" />
+    <Compile Include="WorkOrders\Dtos\GetWorkOrderAll.cs" />
     <Compile Include="WorkOrders\Dtos\GetWorkOrderForEditOutput.cs" />
     <Compile Include="WorkOrders\Dtos\GetWorkOrderInput.cs" />
     <Compile Include="WorkOrders\Dtos\ReportInput.cs" />

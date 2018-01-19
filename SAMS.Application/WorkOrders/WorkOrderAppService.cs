@@ -1150,5 +1150,50 @@ namespace SAMS.WorkOrders
             }
             return workOrder.MapTo<GetExpenseOutput>();
         }
+
+        public PagedResultDto<WorkOrderListDto> GetAllWorkOrders(GetWorkOrderAll input)
+        {
+            var query = _workOrderRepository.GetAll()
+           .WhereIf(!string.IsNullOrEmpty(input.Where.SearchKey),
+               e => e.Customer.Name.Contains(input.Where.SearchKey)
+               || e.Id.ToString().Equals(input.Where.SearchKey))
+           .WhereIf(!string.IsNullOrEmpty(input.Where.SerialNo), e => e.SerialNo.Equals(input.Where.SerialNo));
+
+            // query.Where(e => e.BillStatus == BillStatus.Complete);
+            if (input.Where.Filter.HasValue)
+            {
+                if (input.Where.Filter == 2)
+                {
+                    query = query.Where(e => e.BillStatus != BillStatus.Close)
+                      .Where(e => e.BillStatus != BillStatus.Cancel);
+                }
+                else if (input.Where.Filter == 3)
+                {
+                    query = query.Where(e => DbFunctions.DiffDays(e.CreationTime, DateTime.Now) == 0);
+                }
+                else if (input.Where.Filter == 4)
+                {
+                    query = query.Where(e => e.BillStatus == BillStatus.Complete);
+
+                }
+                else if (input.Where.Filter == 5)
+                {
+                    query = query.Where(e => (e.BillStatus == BillStatus.Save || e.BillStatus == BillStatus.Accept));
+                }
+
+            }
+            var orderCount = query.Count();
+            var workOrders = query
+                .OrderBy(input.Sorting)
+                .PageBy(input)
+                .ToList();
+
+            var workOrderListDto = workOrders.MapTo<List<WorkOrderListDto>>();
+            return new PagedResultDto<WorkOrderListDto>(
+                orderCount,
+                workOrderListDto
+                );
+           
+        }
     }
 }

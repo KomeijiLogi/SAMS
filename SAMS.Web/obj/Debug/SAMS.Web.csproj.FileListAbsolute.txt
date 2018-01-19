@@ -1347,3 +1347,9 @@ D:\Documents\SAMS\SAMS\SAMS.Web\obj\Debug\SAMS.Web.csprojResolveAssemblyReferenc
 D:\Documents\SAMS\SAMS\SAMS.Web\obj\Debug\SAMS.Web.csproj.CoreCompileInputs.cache
 D:\Documents\SAMS\SAMS\SAMS.Web\obj\Debug\SAMS.Web.dll
 D:\Documents\SAMS\SAMS\SAMS.Web\obj\Debug\SAMS.Web.pdb
+D:\Documents\SAMS\SAMS\SAMS.Web\bin\NPOI.dll
+D:\Documents\SAMS\SAMS\SAMS.Web\bin\NPOI.OOXML.dll
+D:\Documents\SAMS\SAMS\SAMS.Web\bin\NPOI.OpenXml4Net.dll
+D:\Documents\SAMS\SAMS\SAMS.Web\bin\NPOI.OpenXmlFormats.dll
+D:\Documents\SAMS\SAMS\SAMS.Web\bin\ICSharpCode.SharpZipLib.dll
+D:\Documents\SAMS\SAMS\SAMS.Web\bin\NPOI.xml

@@ -288,10 +288,44 @@
         }
 
         //导出excel
-        function exportExcel() {window.location = "/admin/workorder/exportexcel?Where=" + $("#Where").val();}
+        //function exportExcel() {window.location = "/admin/workorder/exportexcel?Where=" + $("#Where").val();}
 
         //创建工单成功
         function editWorkOrderSucess(data) { if (data == "ok") { $("#createworkDailog").modal("hide"); changeQueryCondition();} else { growlAlert.danger("新建工单失败。"); } }
+
+        //导出excel
+        function exportExcel() {
+           
+            var form = $('<form>');
+            form.attr('style', 'display:none');
+            form.attr('target', '');
+            form.attr('method', 'post');
+            form.attr('action', '/admin/WorkOrder/ExportExcel');
+            var Name = $('<input>');
+            Name.attr('type', 'text');
+            Name.attr('name', 'Name');//参数  
+            Name.attr('value', Name);
+            $('body').append(form);
+            form.append(Name);
+            form.submit();
+            form.remove();  
+
+
+            /**
+            $.ajax({
+                url: '/admin/WorkOrder/ExportExcel',
+                method: 'post',
+                contentType: 'application/x-www-form-urlencoded;charset=utf-8'
+
+            }).done(function (res) {
+                //console.log(res);
+               
+
+            }).fail(function (err) {
+                 console.log(err);
+            });
+            */
+        }
 
     </script>
 
@@ -356,8 +390,8 @@
                                data-ajax-method="GET" data-ajax-success="showDialog"
                                href="/admin/workorder/popcreateworkorder">新建</a>
 
+                            <a class="btn green" href="#" onclick="exportExcel()">导出Excel</a>
                             @*<button class="btn green collapse" id="btnFilter">筛选</button>*@
-
                         </div>
                         @*<div class="col-md-6 col-xs-6 clear-padding-right">
                             <div class="pull-right">

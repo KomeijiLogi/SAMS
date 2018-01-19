@@ -28,6 +28,8 @@ using Microsoft.AspNet.Identity;
 using SAMS.Authorization.Roles;
 using Abp.Authorization.Roles;
 using Abp.Authorization.Users;
+using System.Data;
+using System.Web.UI;
 
 namespace SAMS.Web.Areas.Admin.Controllers
 {
@@ -60,7 +62,9 @@ namespace SAMS.Web.Areas.Admin.Controllers
         public ActionResult Index()
         {
             ViewBag.ID = 1;
+
             return View("Index");
+
         }
         /// <summary>
         /// 工单编号 客户名称 查找工单
@@ -386,5 +390,100 @@ namespace SAMS.Web.Areas.Admin.Controllers
             return View();
 
         }
+
+        /// <summary>
+        /// 导出excel
+        /// </summary>
+        /// <param name="dataTable">数据来源</param>
+        /// <returns>状态字符</returns>
+        [HttpPost]
+        public ActionResult ExportExcel()
+        {
+            DataTable dataTable = new DataTable();
+            var viewModel = new GetListViewModel();
+            string sorting = "id desc";
+            var where = JsonConvert.DeserializeObject<WhereParam>("{filter:1}");
+            //GetWorkOrderInput input = new GetWorkOrderInput() { MaxResultCount =1000, SkipCount = 0, Sorting = sorting, Where = where };
+            GetWorkOrderAll input =new GetWorkOrderAll() { MaxResultCount = 100000, SkipCount = 0, Sorting = sorting, Where = where };
+            try
+            {
+                viewModel.WorkOrders = _workOrderAppService.GetAllWorkOrders(input);
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+            }
+
+
+            //遍历workorder对象，转化成dataTable
+            
+            dataTable.Columns.Add("编号", typeof(string));
+            dataTable.Columns.Add("客户名称", typeof(string));
+            dataTable.Columns.Add("产品名称", typeof(string));
+            dataTable.Columns.Add("产品型号", typeof(string));
+            dataTable.Columns.Add("服务类型", typeof(string));
+            dataTable.Columns.Add("业务员", typeof(string));
+            dataTable.Columns.Add("安装工程师", typeof(string));
+            dataTable.Columns.Add("订单状态", typeof(string));
+            dataTable.Columns.Add("创建时间", typeof(string));
+            //System.Diagnostics.Debug.WriteLine(viewModel.WorkOrders.TotalCount);    
+            for (var i=0;i<viewModel.WorkOrders.Items.Count;i++)
+            {
+                //System.Diagnostics.Debug.WriteLine(viewModel.WorkOrders.Items[i]);
+                DataRow dataRow = dataTable.NewRow();
+                dataRow["编号"] = viewModel.WorkOrders.Items[i].Id;
+                dataRow["客户名称"] = viewModel.WorkOrders.Items[i].CustomerName;
+                dataRow["产品名称"] = viewModel.WorkOrders.Items[i].ProductName;
+                dataRow["产品型号"] = viewModel.WorkOrders.Items[i].ProductModel;
+                dataRow["服务类型"] = viewModel.WorkOrders.Items[i].ServiceType;
+                dataRow["业务员"] = viewModel.WorkOrders.Items[i].SaleMan;
+                dataRow["安装工程师"] = viewModel.WorkOrders.Items[i].AssignedPersonName;
+                dataRow["订单状态"] = viewModel.WorkOrders.Items[i].BillStatus;
+                dataRow["创建时间"] = viewModel.WorkOrders.Items[i].CreationTime;
+                dataTable.Rows.Add(dataRow);
+            }
+            try
+            {
+                TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                String timestamp = Convert.ToInt64(ts.TotalSeconds).ToString();
+                String fileName = Server.MapPath("~/导出excel.xlsx");
+                //构造excel帮助类
+                ExcelHelper excelHelper = new ExcelHelper(fileName);
+                String sheetName = "sheet1";
+                //FileStream fs = excelHelper.DataTableToExcel(dataTable, sheetName, true);
+                //if (fs != null)
+                //{
+                //    //return File(fileName, "application/vnd.ms-excel", "导出excel.xlsx");
+                //    return File(fs, "application/vnd.ms-excel");
+                //}
+              
+
+                
+                byte[] bytes= excelHelper.DataTableExchangeToStream(dataTable, sheetName, true);
+                if (bytes != null)
+                {
+                    
+                    return File(bytes, "application/vnd.ms-excel","导出excel.xls");
+                }
+
+                //List<DataTable> ld = new List<DataTable>();
+                //ld.Add(dataTable);
+                //int[] widths = { 2000, 2000, 2000, 2000, 2000, 2000 };
+                //MemoryStream ms = excelHelper.Export(ld, widths, sheetName);//调用前一个方法
+                //ms.Seek(0, SeekOrigin.Begin);
+                //return File(ms, "application/vnd.ms-excel", "文件名.xls");
+
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+            }
+
+
+            return null;
+        }
+
     }
+
+    
 }
